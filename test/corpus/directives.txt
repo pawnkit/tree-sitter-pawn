@@ -1,0 +1,425 @@
+==========
+directives
+==========
+
+#include <a_samp>
+#tryinclude "custom.inc"
+#define MAX_PLAYERS 1000
+#define SQR(%0) ((%0) * (%0))
+#define DIALOG_CAPTION \
+  "Server"
+#undef MAX_BOTS
+#assert MAX_PLAYERS > 0
+#error unsupported build
+#warning experimental build
+#line 123
+#file "mode.pwn"
+#endinput
+#if defined MAX_PLAYERS && MAX_PLAYERS > 0
+#elseif defined(LEGACY_MODE)
+#else
+#endif
+
+---
+
+(source_file
+  (directive_include
+    path: (system_lib_string))
+  (directive_tryinclude
+    path: (string_literal))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (integer_literal))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_parenthesized_expression
+          expression: (preproc_expression
+            (preproc_binary_expression
+              left: (preproc_expression
+                (preproc_parenthesized_expression
+                  expression: (preproc_expression
+                    (macro_parameter))))
+              right: (preproc_expression
+                (preproc_parenthesized_expression
+                  expression: (preproc_expression
+                    (macro_parameter))))))))))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (string_literal))))
+  (directive_undef
+    name: (identifier))
+  (directive_assert
+    condition: (preproc_expression
+      (preproc_binary_expression
+        left: (preproc_expression
+          (identifier))
+        right: (preproc_expression
+          (integer_literal)))))
+  (directive_error
+    message: (preproc_text))
+  (directive_warning
+    message: (preproc_text))
+  (directive_line
+    number: (integer_literal))
+  (directive_file
+    path: (string_literal))
+  (directive_endinput)
+  (directive_if
+    condition: (preproc_expression
+      (preproc_binary_expression
+        left: (preproc_expression
+          (preproc_defined
+            name: (identifier)))
+        right: (preproc_expression
+          (preproc_binary_expression
+            left: (preproc_expression
+              (identifier))
+            right: (preproc_expression
+              (integer_literal)))))))
+  (directive_elseif
+    condition: (preproc_expression
+      (preproc_defined
+        name: (identifier))))
+  (directive_else)
+  (directive_endif))
+
+=================================
+structured macro replacement forms
+=================================
+
+#define DIALOG_TITLE "Server"
+#define SEND_MSG(%0,%1) SendClientMessage(%0, 0xFFFFFFFF, %1)
+#define SET_ELEM(%0,%1,%2) %0[%1] = %2
+#define WITH_SIZE(%0) sizeof(%0)
+#define MULTI_STMT(%0,%1) { %0 = %1; %1 = %0; }
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (string_literal))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_call_expression
+          function: (identifier)
+          (preproc_expression
+            (macro_parameter))
+          (preproc_expression
+            (hex_literal))
+          (preproc_expression
+            (macro_parameter))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_assignment_expression
+          left: (preproc_subscript_expression
+            array: (macro_parameter)
+            index: (preproc_expression
+              (macro_parameter)))
+          right: (preproc_expression
+            (macro_parameter))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_sizeof_expression
+          argument: (preproc_expression
+            (macro_parameter))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_block
+        (macro_statement
+          (macro_expression_statement
+            expression: (preproc_expression
+              (preproc_assignment_expression
+                left: (macro_parameter)
+                right: (preproc_expression
+                  (macro_parameter))))))
+        (macro_statement
+          (macro_expression_statement
+            expression: (preproc_expression
+              (preproc_assignment_expression
+                left: (macro_parameter)
+                right: (preproc_expression
+                  (macro_parameter))))))))))
+
+================================
+statement-like macro replacements
+================================
+
+#define IF_WRAP(%0) if (%0) return 1
+#define IF_ELSE_WRAP(%0) if (%0) return 1; else return 0
+#define IF_BLOCK_WRAP(%0,%1) if (%0) { %1; }
+#define RETURN_WRAP(%0) return %0
+#define GOTO_WRAP(%0) goto %0
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_if_statement
+        condition: (preproc_expression
+          (macro_parameter))
+        consequence: (macro_control_statement
+          (macro_return_statement
+            value: (preproc_expression
+              (integer_literal)))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_if_statement
+        condition: (preproc_expression
+          (macro_parameter))
+        consequence: (macro_control_statement
+          (macro_return_statement
+            value: (preproc_expression
+              (integer_literal))))
+        alternative: (macro_control_statement
+          (macro_return_statement
+            value: (preproc_expression
+              (integer_literal)))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_if_statement
+        condition: (preproc_expression
+          (macro_parameter))
+        consequence: (macro_control_statement
+          (macro_block
+            (macro_statement
+              (macro_expression_statement
+                expression: (preproc_expression
+                  (macro_parameter)))))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_return_statement
+        value: (preproc_expression
+          (macro_parameter)))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_goto_statement
+        label: (macro_parameter)))))
+
+=====================================
+loop and control macro replacements
+=====================================
+
+#define WHILE_WRAP(%0,%1) while (%0) %1;
+#define DO_WRAP(%0,%1) do { %0; } while (%1)
+#define FOR_WRAP(%0,%1,%2,%3) for (%0; %1; %2) %3;
+#define BREAK_WRAP break
+#define CONTINUE_WRAP continue
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_while_statement
+        condition: (preproc_expression
+          (macro_parameter))
+        body: (macro_control_statement
+          (macro_expression_statement
+            expression: (preproc_expression
+              (macro_parameter)))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_do_while_expression
+        body: (macro_block
+          (macro_statement
+            (macro_expression_statement
+              expression: (preproc_expression
+                (macro_parameter)))))
+        condition: (preproc_expression
+          (macro_parameter)))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_for_statement
+        initializer: (preproc_expression
+          (macro_parameter))
+        condition: (preproc_expression
+          (macro_parameter))
+        update: (preproc_expression
+          (macro_parameter))
+        body: (macro_control_statement
+          (macro_expression_statement
+            expression: (preproc_expression
+              (macro_parameter)))))))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (macro_break_statement)))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (macro_continue_statement))))
+
+========================
+switch macro replacements
+========================
+
+#define SWITCH_WRAP(%0) switch (%0) { case 0: return 1; default: return 0; }
+#define SWITCH_BREAK(%0) switch (%0) { case 1: break; default: continue; }
+#define SWITCH_MULTI(%0) switch (%0) { case 1, 3 .. 5: return 9; }
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_switch_statement
+        condition: (preproc_expression
+          (macro_parameter))
+        (macro_case_statement
+          value: (macro_case_value
+            (preproc_expression
+              (integer_literal)))
+          (macro_statement
+            (macro_return_statement
+              value: (preproc_expression
+                (integer_literal)))))
+        (macro_default_statement
+          (macro_statement
+            (macro_return_statement
+              value: (preproc_expression
+                (integer_literal))))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_switch_statement
+        condition: (preproc_expression
+          (macro_parameter))
+        (macro_case_statement
+          value: (macro_case_value
+            (preproc_expression
+              (integer_literal)))
+          (macro_statement
+            (macro_break_statement)))
+        (macro_default_statement
+          (macro_statement
+            (macro_continue_statement))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_switch_statement
+        condition: (preproc_expression
+          (macro_parameter))
+        (macro_case_statement
+          value: (macro_case_value_list
+            left: (macro_case_value
+              (preproc_expression
+                (integer_literal)))
+            right: (macro_case_value
+              (macro_case_range
+                start: (preproc_expression
+                  (integer_literal))
+                end: (preproc_expression
+                  (integer_literal)))))
+          (macro_statement
+            (macro_return_statement
+              value: (preproc_expression
+                (integer_literal)))))))))
+
+========================
+weird supported defines
+========================
+
+#define ZERO_RETURN return;
+#define EMPTY_BLOCK { }
+#define NESTED_IF(%0,%1) if (%0) if (%1) return 1; else return 0
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (macro_return_statement)))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (macro_block)))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_if_statement
+        condition: (preproc_expression
+          (macro_parameter))
+        consequence: (macro_control_statement
+          (macro_if_statement
+            condition: (preproc_expression
+              (macro_parameter))
+            consequence: (macro_control_statement
+              (macro_return_statement
+                value: (preproc_expression
+                  (integer_literal))))
+            alternative: (macro_control_statement
+              (macro_return_statement
+                value: (preproc_expression
+                  (integer_literal))))))))))

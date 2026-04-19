@@ -1,0 +1,208 @@
+===============================
+anonymous enum with trailing comma
+===============================
+
+enum
+{
+    STATE_NONE,
+    Float:STATE_VALUES[4],
+    STATE_LAST = 8,
+};
+
+---
+
+(source_file
+  (enum_declaration
+    (enum_entry
+      name: (identifier))
+    (enum_entry
+      type: (type
+        (tagged_type
+          tag: (tag)))
+      name: (identifier)
+      (fixed_dimension
+        size: (integer_literal)))
+    (enum_entry
+      name: (identifier)
+      value: (integer_literal))))
+
+=====================================
+macro signature and complex preproc if
+=====================================
+
+#define APPLY(playerid, %1) SetPlayerPos(playerid, %1)
+#if !defined(FEATURE) || (MAX_PLAYERS << 1) >= 64
+#endif
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (identifier)
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_call_expression
+          function: (identifier)
+          (preproc_expression
+            (identifier))
+          (preproc_expression
+            (macro_parameter))))))
+  (directive_if
+    condition: (preproc_expression
+      (preproc_binary_expression
+        left: (preproc_expression
+          (preproc_unary_expression
+            argument: (preproc_expression
+              (preproc_defined
+                name: (identifier)))))
+        right: (preproc_expression
+          (preproc_binary_expression
+            left: (preproc_expression
+              (preproc_parenthesized_expression
+                expression: (preproc_expression
+                  (preproc_binary_expression
+                    left: (preproc_expression
+                      (identifier))
+                    right: (preproc_expression
+                      (integer_literal))))))
+            right: (preproc_expression
+              (integer_literal)))))))
+  (directive_endif))
+
+==========================
+preprocessor wrapped enum
+==========================
+
+#if defined FEATURE
+enum Test
+{
+    VALUE = 1
+};
+#endif
+
+---
+
+(source_file
+  (directive_if
+    condition: (preproc_expression
+      (preproc_defined
+        name: (identifier))))
+  (enum_declaration
+    name: (identifier)
+    (enum_entry
+      name: (identifier)
+      value: (integer_literal)))
+  (directive_endif))
+
+=====================================
+typed enum entries and packed members
+=====================================
+
+enum WeaponData
+{
+    _:WEAPON_SLOT,
+    Float:WEAPON_DAMAGE,
+    weaponName[32 char],
+    bool:WEAPON_ENABLED = true,
+};
+
+---
+
+(source_file
+  (enum_declaration
+    name: (identifier)
+    (enum_entry
+      type: (type
+        (tagged_type
+          tag: (tag_wildcard)))
+      name: (identifier))
+    (enum_entry
+      type: (type
+        (tagged_type
+          tag: (tag)))
+      name: (identifier))
+    (enum_entry
+      name: (identifier)
+      (packed_dimension
+        size: (integer_literal)
+        storage: (packed_storage)))
+    (enum_entry
+      type: (type
+        (tagged_type
+          tag: (tag)))
+      name: (identifier)
+      value: (boolean_literal))))
+
+=========================
+multi-line replacement body
+=========================
+
+#define WRAP_ASSIGN(%0,%1) do { \
+    %0 = (%1); \
+} while (0)
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_do_while_expression
+        body: (macro_block
+          (macro_statement
+            (macro_expression_statement
+              expression: (preproc_expression
+                (preproc_assignment_expression
+                  left: (macro_parameter)
+                  right: (preproc_expression
+                    (preproc_parenthesized_expression
+                      expression: (preproc_expression
+                        (macro_parameter)))))))))
+        condition: (preproc_expression
+          (integer_literal))))))
+
+====================
+enum increment forms
+====================
+
+enum Flags (<<= 1)
+{
+    FLAG_NONE = 1,
+    FLAG_READ,
+    FLAG_WRITE
+};
+
+enum Offsets (= 5)
+{
+    OFFSET_X,
+    OFFSET_Y
+};
+
+---
+
+(source_file
+  (enum_declaration
+    name: (identifier)
+    increment: (enum_increment_clause
+      value: (integer_literal))
+    (enum_entry
+      name: (identifier)
+      value: (integer_literal))
+    (enum_entry
+      name: (identifier))
+    (enum_entry
+      name: (identifier)))
+  (enum_declaration
+    name: (identifier)
+    increment: (enum_increment_clause
+      value: (integer_literal))
+    (enum_entry
+      name: (identifier))
+    (enum_entry
+      name: (identifier))))

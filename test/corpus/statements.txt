@@ -1,0 +1,124 @@
+==========
+statements
+==========
+
+public OnPlayerConnect(playerid)
+{
+    if (playerid >= 0) {
+        new welcome = 1;
+    } else {
+        return 0;
+    }
+
+    for (new i = 0; i < 10; i++) {
+        if (i == 5) {
+            continue;
+        }
+    }
+
+    while (playerid > 0) {
+        break;
+    }
+
+    do {
+        playerid--;
+    } while (playerid > 0);
+
+    switch (playerid) {
+        case 0:
+            return 1;
+        case 1, 2:
+            return 2;
+      case 3 .. 5:
+        return 4;
+        case 6, 8 .. 10, 12:
+          return 5;
+        default:
+            return 3;
+    }
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (if_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        consequence: (block
+          (variable_declaration
+            (declaration_qualifier)
+            (variable_declarator
+              name: (identifier)
+              initializer: (integer_literal))))
+        alternative: (block
+          (return_statement
+            value: (integer_literal))))
+      (for_statement
+        initializer: (declaration_qualifier)
+        initializer: (variable_declarator
+          name: (identifier)
+          initializer: (integer_literal))
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        update: (update_expression
+          argument: (identifier))
+        body: (block
+          (if_statement
+            condition: (binary_expression
+              left: (identifier)
+              right: (integer_literal))
+            consequence: (block
+              (continue_statement)))))
+      (while_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        body: (block
+          (break_statement)))
+      (do_while_statement
+        body: (block
+          (expression_statement
+            expression: (update_expression
+              argument: (identifier))))
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal)))
+      (switch_statement
+        condition: (identifier)
+        (case_statement
+          value: (integer_literal)
+          (return_statement
+            value: (integer_literal)))
+        (case_statement
+          value: (case_value_list
+            left: (integer_literal)
+            right: (integer_literal))
+          (return_statement
+            value: (integer_literal)))
+        (case_statement
+          value: (case_range
+            start: (integer_literal)
+            end: (integer_literal))
+          (return_statement
+            value: (integer_literal)))
+        (case_statement
+          value: (case_value_list
+            left: (integer_literal)
+            right: (case_range
+              start: (integer_literal)
+              end: (integer_literal))
+            right: (integer_literal))
+          (return_statement
+            value: (integer_literal)))
+        (default_statement
+          (return_statement
+            value: (integer_literal)))))))

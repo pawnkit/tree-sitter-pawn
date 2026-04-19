@@ -1,0 +1,113 @@
+=================
+callback patterns
+=================
+
+public OnPlayerConnect(playerid)
+{
+    new name[MAX_PLAYER_NAME + 1];
+    GetPlayerName(playerid, name, sizeof name);
+    return 1;
+}
+
+public OnPlayerCommandText(playerid, cmdtext[])
+{
+    if (strcmp(cmdtext, "/spawn", true, sizeof cmdtext) == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+stock FormatPlayerLabel(playerid)
+{
+  new labels[MAX_PLAYERS][32];
+  format(labels[playerid], sizeof labels[playerid], "%s", labels[playerid]);
+  return 1;
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (variable_declaration
+        (declaration_qualifier)
+        (variable_declarator
+          name: (identifier)
+          (fixed_dimension
+            size: (binary_expression
+              left: (identifier)
+              right: (integer_literal)))))
+      (expression_statement
+        expression: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (identifier)
+            (identifier)
+            (sizeof_expression
+              argument: (identifier)))))
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier)
+        (dimension)))
+    body: (block
+      (if_statement
+        condition: (binary_expression
+          left: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)
+              (string_literal)
+              (boolean_literal)
+              (sizeof_expression
+                argument: (identifier))))
+          right: (integer_literal))
+        consequence: (block
+          (return_statement
+            value: (integer_literal))))
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (variable_declaration
+        (declaration_qualifier)
+        (variable_declarator
+          name: (identifier)
+          (fixed_dimension
+            size: (identifier))
+          (fixed_dimension
+            size: (integer_literal))))
+      (expression_statement
+        expression: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (subscript_expression
+              array: (identifier)
+              index: (identifier))
+            (sizeof_expression
+              argument: (subscript_expression
+                array: (identifier)
+                index: (identifier)))
+            (string_literal)
+            (subscript_expression
+              array: (identifier)
+              index: (identifier)))))
+      (return_statement
+        value: (integer_literal)))))

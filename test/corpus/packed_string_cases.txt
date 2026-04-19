@@ -1,0 +1,215 @@
+=================
+packed dimensions
+=================
+
+new name[24 char];
+new board[4][32 char];
+
+---
+
+(source_file
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      (packed_dimension
+        size: (integer_literal)
+        storage: (packed_storage))))
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      (fixed_dimension
+        size: (integer_literal))
+      (packed_dimension
+        size: (integer_literal)
+        storage: (packed_storage)))))
+
+=============================
+packed arrays and enum entries
+=============================
+
+new packed[2][32 char] = { !"Hi", !"Bye" };
+
+enum MessageInfo {
+    text[64 char],
+    author[24 char]
+};
+
+---
+
+(source_file
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      (fixed_dimension
+        size: (integer_literal))
+      (packed_dimension
+        size: (integer_literal)
+        storage: (packed_storage))
+      initializer: (array_literal
+        (unary_expression
+          argument: (string_literal))
+        (unary_expression
+          argument: (string_literal)))))
+  (enum_declaration
+    name: (identifier)
+    (enum_entry
+      name: (identifier)
+      (packed_dimension
+        size: (integer_literal)
+        storage: (packed_storage)))
+    (enum_entry
+      name: (identifier)
+      (packed_dimension
+        size: (integer_literal)
+        storage: (packed_storage)))))
+
+=================
+packed parameters
+=================
+
+stock ShowMessage(const message[144 char])
+{
+    return 1;
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        (parameter_qualifier)
+        name: (identifier)
+        (packed_dimension
+          size: (integer_literal)
+          storage: (packed_storage))))
+    body: (block
+      (return_statement
+        value: (integer_literal)))))
+
+========================================
+packed literals fillers and tagged arrays
+========================================
+
+new packedTable[3][16 char] = { !"A", !"BC", ... };
+new Float:packedTagged[2][8 char] = { !"x", !"yz" };
+
+stock CopyPacked(const source[32 char], dest[32 char])
+{
+    return 1;
+}
+
+---
+
+(source_file
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      (fixed_dimension
+        size: (integer_literal))
+      (packed_dimension
+        size: (integer_literal)
+        storage: (packed_storage))
+      initializer: (array_literal
+        (unary_expression
+          argument: (string_literal))
+        (unary_expression
+          argument: (string_literal))
+        (ellipsis))))
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      type: (type
+        (tagged_type
+          tag: (tag)))
+      name: (identifier)
+      (fixed_dimension
+        size: (integer_literal))
+      (packed_dimension
+        size: (integer_literal)
+        storage: (packed_storage))
+      initializer: (array_literal
+        (unary_expression
+          argument: (string_literal))
+        (unary_expression
+          argument: (string_literal)))))
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        (parameter_qualifier)
+        name: (identifier)
+        (packed_dimension
+          size: (integer_literal)
+          storage: (packed_storage)))
+      (parameter_declaration
+        name: (identifier)
+        (packed_dimension
+          size: (integer_literal)
+          storage: (packed_storage))))
+    body: (block
+      (return_statement
+        value: (integer_literal)))))
+
+======================
+packed string literal
+======================
+
+new packed[] = !"Hello";
+
+---
+
+(source_file
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      (dimension)
+      initializer: (unary_expression
+        argument: (string_literal)))))
+
+=======================================
+packed arrays with ellipsis after label
+=======================================
+
+stock PackedEdge()
+{
+label_a:
+    new names[3][8 char] = { !"A", ..., !"XYZ" };
+    goto label_a;
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (label_statement
+        label: (statement_label))
+      (variable_declaration
+        (declaration_qualifier)
+        (variable_declarator
+          name: (identifier)
+          (fixed_dimension
+            size: (integer_literal))
+          (packed_dimension
+            size: (integer_literal)
+            storage: (packed_storage))
+          initializer: (array_literal
+            (unary_expression
+              argument: (string_literal))
+            (ellipsis)
+            (unary_expression
+              argument: (string_literal)))))
+      (goto_statement
+        label: (identifier)))))

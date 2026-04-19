@@ -1,0 +1,102 @@
+=====================================
+comments around dimensions and access
+=====================================
+
+new value /*dim*/ [4] = {1, 2, 3, 4};
+stock Foo /*sig*/ ()
+{
+    return value /*idx*/ [0];
+}
+
+---
+
+(source_file
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      (comment)
+      (fixed_dimension
+        size: (integer_literal))
+      initializer: (array_literal
+        (integer_literal)
+        (integer_literal)
+        (integer_literal)
+        (integer_literal))))
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    (comment)
+    parameters: (parameter_list)
+    body: (block
+      (return_statement
+        value: (subscript_expression
+          array: (identifier)
+          (comment)
+          index: (integer_literal))))))
+
+==========================
+escaped string and chars
+==========================
+
+stock TestLiterals()
+{
+    new message[] = "Line\n\"quoted\"\x41\u0042\\";
+    new letter = 'ab';
+    new escaped = '\x41';
+    return 1;
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (variable_declaration
+        (declaration_qualifier)
+        (variable_declarator
+          name: (identifier)
+          (dimension)
+          initializer: (string_literal
+            (escape_sequence)
+            (escape_sequence)
+            (escape_sequence)
+            (escape_sequence)
+            (escape_sequence)
+            (escape_sequence))))
+      (variable_declaration
+        (declaration_qualifier)
+        (variable_declarator
+          name: (identifier)
+          initializer: (char_literal)))
+      (variable_declaration
+        (declaration_qualifier)
+        (variable_declarator
+          name: (identifier)
+          initializer: (char_literal
+            (escape_sequence))))
+      (return_statement
+        value: (integer_literal)))))
+
+=================================
+macro comment before parameters
+=================================
+
+#define APPLY/*gap*/(%0) (%0)
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    (comment)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_parenthesized_expression
+          expression: (preproc_expression
+            (macro_parameter)))))))

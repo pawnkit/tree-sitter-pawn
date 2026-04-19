@@ -1,0 +1,1 @@
+FROM ghcr.io/adrfranklin/nodedevcontainer:alpine

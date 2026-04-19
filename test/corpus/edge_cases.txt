@@ -1,0 +1,94 @@
+=================
+mixed declarators
+=================
+
+new Float:x = 1.0, y[4], bool:z = true;
+
+---
+
+(source_file
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      type: (type
+        (tagged_type
+          tag: (tag)))
+      name: (identifier)
+      initializer: (float_literal))
+    (variable_declarator
+      name: (identifier)
+      (fixed_dimension
+        size: (integer_literal)))
+    (variable_declarator
+      type: (type
+        (tagged_type
+          tag: (tag)))
+      name: (identifier)
+      initializer: (boolean_literal))))
+
+===============================
+block preprocessor statements
+===============================
+
+stock Foo()
+{
+#if defined FEATURE
+    new value = 1;
+#else
+    return 0;
+#endif
+    return 1;
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (variable_declaration
+        (declaration_qualifier)
+        (variable_declarator
+          name: (identifier)
+          initializer: (integer_literal)))
+      (directive_else)
+      (return_statement
+        value: (integer_literal))
+      (directive_endif)
+      (return_statement
+        value: (integer_literal)))))
+
+=================================
+comma expressions in control flow
+=================================
+
+stock Foo()
+{
+    if ((a, b)) return (x, y);
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (if_statement
+        condition: (parenthesized_expression
+          expression: (expression_list
+            left: (identifier)
+            right: (identifier)))
+        consequence: (return_statement
+          value: (parenthesized_expression
+            expression: (expression_list
+              left: (identifier)
+              right: (identifier))))))))
+

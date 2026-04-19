@@ -1,0 +1,107 @@
+==================
+weird legacy cases
+==================
+
+new bool:gFlags[MAX_PLAYERS] = { true, ... };
+new matrix[2][2] = { {1, 2}, {3, 4} };
+new _:value = 1;
+
+stock Float:GetValue(index)
+{
+    new value = Float:gFlags[index] ? 1 : 0;
+    return Float:(value);
+}
+
+stock _:AsCell(Float:x)
+{
+  return _:x;
+}
+
+---
+
+(source_file
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      type: (type
+        (tagged_type
+          tag: (tag)))
+      name: (identifier)
+      (fixed_dimension
+        size: (identifier))
+      initializer: (array_literal
+        (boolean_literal)
+        (ellipsis))))
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      (fixed_dimension
+        size: (integer_literal))
+      (fixed_dimension
+        size: (integer_literal))
+      initializer: (array_literal
+        (array_literal
+          (integer_literal)
+          (integer_literal))
+        (array_literal
+          (integer_literal)
+          (integer_literal)))))
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      type: (type
+        (tagged_type
+          tag: (tag_wildcard)))
+      name: (identifier)
+      initializer: (integer_literal)))
+  (function_definition
+    (function_modifier)
+    return_type: (type
+      (tagged_type
+        tag: (tag)))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (variable_declaration
+        (declaration_qualifier)
+        (variable_declarator
+          name: (identifier)
+          initializer: (ternary_expression
+            condition: (tagged_expression
+              type: (type
+                (tagged_type
+                  tag: (tag)))
+              value: (subscript_expression
+                array: (identifier)
+                index: (identifier)))
+            consequence: (integer_literal)
+            alternative: (integer_literal))))
+      (return_statement
+        value: (tagged_expression
+          type: (type
+            (tagged_type
+              tag: (tag)))
+          value: (parenthesized_expression
+            expression: (identifier))))))
+  (function_definition
+    (function_modifier)
+    return_type: (type
+      (tagged_type
+        tag: (tag_wildcard)))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (tagged_expression
+          type: (type
+            (tagged_type
+              tag: (tag_wildcard)))
+          value: (identifier))))))

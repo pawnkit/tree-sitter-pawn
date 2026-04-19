@@ -1,0 +1,207 @@
+========================
+top level wrapped items
+========================
+
+#if defined FEATURE_A
+stock FeatureA()
+{
+    return 1;
+}
+#elseif defined(FEATURE_B)
+new gFeatureValue = 2;
+#else
+enum FeatureMode {
+    FEATURE_NONE,
+    FEATURE_FALLBACK = 3
+};
+#endif
+
+---
+
+(source_file
+  (directive_if
+    condition: (preproc_expression
+      (preproc_defined
+        name: (identifier))))
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (return_statement
+        value: (integer_literal))))
+  (directive_elseif
+    condition: (preproc_expression
+      (preproc_defined
+        name: (identifier))))
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      initializer: (integer_literal)))
+  (directive_else)
+  (enum_declaration
+    name: (identifier)
+    (enum_entry
+      name: (identifier))
+    (enum_entry
+      name: (identifier)
+      value: (integer_literal)))
+  (directive_endif))
+
+=======================
+block level wrapped code
+=======================
+
+stock ConfigureFeature(playerid)
+{
+#if defined FEATURE_A
+    new enabled = 1;
+#elseif defined(FEATURE_B)
+    if (playerid > 0) {
+        return 2;
+    }
+#else
+    return 0;
+#endif
+
+    return 1;
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (variable_declaration
+        (declaration_qualifier)
+        (variable_declarator
+          name: (identifier)
+          initializer: (integer_literal)))
+      (directive_elseif
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (if_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        consequence: (block
+          (return_statement
+            value: (integer_literal))))
+      (directive_else)
+      (return_statement
+        value: (integer_literal))
+      (directive_endif)
+      (return_statement
+        value: (integer_literal)))))
+
+==================
+nested conditionals
+==================
+
+#if defined OUTER
+#if defined INNER
+new gValue = 1;
+#else
+new gValue = 2;
+#endif
+#endif
+
+---
+
+(source_file
+  (directive_if
+    condition: (preproc_expression
+      (preproc_defined
+        name: (identifier))))
+  (directive_if
+    condition: (preproc_expression
+      (preproc_defined
+        name: (identifier))))
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      initializer: (integer_literal)))
+  (directive_else)
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      initializer: (integer_literal)))
+  (directive_endif)
+  (directive_endif))
+
+===================================
+wrapped inline labels and directives
+===================================
+
+stock Wrapped(value)
+{
+#if defined FEATURE
+label_a: return 1;
+#elseif defined ALT
+    while (value > 0) {
+    #if defined INNER
+        retry: continue;
+    #endif
+    }
+#else
+    guard: #warning fallback branch
+#endif
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (label_statement
+        label: (statement_label)
+        statement: (inline_labeled_statement
+          (return_statement
+            value: (integer_literal))))
+      (directive_elseif
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (while_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        body: (block
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (label_statement
+            label: (statement_label)
+            statement: (inline_labeled_statement
+              (continue_statement)))
+          (directive_endif)))
+      (directive_else)
+      (label_statement
+        label: (statement_label)
+        statement: (inline_labeled_statement
+          (directive_warning
+            message: (preproc_text))))
+      (directive_endif))))

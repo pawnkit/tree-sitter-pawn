@@ -1,0 +1,169 @@
+===========
+expressions
+===========
+
+stock Float:Distance(Float:x, Float:y)
+{
+    new Float:result = x * x + y * y;
+    result += 1.0;
+    result = result > 10.0 ? result : Float:(10.0);
+    return floatsqroot(result);
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    return_type: (type
+      (tagged_type
+        tag: (tag)))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier))
+      (parameter_declaration
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier)))
+    body: (block
+      (variable_declaration
+        (declaration_qualifier)
+        (variable_declarator
+          type: (type
+            (tagged_type
+              tag: (tag)))
+          name: (identifier)
+          initializer: (binary_expression
+            left: (binary_expression
+              left: (identifier)
+              right: (identifier))
+            right: (binary_expression
+              left: (identifier)
+              right: (identifier)))))
+      (expression_statement
+        expression: (assignment_expression
+          left: (identifier)
+          right: (float_literal)))
+      (expression_statement
+        expression: (assignment_expression
+          left: (identifier)
+          right: (ternary_expression
+            condition: (binary_expression
+              left: (identifier)
+              right: (float_literal))
+            consequence: (identifier)
+            alternative: (tagged_expression
+              type: (type
+                (tagged_type
+                  tag: (tag)))
+              value: (parenthesized_expression
+                expression: (float_literal))))))
+      (return_statement
+        value: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (identifier)))))))
+
+========================
+advanced tag expressions
+========================
+
+stock Float:Clamp(Float:value)
+{
+    return Float:(value < Float:(0.0) ? Float:(0.0) : value);
+}
+
+stock Float:Invoke()
+{
+    return Float:foo();
+}
+
+new Float:coords[3] = { Float:(1.0), Float:(2.0), Float:(3.0) };
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    return_type: (type
+      (tagged_type
+        tag: (tag)))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (tagged_expression
+          type: (type
+            (tagged_type
+              tag: (tag)))
+          value: (parenthesized_expression
+            expression: (ternary_expression
+              condition: (binary_expression
+                left: (identifier)
+                right: (tagged_expression
+                  type: (type
+                    (tagged_type
+                      tag: (tag)))
+                  value: (parenthesized_expression
+                    expression: (float_literal))))
+              consequence: (tagged_expression
+                type: (type
+                  (tagged_type
+                    tag: (tag)))
+                value: (parenthesized_expression
+                  expression: (float_literal)))
+              alternative: (identifier)))))))
+  (function_definition
+    (function_modifier)
+    return_type: (type
+      (tagged_type
+        tag: (tag)))
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (return_statement
+        value: (tagged_expression
+          type: (type
+            (tagged_type
+              tag: (tag)))
+          value: (call_expression
+            function: (identifier)
+            arguments: (argument_list))))))
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      type: (type
+        (tagged_type
+          tag: (tag)))
+      name: (identifier)
+      (fixed_dimension
+        size: (integer_literal))
+      initializer: (array_literal
+        (tagged_expression
+          type: (type
+            (tagged_type
+              tag: (tag)))
+          value: (parenthesized_expression
+            expression: (float_literal)))
+        (tagged_expression
+          type: (type
+            (tagged_type
+              tag: (tag)))
+          value: (parenthesized_expression
+            expression: (float_literal)))
+        (tagged_expression
+          type: (type
+            (tagged_type
+              tag: (tag)))
+          value: (parenthesized_expression
+            expression: (float_literal)))))))

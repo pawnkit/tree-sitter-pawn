@@ -1,0 +1,6 @@
+.cargo-tree-sitter/
+node_modules/
+yarn.lock
+
+# Local npm pack artifacts
+*.tgz

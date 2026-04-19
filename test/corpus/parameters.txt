@@ -1,0 +1,174 @@
+==================
+parameter patterns
+==================
+
+forward Foo(...);
+forward SetSpawn(Float:x, Float:y, Float:z = 0.0);
+forward SendClientMessagef(playerid, color, const format[], {Float,_}:...);
+native GetPlayerPos(playerid, &Float:x, &Float:y, &Float:z);
+native Bar(const name[], &Float:x = 1.0);
+
+public OnPlayerCommandText(playerid, cmdtext[])
+{
+    if (!strcmp(cmdtext, "/heal", true, sizeof cmdtext)) {
+        return 1;
+    }
+
+    return 0;
+}
+
+public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+{
+  return 1;
+}
+
+stock SendClientMessagef(playerid, color, const format[], {Float,_}:...)
+{
+    return 1;
+}
+
+---
+
+(source_file
+  (function_declaration
+    kind: (function_declaration_kind)
+    name: (identifier)
+    parameters: (parameter_list
+      (variadic_parameter)))
+  (function_declaration
+    kind: (function_declaration_kind)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier))
+      (parameter_declaration
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier))
+      (parameter_declaration
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier)
+        default_value: (float_literal))))
+  (function_declaration
+    kind: (function_declaration_kind)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        (parameter_qualifier)
+        name: (identifier)
+        (dimension))
+      (variadic_parameter
+        tag_set: (variadic_tag_set
+          (tag)
+          (tag_wildcard)))))
+  (function_declaration
+    kind: (function_declaration_kind)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        (reference_modifier)
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier))
+      (parameter_declaration
+        (reference_modifier)
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier))
+      (parameter_declaration
+        (reference_modifier)
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier))))
+  (function_declaration
+    kind: (function_declaration_kind)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        (parameter_qualifier)
+        name: (identifier)
+        (dimension))
+      (parameter_declaration
+        (reference_modifier)
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier)
+        default_value: (float_literal))))
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier)
+        (dimension)))
+    body: (block
+      (if_statement
+        condition: (unary_expression
+          argument: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)
+              (string_literal)
+              (boolean_literal)
+              (sizeof_expression
+                argument: (identifier)))))
+        consequence: (block
+          (return_statement
+            value: (integer_literal))))
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier)
+        (dimension)))
+    body: (block
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        (parameter_qualifier)
+        name: (identifier)
+        (dimension))
+      (variadic_parameter
+        tag_set: (variadic_tag_set
+          (tag)
+          (tag_wildcard))))
+    body: (block
+      (return_statement
+        value: (integer_literal)))))

@@ -1,0 +1,143 @@
+========================
+split parameter lists
+========================
+
+stock Foo(
+#if defined FEATURE_A
+    playerid,
+#else
+    playerid, value,
+#endif
+    tail
+)
+{
+    return 1;
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (parameter_declaration
+        name: (identifier))
+      (directive_else)
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier))
+      (directive_endif)
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (integer_literal)))))
+
+===================
+split enum entries
+===================
+
+enum Mode {
+#if defined FEATURE_A
+    MODE_A,
+#else
+    MODE_B,
+#endif
+    MODE_C
+};
+
+---
+
+(source_file
+  (enum_declaration
+    name: (identifier)
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (enum_entry
+      name: (identifier))
+    (directive_else)
+    (enum_entry
+      name: (identifier))
+    (directive_endif)
+    (enum_entry
+      name: (identifier))))
+
+====================
+split array literals
+====================
+
+new values[] = {
+#if defined FEATURE_A
+    1,
+#else
+    2,
+#endif
+    3
+};
+
+---
+
+(source_file
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      (dimension)
+      initializer: (array_literal
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        (integer_literal)
+        (directive_else)
+        (integer_literal)
+        (directive_endif)
+        (integer_literal)))))
+
+====================
+split call arguments
+====================
+
+stock ArgSplit(playerid)
+{
+    SendClientMessage(playerid,
+#if defined DEBUG
+        0xFFFFFFFF,
+#else
+        0x00FF00FF,
+#endif
+        "hello");
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (expression_statement
+        expression: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (identifier)
+            (directive_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            (hex_literal)
+            (directive_else)
+            (hex_literal)
+            (directive_endif)
+            (string_literal)))))))
