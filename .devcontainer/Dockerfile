@@ -1,1 +1,5 @@
-FROM ghcr.io/adrfranklin/nodedevcontainer:alpine
+FROM ghcr.io/adrfranklin/nodedevcontainer:debian
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends build-essential \
+	&& rm -rf /var/lib/apt/lists/*
