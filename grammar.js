@@ -28,9 +28,20 @@ module.exports = grammar({
 
   word: ($) => $.identifier,
 
+  externals: ($) => [
+    $.conditional_if_else_preamble,
+    $.conditional_if_preamble,
+    $.conditional_if_closing,
+  ],
+
   conflicts: ($) => [
     [$.visibility_modifier, $.function_modifier],
     [$.declaration_qualifier, $.function_modifier],
+    [$._top_level_item, $.conditional_function_definition],
+    [$._top_level_item, $.conditional_function_declaration],
+    [$._loop_header, $.foreach_statement],
+    [$._loop_header, $.for_statement],
+    [$._statement, $._nonblock_statement],
   ],
 
   supertypes: ($) => [
@@ -43,6 +54,9 @@ module.exports = grammar({
 
     _top_level_item: ($) => choice(
       $.function_definition,
+      $.conditional_function_definition,
+      $.conditional_function_declaration,
+      $.hook_forward_statement,
       $.function_declaration,
       $.enum_declaration,
       $.variable_declaration,
@@ -65,12 +79,99 @@ module.exports = grammar({
     ),
 
     function_definition: ($) => seq(
+      $._function_definition_signature,
+      field("body", $._function_body),
+    ),
+
+    conditional_function_definition: ($) => prec.right(seq(
+      $.directive_if,
+      field("signature", $._function_definition_signature),
+      repeat(seq(
+        $.directive_elseif,
+        field("elseif_signature", $._function_definition_signature),
+      )),
+      optional(seq(
+        $.directive_else,
+        field("alternative_signature", $._function_definition_signature),
+      )),
+      $.directive_endif,
+      field("body", $._function_body),
+    )),
+
+    conditional_function_declaration: ($) => prec.right(seq(
+      $.directive_if,
+      field("declaration", $.function_declaration),
+      repeat(seq(
+        $.directive_elseif,
+        field("elseif_declaration", $.function_declaration),
+      )),
+      optional(seq(
+        $.directive_else,
+        field("alternative_declaration", $.function_declaration),
+      )),
+      $.directive_endif,
+    )),
+
+    _prefixed_function_definition_signature: ($) => seq(
+      repeat($.function_modifier),
+      field("prefix", $._function_prefix_identifier),
+      optional(field("return_type", $.type)),
+      field("name", $.identifier),
+      field("parameters", $.parameter_list),
+      optional(field("state", $.state_classifier)),
+    ),
+
+    _plain_function_definition_signature: ($) => seq(
       repeat($.function_modifier),
       optional(field("return_type", $.type)),
       field("name", $.identifier),
       field("parameters", $.parameter_list),
       optional(field("state", $.state_classifier)),
-      field("body", $.block),
+    ),
+
+    _alternative_function_definition_signature: ($) => seq(
+      repeat1($.visibility_modifier),
+      repeat($.function_modifier),
+      optional(field("return_type", $.type)),
+      field("name", $.identifier),
+      field("parameters", $.parameter_list),
+      optional(field("state", $.state_classifier)),
+    ),
+
+    _function_definition_signature: ($) => choice(
+      $._prefixed_function_definition_signature,
+      $._plain_function_definition_signature,
+    ),
+
+    _function_body: ($) => choice(
+      $.block,
+      $.if_statement,
+      $.switch_statement,
+      $.while_statement,
+      $.foreach_statement,
+      $.do_while_statement,
+      $.for_statement,
+      $.goto_statement,
+      $.return_statement,
+      $.break_statement,
+      $.continue_statement,
+      $.expression_statement,
+      $.directive_include,
+      $.directive_tryinclude,
+      $.directive_define,
+      $.directive_emit,
+      $.directive_pragma,
+      $.directive_undef,
+      $.directive_assert,
+      $.directive_error,
+      $.directive_warning,
+      $.directive_line,
+      $.directive_file,
+      $.directive_endinput,
+      $.directive_if,
+      $.directive_elseif,
+      $.directive_else,
+      $.directive_endif,
     ),
 
     function_declaration_kind: ($) => choice("forward", "native"),
@@ -85,6 +186,15 @@ module.exports = grammar({
       ";",
     ),
 
+    hook_forward_statement: ($) => prec.dynamic(5, seq(
+      field("return_type", $.type),
+      field("name", $.identifier),
+      field("parameters", $.parameter_list),
+      "=",
+      field("value", choice($.expression_list, $._expression)),
+      ";",
+    )),
+
     _visibility_keyword: ($) => choice("public", "stock"),
 
     visibility_modifier: ($) => $._visibility_keyword,
@@ -94,12 +204,23 @@ module.exports = grammar({
       "static",
     ),
 
+    _function_prefix_identifier: ($) => alias($.identifier, $.function_prefix),
+
     parameter_qualifier: ($) => choice("const", "stock"),
 
-    state_classifier: ($) => seq(
-      "<",
-      commaSep1($.state_name),
-      ">",
+    state_classifier: ($) => choice(
+      seq(
+        "<",
+        field("scope", $.state_name),
+        ":",
+        commaSep1($.state_name),
+        ">",
+      ),
+      seq(
+        "<",
+        commaSep1($.state_name),
+        ">",
+      ),
     ),
 
     state_name: ($) => token(choice("default", /[A-Za-z_][A-Za-z0-9_]*/)),
@@ -138,7 +259,7 @@ module.exports = grammar({
       optional($.reference_modifier),
       field("name", $.identifier),
       repeat(choice($.dimension, $.fixed_dimension, $.packed_dimension)),
-      optional(seq("=", field("default_value", $._expression))),
+      optional(seq("=", field("default_value", choice($.array_literal, $._expression)))),
     ),
 
     variadic_parameter: ($) => choice(
@@ -158,23 +279,33 @@ module.exports = grammar({
 
     tag_wildcard: ($) => "_",
 
-    variable_declaration: ($) => choice(
-      seq(
-        optional($.visibility_modifier),
-        $._qualified_variable_declaration_clause,
-        ";",
-      ),
-      seq(
-        $.visibility_modifier,
-        commaSep1($.variable_declarator),
-        ";",
-      ),
+    variable_declaration: ($) => seq(
+      $._variable_declaration_prefix,
+      $._variable_declarator_list,
+      ";",
     ),
+
+    _variable_declaration_prefix: ($) => repeat1(choice(
+      $.declaration_qualifier,
+      $.visibility_modifier,
+    )),
 
     _qualified_variable_declaration_clause: ($) => prec.left(seq(
       repeat1($.declaration_qualifier),
       commaSep1($.variable_declarator),
     )),
+
+    _variable_declarator_list: ($) => seq(
+      repeat($._conditional_directive),
+      $.variable_declarator,
+      repeat(seq(
+        ",",
+        repeat($._conditional_directive),
+        $.variable_declarator,
+      )),
+      optional(","),
+      repeat($._conditional_directive),
+    ),
 
     declaration_qualifier: ($) => choice(
       "new",
@@ -259,16 +390,104 @@ module.exports = grammar({
 
     block: ($) => seq(
       "{",
-      repeat($._statement),
+      repeat($._block_statement),
       "}",
+    ),
+
+    _block_statement: ($) => choice(
+      $.block,
+      $.variable_declaration,
+      $.state_statement,
+      $.function_initializer_alternative_statement,
+      $.conditional_else_statement,
+      $.conditional_if_else_statement,
+      $.conditional_if_statement,
+      $.if_statement,
+      $.switch_statement,
+      $.conditional_loop_fallback_statement,
+      $.conditional_loop_variant_statement,
+      $.conditional_loop_statement,
+      $.while_statement,
+      $.foreach_statement,
+      $.do_while_statement,
+      $.for_statement,
+      $.goto_statement,
+      $.label_statement,
+      $.return_statement,
+      $.break_statement,
+      $.continue_statement,
+      $.expression_statement,
+      $.directive_include,
+      $.directive_tryinclude,
+      $.directive_define,
+      $.directive_emit,
+      $.directive_pragma,
+      $.directive_undef,
+      $.directive_assert,
+      $.directive_error,
+      $.directive_warning,
+      $.directive_line,
+      $.directive_file,
+      $.directive_endinput,
+      $.directive_if,
+      $.directive_elseif,
+      $.directive_else,
+      $.directive_endif,
     ),
 
     _statement: ($) => choice(
       $.block,
       $.variable_declaration,
+      $.state_statement,
+      $.function_initializer_alternative_statement,
+      $.conditional_else_statement,
+      $.conditional_if_else_statement,
+      $.conditional_if_statement,
       $.if_statement,
       $.switch_statement,
+      $.conditional_loop_fallback_statement,
+      $.conditional_loop_variant_statement,
+      $.conditional_loop_statement,
       $.while_statement,
+      $.foreach_statement,
+      $.do_while_statement,
+      $.for_statement,
+      $.goto_statement,
+      $.label_statement,
+      $.return_statement,
+      $.break_statement,
+      $.continue_statement,
+      $.expression_statement,
+      $.directive_include,
+      $.directive_tryinclude,
+      $.directive_define,
+      $.directive_emit,
+      $.directive_pragma,
+      $.directive_undef,
+      $.directive_assert,
+      $.directive_error,
+      $.directive_warning,
+      $.directive_line,
+      $.directive_file,
+      $.directive_endinput,
+      $.directive_if,
+      $.directive_elseif,
+      $.directive_else,
+      $.directive_endif,
+    ),
+
+    _nonblock_statement: ($) => choice(
+      $.variable_declaration,
+      $.state_statement,
+      $.function_initializer_alternative_statement,
+      $.conditional_else_statement,
+      $.if_statement,
+      $.switch_statement,
+      $.conditional_loop_fallback_statement,
+      $.conditional_loop_variant_statement,
+      $.conditional_loop_statement,
+      $.while_statement,
+      $.foreach_statement,
       $.do_while_statement,
       $.for_statement,
       $.goto_statement,
@@ -314,22 +533,37 @@ module.exports = grammar({
       "}",
     ),
 
-    case_statement: ($) => seq(
+    case_statement: ($) => prec(1, seq(
       "case",
       field("value", choice($.case_value_list, $._case_value)),
       ":",
       repeat($._statement),
-    ),
+    )),
 
     _case_value: ($) => choice(
       $.case_range,
-      $._expression,
+      $._case_expression,
     ),
 
+    _case_expression: ($) => choice(
+      $.ternary_expression,
+      $.binary_expression,
+      $.sizeof_expression,
+      $.unary_expression,
+      $.update_expression,
+      $.call_expression,
+      $.subscript_expression,
+      $.parenthesized_expression,
+      alias($._case_identifier, $.identifier),
+      $._literal,
+    ),
+
+    _case_identifier: ($) => token(prec(1, /[A-Za-z_][A-Za-z0-9_]*/)),
+
     case_range: ($) => seq(
-      field("start", $._expression),
+      field("start", $._case_expression),
       "..",
-      field("end", $._expression),
+      field("end", $._case_expression),
     ),
 
     case_value_list: ($) => seq(
@@ -343,12 +577,249 @@ module.exports = grammar({
       repeat($._statement),
     ),
 
+    state_statement: ($) => seq(
+      "state",
+      field("scope", $.state_name),
+      optional(seq(
+        ":",
+        commaSep1($.state_name),
+      )),
+      ";",
+    ),
+
+    function_initializer_alternative_statement: ($) => prec.right(1, seq(
+      $.directive_else,
+      field("alternative_signature", $._alternative_function_definition_signature),
+      "{",
+      field("alternative_initializer", $.variable_declaration),
+      $.directive_endif,
+    )),
+
+    conditional_else_statement: ($) => prec.right(1, seq(
+      $.directive_if,
+      "else",
+      field("alternative", $._statement),
+      $.directive_endif,
+    )),
+
+    conditional_if_else_statement: ($) => prec.dynamic(10, prec.right(2, seq(
+      preprocessor("if"),
+      field("condition", $.preproc_expression),
+      field("preamble", $.conditional_if_else_preamble),
+      field("consequence", $.block),
+      "else",
+      field("alternative", $._statement),
+    ))),
+
+    conditional_if_statement: ($) => prec.dynamic(20, prec.right(2, seq(
+      preprocessor("if"),
+      field("condition", $.preproc_expression),
+      field("preamble", $.conditional_if_preamble),
+      repeat($._statement),
+      field("closing", $.conditional_if_closing),
+    ))),
+
+    conditional_loop_fallback_statement: ($) => prec.right(1, seq(
+      $.directive_if,
+      field("consequence", choice($.foreach_statement, $.for_statement)),
+      repeat(seq(
+        $.directive_elseif,
+        field("elseif", choice($.foreach_statement, $.for_statement)),
+      )),
+      optional(seq(
+        $.directive_else,
+        repeat1(field("alternative", $._statement)),
+      )),
+      $.directive_endif,
+    )),
+
+    conditional_loop_variant_statement: ($) => prec.right(1, seq(
+      $.directive_if,
+      field("consequence", $._direct_loop_statement_variant),
+      repeat(seq(
+        $.directive_elseif,
+        field("elseif", $._direct_loop_statement_variant),
+      )),
+      optional(seq(
+        $.directive_else,
+        field("alternative", $._loop_statement_variant),
+      )),
+      $.directive_endif,
+    )),
+
+    conditional_loop_statement: ($) => prec.right(1, seq(
+      $.directive_if,
+      field("consequence", $._direct_loop_preamble),
+      repeat(seq(
+        $.directive_elseif,
+        field("elseif", $._direct_loop_preamble),
+      )),
+      optional(seq(
+        $.directive_else,
+        field("alternative", $.loop_preamble),
+      )),
+      $.directive_endif,
+      repeat($._statement),
+      "}",
+    )),
+
+    _loop_body_statement: ($) => choice(
+      $.block,
+      $.variable_declaration,
+      $.conditional_else_statement,
+      $.if_statement,
+      $.switch_statement,
+      $.loop_body_conditional_if_statement,
+      $.conditional_loop_fallback_statement,
+      $.conditional_loop_statement,
+      $.while_statement,
+      $.foreach_statement,
+      $.do_while_statement,
+      $.for_statement,
+      $.goto_statement,
+      $.label_statement,
+      $.return_statement,
+      $.break_statement,
+      $.continue_statement,
+      $.expression_statement,
+      $.directive_include,
+      $.directive_tryinclude,
+      $.directive_define,
+      $.directive_emit,
+      $.directive_pragma,
+      $.directive_undef,
+      $.directive_assert,
+      $.directive_error,
+      $.directive_warning,
+      $.directive_line,
+      $.directive_file,
+      $.directive_endinput,
+    ),
+
+    _direct_loop_statement_variant: ($) => choice(
+      seq(
+        $._foreach_header,
+        field("body", $._nonblock_statement),
+      ),
+      seq(
+        $._for_header,
+        field("body", $._nonblock_statement),
+      ),
+    ),
+
+    _loop_statement_variant: ($) => choice(
+      $._direct_loop_statement_variant,
+      $.loop_header_selection_statement,
+    ),
+
+    loop_header_selection_statement: ($) => seq(
+      $.directive_if,
+      field("signature", $._loop_header),
+      repeat(seq(
+        $.directive_elseif,
+        field("elseif_signature", $._loop_header),
+      )),
+      optional(seq(
+        $.directive_else,
+        field("alternative_signature", $._loop_header),
+      )),
+      $.directive_endif,
+      field("body", $.block),
+    ),
+
+    _direct_loop_preamble: ($) => seq(
+      $._loop_header,
+      "{",
+      repeat($._loop_body_statement),
+    ),
+
+    loop_body_conditional_if_statement: ($) => prec.right(1, seq(
+      $.directive_if,
+      field("consequence", $._preproc_branch_if_statement),
+      repeat(seq(
+        $.directive_elseif,
+        field("elseif", $._preproc_branch_if_statement),
+      )),
+      optional(seq(
+        $.directive_else,
+        field("alternative", $._preproc_branch_if_statement),
+      )),
+      $.directive_endif,
+    )),
+
+    _preproc_branch_if_statement: ($) => seq(
+      $._if_header,
+      field("consequence", $._statement),
+    ),
+
+    _if_header: ($) => seq(
+      "if",
+      "(",
+      field("condition", choice($.expression_list, $._expression)),
+      ")",
+    ),
+
+    loop_preamble: ($) => prec.right(choice(
+      $._direct_loop_preamble,
+      seq(
+        $.directive_if,
+        field("signature", $._loop_header),
+        repeat(seq(
+          $.directive_elseif,
+          field("elseif_signature", $._loop_header),
+        )),
+        optional(seq(
+          $.directive_else,
+          field("alternative_signature", $._loop_header),
+        )),
+        $.directive_endif,
+        "{",
+        repeat($._loop_body_statement),
+      ),
+    )),
+
+    _loop_header: ($) => choice(
+      $._foreach_header,
+      $._for_header,
+    ),
+
     while_statement: ($) => seq(
       "while",
       "(",
       field("condition", choice($.expression_list, $._expression)),
       ")",
       field("body", $._statement),
+    ),
+
+    _foreach_header: ($) => seq(
+      "foreach",
+      "(",
+      field("iterator", $.foreach_iterator),
+      ")",
+    ),
+
+    foreach_statement: ($) => prec.right(seq(
+      $._foreach_header,
+      field("body", $._statement),
+    )),
+
+    foreach_iterator: ($) => seq(
+      optional("new"),
+      optional(field("type", $.type)),
+      field("name", $.identifier),
+      ":",
+      field("collection", $.identifier),
+    ),
+
+    _for_header: ($) => seq(
+      "for",
+      "(",
+      field("initializer", optional(choice($._qualified_variable_declaration_clause, $.expression_list, $._expression))),
+      ";",
+      field("condition", optional(choice($.expression_list, $._expression))),
+      ";",
+      field("update", optional(choice($.expression_list, $._expression))),
+      ")",
     ),
 
     do_while_statement: ($) => seq(
@@ -361,17 +832,10 @@ module.exports = grammar({
       ";",
     ),
 
-    for_statement: ($) => seq(
-      "for",
-      "(",
-      field("initializer", optional(choice($._qualified_variable_declaration_clause, $.expression_list, $._expression))),
-      ";",
-      field("condition", optional(choice($.expression_list, $._expression))),
-      ";",
-      field("update", optional(choice($.expression_list, $._expression))),
-      ")",
+    for_statement: ($) => prec.right(seq(
+      $._for_header,
       field("body", $._statement),
-    ),
+    )),
 
     goto_statement: ($) => seq(
       "goto",
@@ -394,9 +858,14 @@ module.exports = grammar({
     inline_labeled_statement: ($) => choice(
       $.block,
       $.variable_declaration,
+      $.conditional_else_statement,
       $.if_statement,
       $.switch_statement,
+      $.conditional_loop_fallback_statement,
+      $.conditional_loop_variant_statement,
+      $.conditional_loop_statement,
       $.while_statement,
+      $.foreach_statement,
       $.do_while_statement,
       $.for_statement,
       $.goto_statement,
@@ -480,7 +949,7 @@ module.exports = grammar({
     )),
 
     assignment_expression: ($) => prec.right(PREC.ASSIGNMENT, seq(
-      field("left", choice($.identifier, $.subscript_expression)),
+      field("left", choice($.identifier, $.subscript_expression, $.tagged_expression)),
       field("operator", choice(
         "=",
         "+=",
@@ -518,6 +987,7 @@ module.exports = grammar({
       [">", PREC.RELATIONAL],
       [">=", PREC.RELATIONAL],
       ["<<", PREC.SHIFT],
+      [">>>", PREC.SHIFT],
       [">>", PREC.SHIFT],
       ["+", PREC.ADD],
       ["-", PREC.ADD],
@@ -561,14 +1031,21 @@ module.exports = grammar({
 
     _argument_list_items: ($) => seq(
       repeat($._conditional_directive),
-      choice($.array_literal, $._expression),
+      choice($.array_literal, $.named_argument, $.tag_wildcard, $._expression),
       repeat(seq(
         ",",
         repeat($._conditional_directive),
-        choice($.array_literal, $._expression),
+        choice($.array_literal, $.named_argument, $.tag_wildcard, $._expression),
       )),
       optional(","),
       repeat($._conditional_directive),
+    ),
+
+    named_argument: ($) => seq(
+      ".",
+      field("name", $.identifier),
+      "=",
+      field("value", $._expression),
     ),
 
     subscript_expression: ($) => prec.left(PREC.SUBSCRIPT, seq(
@@ -634,7 +1111,7 @@ module.exports = grammar({
     directive_define: ($) => choice(
       seq(
         preprocessor("define"),
-        field("name", $.identifier),
+        field("name", choice($.identifier, $.macro_pasted_identifier)),
         field("parameters", $.macro_parameter_list),
         optional(seq(
           $._macro_value_separator,
@@ -643,7 +1120,7 @@ module.exports = grammar({
       ),
       seq(
         preprocessor("define"),
-        field("name", $.identifier),
+        field("name", choice($.identifier, $.macro_pasted_identifier)),
         optional(seq(
           $._define_value_separator,
           field("value", choice($.macro_replacement, $.preproc_text)),
@@ -652,6 +1129,7 @@ module.exports = grammar({
     ),
 
     macro_replacement: ($) => choice(
+      $.macro_expression_sequence,
       $.preproc_do_while_expression,
       $.macro_if_statement,
       $.macro_switch_statement,
@@ -663,6 +1141,11 @@ module.exports = grammar({
       $.macro_continue_statement,
       $.macro_block,
       $.preproc_expression,
+    ),
+
+    macro_expression_sequence: ($) => seq(
+      repeat1($.macro_expression_statement),
+      field("tail", $.preproc_expression),
     ),
 
     directive_emit: ($) => seq(
@@ -751,8 +1234,10 @@ module.exports = grammar({
       $.preproc_sizeof_expression,
       $.preproc_call_expression,
       $.preproc_subscript_expression,
+      $.preproc_tagged_expression,
       $.preproc_parenthesized_expression,
       $.preproc_defined,
+      $.macro_pasted_identifier,
       $.macro_parameter,
       $.identifier,
       $.integer_literal,
@@ -808,6 +1293,7 @@ module.exports = grammar({
       [">", PREC.RELATIONAL],
       [">=", PREC.RELATIONAL],
       ["<<", PREC.SHIFT],
+      [">>>", PREC.SHIFT],
       [">>", PREC.SHIFT],
       ["+", PREC.ADD],
       ["-", PREC.ADD],
@@ -827,11 +1313,21 @@ module.exports = grammar({
       ")",
     ),
 
-    preproc_sizeof_expression: ($) => seq(
-      "sizeof",
-      "(",
-      field("argument", $.preproc_expression),
-      ")",
+    preproc_sizeof_expression: ($) => choice(
+      seq(
+        "sizeof",
+        field("argument", $.identifier),
+      ),
+      seq(
+        "sizeof",
+        field("argument", $.preproc_subscript_expression),
+      ),
+      seq(
+        "sizeof",
+        "(",
+        field("argument", $.preproc_expression),
+        ")",
+      ),
     ),
 
     preproc_do_while_expression: ($) => seq(
@@ -973,6 +1469,7 @@ module.exports = grammar({
     preproc_subscript_expression: ($) => prec.left(PREC.SUBSCRIPT, seq(
       field("array", choice(
         $.identifier,
+        $.macro_pasted_identifier,
         $.macro_parameter,
         $.preproc_call_expression,
         $.preproc_subscript_expression,
@@ -983,8 +1480,28 @@ module.exports = grammar({
       "]",
     )),
 
+    preproc_tagged_expression: ($) => prec.right(PREC.CAST, seq(
+      field("type", $.type),
+      field("value", choice(
+        $.preproc_call_expression,
+        $.preproc_subscript_expression,
+        $.preproc_parenthesized_expression,
+        $.macro_pasted_identifier,
+        $.macro_parameter,
+        $.identifier,
+        $.integer_literal,
+        $.binary_literal,
+        $.hex_literal,
+        $.float_literal,
+        $.string_literal,
+        $.char_literal,
+        $.boolean_literal,
+        $.null_literal,
+      )),
+    )),
+
     preproc_call_expression: ($) => prec.left(PREC.CALL, seq(
-      field("function", choice($.identifier, $.macro_parameter)),
+      field("function", choice($.identifier, $.macro_pasted_identifier, $.macro_parameter)),
       "(",
       commaSep($.preproc_expression),
       ")",
@@ -999,6 +1516,7 @@ module.exports = grammar({
 
     _literal: ($) => choice(
       $.integer_literal,
+      $.binary_literal,
       $.hex_literal,
       $.float_literal,
       $.string_literal,
@@ -1009,6 +1527,8 @@ module.exports = grammar({
 
     integer_literal: ($) => token(/[0-9][0-9_]*/),
 
+    binary_literal: ($) => token(/0[bB][01][01_]*/),
+
     hex_literal: ($) => token(/0[xX][0-9a-fA-F][0-9a-fA-F_]*/),
 
     float_literal: ($) => token(choice(
@@ -1018,13 +1538,13 @@ module.exports = grammar({
 
     string_literal: ($) => seq(
       '"',
-      repeat(choice($.escape_sequence, token.immediate(/[^"\\\r\n]+/))),
+      repeat(choice($.escape_sequence, token.immediate(prec(1, /[^"\\\r\n]+/)))),
       '"',
     ),
 
     char_literal: ($) => seq(
       "'",
-      repeat1(choice($.escape_sequence, token.immediate(/[^'\\\r\n]+/))),
+      repeat1(choice($.escape_sequence, token.immediate(prec(1, /[^'\\\r\n]+/)))),
       "'",
     ),
 
@@ -1038,6 +1558,11 @@ module.exports = grammar({
     null_literal: ($) => "null",
 
     system_lib_string: ($) => token(seq("<", /[^>\r\n]+/, ">")),
+
+    macro_pasted_identifier: ($) => token(choice(
+      /[A-Za-z_][A-Za-z0-9_]*%[A-Za-z0-9_]+(?:[A-Za-z_][A-Za-z0-9_]*|%[A-Za-z0-9_]+)*/,
+      /%[A-Za-z0-9_]+[A-Za-z_][A-Za-z0-9_]*(?:[A-Za-z_][A-Za-z0-9_]*|%[A-Za-z0-9_]+)*/,
+    )),
 
     identifier: ($) => /[A-Za-z_][A-Za-z0-9_]*/,
 

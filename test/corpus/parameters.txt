@@ -27,6 +27,8 @@ stock SendClientMessagef(playerid, color, const format[], {Float,_}:...)
     return 1;
 }
 
+forward CreateGroup(const worlds[] = { -1 }, const Float:coords[] = { 1.0, 2.0 });
+
 ---
 
 (source_file
@@ -171,4 +173,25 @@ stock SendClientMessagef(playerid, color, const format[], {Float,_}:...)
           (tag_wildcard))))
     body: (block
       (return_statement
-        value: (integer_literal)))))
+        value: (integer_literal))))
+  (function_declaration
+    kind: (function_declaration_kind)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        (parameter_qualifier)
+        name: (identifier)
+        (dimension)
+        default_value: (array_literal
+          (unary_expression
+            argument: (integer_literal))))
+      (parameter_declaration
+        (parameter_qualifier)
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier)
+        (dimension)
+        default_value: (array_literal
+          (float_literal)
+          (float_literal))))))

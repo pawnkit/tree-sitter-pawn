@@ -143,6 +143,91 @@ next_step: goto invalid_value;
           (goto_statement
             label: (identifier)))))))
 
+===================================
+macro prefixed function variants
+===================================
+
+HOOK_PUBLIC DestroyPickup(pickupid)
+{
+    foreach(new playerid : Player)
+        return pickupid;
+}
+
+macro_forward AntiCheatGetSpeed(playerid) return playerid;
+
+---
+
+(source_file
+  (function_definition
+    prefix: (function_prefix)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (foreach_statement
+        iterator: (foreach_iterator
+          name: (identifier)
+          collection: (identifier))
+        body: (return_statement
+          value: (identifier)))))
+  (function_definition
+    prefix: (function_prefix)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (return_statement
+      value: (identifier))))
+
+==============================
+conditional function signature
+==============================
+
+#if defined STREAMER_ENABLE_TAGS
+  HOOK_PUBLIC CreateDynamicPickup(STREAMER_TAG_PICKUP:pickupid, modelid, type)
+#else
+  HOOK_PUBLIC CreateDynamicPickup(pickupid, modelid, type)
+#endif
+{
+    return 1;
+}
+
+---
+
+(source_file
+  (conditional_function_definition
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    prefix: (function_prefix)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (type
+          (tagged_type
+            tag: (tag)))
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier)))
+    (directive_else)
+    prefix: (function_prefix)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier)))
+    (directive_endif)
+    body: (block
+      (return_statement
+        value: (integer_literal)))))
+
 =====================
 inline label variants
 =====================
@@ -200,6 +285,23 @@ stock MoreInlineLabels(value)
             (default_statement
               (return_statement
                 value: (integer_literal)))))))))
+
+======================
+hook forward statement
+======================
+
+CHAIN_FORWARD:OnThing() = 1;
+
+---
+
+(source_file
+  (hook_forward_statement
+    return_type: (type
+      (tagged_type
+        tag: (tag)))
+    name: (identifier)
+    parameters: (parameter_list)
+    value: (integer_literal)))
 
 ===========================
 inline label branch variants

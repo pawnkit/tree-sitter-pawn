@@ -141,3 +141,68 @@ stock ArgSplit(playerid)
             (hex_literal)
             (directive_endif)
             (string_literal)))))))
+
+===============================
+split variable declarator lists
+===============================
+
+static
+    first,
+#if defined FEATURE_A
+    second,
+#else
+    third,
+#endif
+    bool:ready = true;
+
+new values[] = {1},
+#if defined FEATURE_B
+    more_values[] = {2},
+#endif
+    final_values[] = {3};
+
+---
+
+(source_file
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier))
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (variable_declarator
+      name: (identifier))
+    (directive_else)
+    (variable_declarator
+      name: (identifier))
+    (directive_endif)
+    (variable_declarator
+      type: (type
+        (tagged_type
+          tag: (tag)))
+      name: (identifier)
+      initializer: (boolean_literal)))
+  (variable_declaration
+    (declaration_qualifier)
+    (variable_declarator
+      name: (identifier)
+      (dimension)
+      initializer: (array_literal
+        (integer_literal)))
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (variable_declarator
+      name: (identifier)
+      (dimension)
+      initializer: (array_literal
+        (integer_literal)))
+    (directive_endif)
+    (variable_declarator
+      name: (identifier)
+      (dimension)
+      initializer: (array_literal
+        (integer_literal)))))

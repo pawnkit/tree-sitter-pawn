@@ -142,6 +142,92 @@ new gValue = 2;
   (directive_endif)
   (directive_endif))
 
+=====================================
+scanner-backed shared if-header else
+=====================================
+
+public TestBranch(playerid)
+{
+#if defined IsAlive
+    if(IsAlive(playerid))
+#else
+    if(playerid)
+#endif
+    {
+        return 1;
+    }
+    else return 0;
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (conditional_if_else_statement
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier)))
+        preamble: (conditional_if_else_preamble)
+        consequence: (block
+          (return_statement
+            value: (integer_literal)))
+        alternative: (return_statement
+          value: (integer_literal))))))
+
+============================================
+scanner-backed shared if-header wrapped close
+============================================
+
+public TestWrapped(playerid)
+{
+#if AC_USE_NPC && defined IsPlayerDying
+    if(!IsPlayerNPC(playerid) && !IsPlayerDying(playerid))
+    {
+#elseif AC_USE_NPC
+    if(!IsPlayerNPC(playerid))
+    {
+#elseif defined IsPlayerDying
+    if(!IsPlayerDying(playerid))
+    {
+#endif
+        return 1;
+#if AC_USE_NPC || defined IsPlayerDying
+    }
+#endif
+    return 0;
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (conditional_if_statement
+        condition: (preproc_expression
+          (preproc_binary_expression
+            left: (preproc_expression
+              (identifier))
+            right: (preproc_expression
+              (preproc_defined
+                name: (identifier)))))
+        preamble: (conditional_if_preamble)
+        (return_statement
+          value: (integer_literal))
+        closing: (conditional_if_closing))
+      (return_statement
+        value: (integer_literal)))))
+
 ===================================
 wrapped inline labels and directives
 ===================================
@@ -205,3 +291,237 @@ label_a: return 1;
           (directive_warning
             message: (preproc_text))))
       (directive_endif))))
+
+====================================
+shared-tail conditional loop wrapper
+====================================
+
+stock SharedLoop()
+{
+#if defined foreach
+    foreach(new playerid : Player)
+    {
+#else
+    #if defined GetPlayerPoolSize
+        for(new playerid = GetPlayerPoolSize(); playerid >= 0; --playerid)
+    #else
+        for(new playerid = MAX_PLAYERS - 1; playerid >= 0; --playerid)
+    #endif
+    {
+        if(!IsPlayerConnected(playerid)) continue;
+#endif
+        MarkPlayer(playerid);
+    }
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (conditional_loop_statement
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        iterator: (foreach_iterator
+          name: (identifier)
+          collection: (identifier))
+        (directive_else)
+        alternative: (loop_preamble
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          initializer: (declaration_qualifier)
+          initializer: (variable_declarator
+            name: (identifier)
+            initializer: (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          condition: (binary_expression
+            left: (identifier)
+            right: (integer_literal))
+          update: (update_expression
+            argument: (identifier))
+          (directive_else)
+          initializer: (declaration_qualifier)
+          initializer: (variable_declarator
+            name: (identifier)
+            initializer: (binary_expression
+              left: (identifier)
+              right: (integer_literal)))
+          condition: (binary_expression
+            left: (identifier)
+            right: (integer_literal))
+          update: (update_expression
+            argument: (identifier))
+          (directive_endif)
+          (if_statement
+            condition: (unary_expression
+              argument: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier))))
+            consequence: (continue_statement)))
+        (directive_endif)
+        (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))))))
+
+=====================================
+conditional loop statement variants
+=====================================
+
+stock ToggleAll(enable)
+{
+#if defined foreach
+    foreach(new playerid : Player) gEnabled[playerid] = enable;
+#else
+    #if defined GetPlayerPoolSize
+        for(new playerid = GetPlayerPoolSize(); playerid >= 0; --playerid)
+    #else
+        for(new playerid = MAX_PLAYERS - 1; playerid >= 0; --playerid)
+    #endif
+    {
+        if(!IsPlayerConnected(playerid)) continue;
+        gEnabled[playerid] = enable;
+    }
+#endif
+}
+
+---
+
+(source_file
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (conditional_loop_variant_statement
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        iterator: (foreach_iterator
+          name: (identifier)
+          collection: (identifier))
+        body: (expression_statement
+          expression: (assignment_expression
+            left: (subscript_expression
+              array: (identifier)
+              index: (identifier))
+            right: (identifier)))
+        (directive_else)
+        alternative: (loop_header_selection_statement
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          initializer: (declaration_qualifier)
+          initializer: (variable_declarator
+            name: (identifier)
+            initializer: (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          condition: (binary_expression
+            left: (identifier)
+            right: (integer_literal))
+          update: (update_expression
+            argument: (identifier))
+          (directive_else)
+          initializer: (declaration_qualifier)
+          initializer: (variable_declarator
+            name: (identifier)
+            initializer: (binary_expression
+              left: (identifier)
+              right: (integer_literal)))
+          condition: (binary_expression
+            left: (identifier)
+            right: (integer_literal))
+          update: (update_expression
+            argument: (identifier))
+          (directive_endif)
+          body: (block
+            (if_statement
+              condition: (unary_expression
+                argument: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier))))
+              consequence: (continue_statement))
+            (expression_statement
+              expression: (assignment_expression
+                left: (subscript_expression
+                  array: (identifier)
+                  index: (identifier))
+                right: (identifier)))))
+        (directive_endif)))))
+
+=====================================
+shared-tail function branch variants
+=====================================
+
+#if defined FEATURE
+stock BuildThing(modelid)
+{
+    new thingid = BuildThing(modelid);
+#else
+stock BuildThing(modelid, priority = 0)
+{
+    new thingid = BuildThing(modelid, priority);
+#endif
+    return thingid;
+}
+
+---
+
+(source_file
+  (directive_if
+    condition: (preproc_expression
+      (preproc_defined
+        name: (identifier))))
+  (function_definition
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (variable_declaration
+        (declaration_qualifier)
+        (variable_declarator
+          name: (identifier)
+          initializer: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)))))
+      (function_initializer_alternative_statement
+        (directive_else)
+        alternative_signature: (visibility_modifier)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier))
+          (parameter_declaration
+            name: (identifier)
+            default_value: (integer_literal)))
+        alternative_initializer: (variable_declaration
+          (declaration_qualifier)
+          (variable_declarator
+            name: (identifier)
+            initializer: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)
+                (identifier)))))
+        (directive_endif))
+      (return_statement
+        value: (identifier)))))

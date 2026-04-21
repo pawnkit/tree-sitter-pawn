@@ -17,6 +17,8 @@ stock _:AsCell(Float:x)
   return _:x;
 }
 
+static stock const Float:ranges[] = { 1.0, 2.0 };
+
 ---
 
 (source_file
@@ -104,4 +106,17 @@ stock _:AsCell(Float:x)
           type: (type
             (tagged_type
               tag: (tag_wildcard)))
-          value: (identifier))))))
+          value: (identifier)))))
+  (variable_declaration
+    (declaration_qualifier)
+    (visibility_modifier)
+    (declaration_qualifier)
+    (variable_declarator
+      type: (type
+        (tagged_type
+          tag: (tag)))
+      name: (identifier)
+      (dimension)
+      initializer: (array_literal
+        (float_literal)
+        (float_literal)))))

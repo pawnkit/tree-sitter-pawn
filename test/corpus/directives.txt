@@ -170,6 +170,33 @@ structured macro replacement forms
                 right: (preproc_expression
                   (macro_parameter))))))))))
 
+=========================
+macro pasted identifiers
+=========================
+
+#define ac_fpublic%0(%1) forward%0(%1); public%0(%1)
+
+---
+
+(source_file
+  (directive_define
+    name: (macro_pasted_identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_expression_sequence
+        (macro_expression_statement
+          expression: (preproc_expression
+            (preproc_call_expression
+              function: (macro_pasted_identifier)
+              (preproc_expression
+                (macro_parameter)))))
+        tail: (preproc_expression
+          (preproc_call_expression
+            function: (macro_pasted_identifier)
+            (preproc_expression
+              (macro_parameter))))))))
+
 ================================
 statement-like macro replacements
 ================================
