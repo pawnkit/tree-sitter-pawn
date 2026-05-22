@@ -443,6 +443,7 @@ hook forward statement
 
 CHAIN_FORWARD:OnThing() = 1;
 hook Float:GetSpeed(playerid);
+hook Float:GetSpeed(playerid) { return 0.0; }
 
 ---
 
@@ -459,7 +460,17 @@ hook Float:GetSpeed(playerid);
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
-        name: (identifier)))))
+        name: (identifier))))
+  (function_definition
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (float_literal)))))
 
 ===========================
 inline label branch variants

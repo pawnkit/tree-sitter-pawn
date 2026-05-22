@@ -3031,6 +3031,10 @@
             "named": true
           },
           {
+            "type": "hook",
+            "named": false
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -3201,6 +3205,10 @@
             "named": true
           },
           {
+            "type": "hook",
+            "named": false
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -3307,6 +3315,10 @@
           {
             "type": "fixed_dimension",
             "named": true
+          },
+          {
+            "type": "hook",
+            "named": false
           },
           {
             "type": "identifier",

@@ -201,6 +201,11 @@ module.exports = grammar({
       functionSignatureTail($),
     ),
 
+    _hook_function_definition_signature: ($) => seq(
+      "hook",
+      functionSignatureTail($),
+    ),
+
     _plain_function_definition_signature: ($) => seq(
       repeat($._function_modifier),
       functionSignatureTail($),
@@ -215,6 +220,7 @@ module.exports = grammar({
     ),
 
     _function_definition_signature: ($) => choice(
+      $._hook_function_definition_signature,
       $._prefixed_function_definition_signature,
       $._plain_function_definition_signature,
     ),
@@ -249,11 +255,11 @@ module.exports = grammar({
     ),
 
     hook_forward_statement: ($) => choice(
-      prec.dynamic(10, seq(
+      seq(
         "hook",
         functionDeclarationSignatureTail($),
         ";",
-      )),
+      ),
       prec.dynamic(5, seq(
         field("return_type", $.tagged_type),
         $._function_named_identifier,
