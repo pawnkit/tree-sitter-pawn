@@ -1,184 +1,236 @@
-========================
-top level wrapped items
-========================
+========================================================
+shared if-header block body with inline division if
+========================================================
 
-#if defined FEATURE_A
-stock FeatureA()
+stock SharedIfInlineDivision(playerid)
 {
-    return 1;
-}
-#elseif defined(FEATURE_B)
-new gFeatureValue = 2;
+#if defined DYNAMIC
+    if(CheckDynamic(playerid))
 #else
-enum FeatureMode {
-    FEATURE_NONE,
-    FEATURE_FALLBACK = 3
-};
-#endif
-
----
-
-(source_file
-  (directive_if
-    condition: (preproc_expression
-      (preproc_defined
-        name: (identifier))))
-  (function_definition
-    (function_modifier)
-    name: (identifier)
-    parameters: (parameter_list)
-    body: (block
-      (return_statement
-        value: (integer_literal))))
-  (directive_elseif
-    condition: (preproc_expression
-      (preproc_defined
-        name: (identifier))))
-  (variable_declaration
-    (declaration_qualifier)
-    (variable_declarator
-      name: (identifier)
-      initializer: (integer_literal)))
-  (directive_else)
-  (enum_declaration
-    name: (identifier)
-    (enum_entry
-      name: (identifier))
-    (enum_entry
-      name: (identifier)
-      value: (integer_literal)))
-  (directive_endif))
-
-=======================
-block level wrapped code
-=======================
-
-stock ConfigureFeature(playerid)
-{
-#if defined FEATURE_A
-    new enabled = 1;
-#elseif defined(FEATURE_B)
-    if (playerid > 0) {
-        return 2;
-    }
-#else
-    return 0;
-#endif
-
-    return 1;
-}
-
----
-
-(source_file
-  (function_definition
-    (function_modifier)
-    name: (identifier)
-    parameters: (parameter_list
-      (parameter_declaration
-        name: (identifier)))
-    body: (block
-      (directive_if
-        condition: (preproc_expression
-          (preproc_defined
-            name: (identifier))))
-      (variable_declaration
-        (declaration_qualifier)
-        (variable_declarator
-          name: (identifier)
-          initializer: (integer_literal)))
-      (directive_elseif
-        condition: (preproc_expression
-          (preproc_defined
-            name: (identifier))))
-      (if_statement
-        condition: (binary_expression
-          left: (identifier)
-          right: (integer_literal))
-        consequence: (block
-          (return_statement
-            value: (integer_literal))))
-      (directive_else)
-      (return_statement
-        value: (integer_literal))
-      (directive_endif)
-      (return_statement
-        value: (integer_literal)))))
-
-==================
-nested conditionals
-==================
-
-#if defined OUTER
-#if defined INNER
-new gValue = 1;
-#else
-new gValue = 2;
-#endif
-#endif
-
----
-
-(source_file
-  (directive_if
-    condition: (preproc_expression
-      (preproc_defined
-        name: (identifier))))
-  (directive_if
-    condition: (preproc_expression
-      (preproc_defined
-        name: (identifier))))
-  (variable_declaration
-    (declaration_qualifier)
-    (variable_declarator
-      name: (identifier)
-      initializer: (integer_literal)))
-  (directive_else)
-  (variable_declaration
-    (declaration_qualifier)
-    (variable_declarator
-      name: (identifier)
-      initializer: (integer_literal)))
-  (directive_endif)
-  (directive_endif))
-
-=====================================
-scanner-backed shared if-header else
-=====================================
-
-public TestBranch(playerid)
-{
-#if defined IsAlive
-    if(IsAlive(playerid))
-#else
-    if(playerid)
+    if(CheckStatic(playerid))
 #endif
     {
-        return 1;
+        if((elapsed = (ticks - Info[playerid][Tick]) / 1000.0) > 1.0) limit *= elapsed;
+        Mark(playerid);
     }
-    else return 0;
 }
 
 ---
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier)))
     body: (block
-      (conditional_if_else_statement
+      (conditional_if_block_statement
         condition: (preproc_expression
           (preproc_defined
             name: (identifier)))
-        preamble: (conditional_if_else_preamble)
         consequence: (block
-          (return_statement
-            value: (integer_literal)))
-        alternative: (return_statement
-          value: (integer_literal))))))
+          (if_statement
+            condition: (binary_expression
+              left: (parenthesized_expression
+                expression: (assignment_expression
+                  left: (identifier)
+                  right: (binary_expression
+                    left: (parenthesized_expression
+                      expression: (binary_expression
+                        left: (identifier)
+                        right: (subscript_expression
+                          array: (subscript_expression
+                            array: (identifier)
+                            index: (identifier))
+                          index: (identifier))))
+                    right: (float_literal))))
+              right: (float_literal))
+            consequence: (expression_statement
+              expression: (assignment_expression
+                left: (identifier)
+                right: (identifier))))
+          (expression_statement
+            expression: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))))))
+
+==============================================
+scanner-backed shared if-else block body close
+==============================================
+
+stock SharedIfElseBlock(value)
+{
+#if defined OUTER
+    if(value)
+    {
+        DoThing();
+    }
+    else
+    {
+#endif
+    #if defined INNER
+        DoOtherThing();
+    #else
+        DoFallbackThing();
+    #endif
+#if defined OUTER
+    }
+#endif
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (conditional_if_else_block_statement
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier)))
+        (block_conditional
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (expression_statement
+            expression: (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          alternative: (block_else
+            (directive_else)
+            (expression_statement
+              expression: (call_expression
+                function: (identifier)
+                arguments: (argument_list))))
+          (directive_endif))))))
+
+========================================================
+shared else block with alternate inline branch
+========================================================
+
+stock ProbeNpc(playerid)
+{
+#if AC_USE_NPC
+    if(IsPlayerNPC(playerid))
+    {
+        Kick(playerid);
+    }
+    else
+    {
+#else
+    if(IsPlayerNPC(playerid)) Kick(playerid);
+#endif
+    Mark(playerid);
+#if AC_USE_NPC
+    }
+#endif
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (conditional_if_else_block_statement
+        condition: (preproc_expression
+          (identifier))
+        (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))))))
+
+=============================================================
+nested directive header with shared else block
+=============================================================
+
+stock ProbePickup(playerid)
+{
+#if AC_USE_PICKUP_WEAPONS
+    #if defined STREAMER
+    if(FirstCheck(playerid))
+    #else
+    if(SecondCheck(playerid))
+    #endif
+    {
+        GrantPickup(playerid);
+    }
+    else
+    {
+#endif
+    FallbackPath(playerid);
+#if AC_USE_PICKUP_WEAPONS
+    }
+#endif
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (conditional_if_else_block_statement
+        condition: (preproc_expression
+          (identifier))
+        (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))))))
+
+=======================================================
+nested directive header with shared brace body
+=======================================================
+
+stock ProbeDynamic(playerid, pickupid)
+{
+#if OUTER
+    new streamerid = Lookup(playerid, pickupid);
+    #if defined TAGS
+    if(!IsValid(TAG:streamerid))
+    #else
+    if(!IsValid(streamerid))
+    #endif
+    {
+#endif
+    Mark(playerid);
+#if OUTER
+    }
+#endif
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (conditional_if_statement
+        condition: (preproc_expression
+          (identifier))
+        (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))))))
 
 ============================================
 scanner-backed shared if-header wrapped close
@@ -207,7 +259,6 @@ public TestWrapped(playerid)
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -221,12 +272,112 @@ public TestWrapped(playerid)
             right: (preproc_expression
               (preproc_defined
                 name: (identifier)))))
-        preamble: (conditional_if_preamble)
         (return_statement
-          value: (integer_literal))
-        closing: (conditional_if_closing))
+          value: (integer_literal)))
       (return_statement
         value: (integer_literal)))))
+
+====================================================
+shared if-header wrapped close with inline else
+====================================================
+
+stock WrappedElse(playerid)
+{
+#if AD_FAST_DOUBLE_CLICK
+    if(Check(playerid))
+    {
+        Mark(playerid);
+#endif
+    Shared(playerid);
+#if AD_FAST_DOUBLE_CLICK
+    }
+    else Remember(playerid);
+#endif
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (conditional_if_wrapped_else_statement
+        condition: (preproc_expression
+          (identifier))
+        (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))
+        alternative: (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))
+        (directive_endif)))))
+
+=====================================================
+split shared if-header wrapped close with inline else
+=====================================================
+
+stock WrappedSplit(playerid)
+{
+#if defined USE_DYNAMIC
+    if (DoThing(playerid))
+    {
+#else
+    DoFallback(playerid);
+#endif
+        ReturnShared(playerid);
+#if defined USE_DYNAMIC
+    }
+    else ReturnAlt(playerid);
+#endif
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (conditional_if_split_wrapped_else_statement
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        condition: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (identifier)))
+        (directive_else)
+        alternative: (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))
+        (directive_endif)
+        (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        shared_alternative: (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))
+        (directive_endif)))))
 
 ===================================
 wrapped inline labels and directives
@@ -251,46 +402,231 @@ label_a: return 1;
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier)))
     body: (block
-      (directive_if
-        condition: (preproc_expression
-          (preproc_defined
-            name: (identifier))))
-      (label_statement
-        label: (statement_label)
-        statement: (inline_labeled_statement
-          (return_statement
-            value: (integer_literal))))
-      (directive_elseif
-        condition: (preproc_expression
-          (preproc_defined
-            name: (identifier))))
-      (while_statement
-        condition: (binary_expression
-          left: (identifier)
-          right: (integer_literal))
-        body: (block
-          (directive_if
+      (block_conditional
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        (label_statement
+          label: (identifier)
+          statement: (inline_labeled_statement
+            (return_statement
+              value: (integer_literal))))
+        alternative: (block_elseif
+          (directive_elseif
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
-          (label_statement
-            label: (statement_label)
-            statement: (inline_labeled_statement
-              (continue_statement)))
-          (directive_endif)))
-      (directive_else)
-      (label_statement
-        label: (statement_label)
-        statement: (inline_labeled_statement
-          (directive_warning
-            message: (preproc_text))))
-      (directive_endif))))
+          (while_statement
+            condition: (binary_expression
+              left: (identifier)
+              right: (integer_literal))
+            body: (block
+              (block_conditional
+                (directive_if
+                  condition: (preproc_expression
+                    (preproc_defined
+                      name: (identifier))))
+                (label_statement
+                  label: (identifier)
+                  statement: (inline_labeled_statement
+                    (continue_statement)))
+                (directive_endif))))
+          alternative: (block_else
+            (directive_else)
+            (label_statement
+              label: (identifier)
+              statement: (inline_labeled_statement
+                (directive_warning
+                  message: (preproc_text))))))
+        (directive_endif)))))
+
+=======================================
+directive-wrapped else expression forms
+=======================================
+
+stock WrappedElseExpr(value)
+{
+    if(value > 10)
+        return 1;
+#if defined ALT_VALUE
+    else DoThing(value);
+#else
+    else DoOtherThing(value);
+#endif
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (if_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        consequence: (return_statement
+          value: (integer_literal)))
+      (conditional_else_expression_statement
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        consequence: (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))
+        (directive_else)
+        alternative: (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))
+        (directive_endif)))))
+
+========================================
+directive-wrapped else-if branch variants
+========================================
+
+stock WrappedElseIf(value)
+{
+    if(value > 10)
+        return 1;
+#if defined ALT_VALUE
+    else if(value == ALT_VALUE)
+        return 2;
+#else
+    else if(value == 5)
+        return 3;
+#endif
+}
+
+stock WrappedElseIfWithElse(value)
+{
+    if(value > 10)
+        return 1;
+#if defined ALT_VALUE
+    else if(value == ALT_VALUE)
+        return 2;
+#else
+    else if(value == 5)
+        return 3;
+#endif
+    else return 4;
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (if_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        consequence: (return_statement
+          value: (integer_literal)))
+      (conditional_else_if_branch_statement
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        consequence: (if_statement
+          condition: (binary_expression
+            left: (identifier)
+            right: (identifier))
+          consequence: (return_statement
+            value: (integer_literal)))
+        (directive_else)
+        alternative: (if_statement
+          condition: (binary_expression
+            left: (identifier)
+            right: (integer_literal))
+          consequence: (return_statement
+            value: (integer_literal)))
+        (directive_endif))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (if_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        consequence: (return_statement
+          value: (integer_literal)))
+      (conditional_else_if_branch_statement
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        consequence: (if_statement
+          condition: (binary_expression
+            left: (identifier)
+            right: (identifier))
+          consequence: (return_statement
+            value: (integer_literal)))
+        (directive_else)
+        alternative: (if_statement
+          condition: (binary_expression
+            left: (identifier)
+            right: (integer_literal))
+          consequence: (return_statement
+            value: (integer_literal)))
+        (directive_endif)
+        shared_alternative: (return_statement
+          value: (integer_literal))))))
+
+=====================================================
+scanner-backed inline branch if with shared else-if
+=====================================================
+
+stock WrappedInlineBranchIf(value)
+{
+#if defined ALT_VALUE
+    if(value == ALT_VALUE) return 1;
+#else
+    if(value == 5) return 2;
+#endif
+    else if(value < 0)
+        return 3;
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (conditional_if_else_if_statement
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier)))
+        alternative: (if_statement
+          condition: (binary_expression
+            left: (identifier)
+            right: (integer_literal))
+          consequence: (return_statement
+            value: (integer_literal)))))))
 
 ====================================
 shared-tail conditional loop wrapper
@@ -318,7 +654,6 @@ stock SharedLoop()
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list)
     body: (block
@@ -336,7 +671,6 @@ stock SharedLoop()
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
-          initializer: (declaration_qualifier)
           initializer: (variable_declarator
             name: (identifier)
             initializer: (call_expression
@@ -348,7 +682,6 @@ stock SharedLoop()
           update: (update_expression
             argument: (identifier))
           (directive_else)
-          initializer: (declaration_qualifier)
           initializer: (variable_declarator
             name: (identifier)
             initializer: (binary_expression
@@ -399,33 +732,32 @@ stock ToggleAll(enable)
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier)))
     body: (block
-      (conditional_loop_variant_statement
+      (conditional_loop_fallback_statement
         (directive_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
-        iterator: (foreach_iterator
-          name: (identifier)
-          collection: (identifier))
-        body: (expression_statement
-          expression: (assignment_expression
-            left: (subscript_expression
-              array: (identifier)
-              index: (identifier))
-            right: (identifier)))
+        consequence: (foreach_statement
+          iterator: (foreach_iterator
+            name: (identifier)
+            collection: (identifier))
+          body: (expression_statement
+            expression: (assignment_expression
+              left: (subscript_expression
+                array: (identifier)
+                index: (identifier))
+              right: (identifier))))
         (directive_else)
         alternative: (loop_header_selection_statement
           (directive_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
-          initializer: (declaration_qualifier)
           initializer: (variable_declarator
             name: (identifier)
             initializer: (call_expression
@@ -437,7 +769,6 @@ stock ToggleAll(enable)
           update: (update_expression
             argument: (identifier))
           (directive_else)
-          initializer: (declaration_qualifier)
           initializer: (variable_declarator
             name: (identifier)
             initializer: (binary_expression
@@ -465,6 +796,220 @@ stock ToggleAll(enable)
                 right: (identifier)))))
         (directive_endif)))))
 
+===========================================
+direct shared loop header selection wrapper
+===========================================
+
+stock RemoveBuilding(modelid, Float:fX, Float:fY, Float:fZ, Float:fRadius)
+{
+    if(RemoveCount < MAX_UC_REMOVED_OBJECTS)
+    {
+        RemoveInfo[RemoveCount][rbRemoved] = true;
+        RemoveInfo[RemoveCount][rbModelid] = modelid;
+        RemoveInfo[RemoveCount][rbX] = fX;
+        RemoveInfo[RemoveCount][rbY] = fY;
+        RemoveInfo[RemoveCount][rbZ] = fZ;
+        RemoveInfo[RemoveCount][rbRadius] = fRadius;
+        RemoveCount++;
+#if defined foreach
+        foreach(new i : Player)
+#else
+        for(new i = GetPlayerPoolSize(); i >= 0; --i)
+#endif
+        {
+            RemoveBuildingForPlayer(i, modelid, fX, fY, fZ, fRadius);
+        }
+        return RemoveCount - 1;
+    }
+    return RemoveCount;
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)))
+    body: (block
+      (if_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (identifier))
+        consequence: (block
+          (expression_statement
+            expression: (assignment_expression
+              left: (subscript_expression
+                array: (subscript_expression
+                  array: (identifier)
+                  index: (identifier))
+                index: (identifier))
+              right: (boolean_literal)))
+          (expression_statement
+            expression: (assignment_expression
+              left: (subscript_expression
+                array: (subscript_expression
+                  array: (identifier)
+                  index: (identifier))
+                index: (identifier))
+              right: (identifier)))
+          (expression_statement
+            expression: (assignment_expression
+              left: (subscript_expression
+                array: (subscript_expression
+                  array: (identifier)
+                  index: (identifier))
+                index: (identifier))
+              right: (identifier)))
+          (expression_statement
+            expression: (assignment_expression
+              left: (subscript_expression
+                array: (subscript_expression
+                  array: (identifier)
+                  index: (identifier))
+                index: (identifier))
+              right: (identifier)))
+          (expression_statement
+            expression: (assignment_expression
+              left: (subscript_expression
+                array: (subscript_expression
+                  array: (identifier)
+                  index: (identifier))
+                index: (identifier))
+              right: (identifier)))
+          (expression_statement
+            expression: (assignment_expression
+              left: (subscript_expression
+                array: (subscript_expression
+                  array: (identifier)
+                  index: (identifier))
+                index: (identifier))
+              right: (identifier)))
+          (expression_statement
+            expression: (update_expression
+              argument: (identifier)))
+          (loop_header_selection_statement
+            (directive_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            iterator: (foreach_iterator
+              name: (identifier)
+              collection: (identifier))
+            (directive_else)
+            initializer: (variable_declarator
+              name: (identifier)
+              initializer: (call_expression
+                function: (identifier)
+                arguments: (argument_list)))
+            condition: (binary_expression
+              left: (identifier)
+              right: (integer_literal))
+            update: (update_expression
+              argument: (identifier))
+            (directive_endif)
+            body: (block
+              (expression_statement
+                expression: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)
+                    (identifier)
+                    (identifier)
+                    (identifier)
+                    (identifier)
+                    (identifier))))))
+          (return_statement
+            value: (binary_expression
+              left: (identifier)
+              right: (integer_literal)))))
+      (return_statement
+        value: (identifier)))))
+
+====================================================
+shared-loop preamble nested conditional if variants
+====================================================
+stock SharedLoopPreamble(value)
+{
+#if defined foreach
+    foreach(new playerid : Player)
+#else
+    for(new playerid = 0; playerid < value; playerid++)
+#endif
+    {
+#if defined INNER
+        if(playerid)
+            continue;
+#else
+        if(value)
+            continue;
+#endif
+        return 1;
+    }
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (loop_header_selection_statement
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        iterator: (foreach_iterator
+          name: (identifier)
+          collection: (identifier))
+        (directive_else)
+        initializer: (variable_declarator
+          name: (identifier)
+          initializer: (integer_literal))
+        condition: (binary_expression
+          left: (identifier)
+          right: (identifier))
+        update: (update_expression
+          argument: (identifier))
+        (directive_endif)
+        body: (block
+          (block_conditional
+            (directive_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            (if_statement
+              condition: (identifier)
+              consequence: (continue_statement))
+            alternative: (block_else
+              (directive_else)
+              (if_statement
+                condition: (identifier)
+                consequence: (continue_statement)))
+            (directive_endif))
+          (return_statement
+            value: (integer_literal)))))))
+
 =====================================
 shared-tail function branch variants
 =====================================
@@ -484,28 +1029,517 @@ stock BuildThing(modelid, priority = 0)
 ---
 
 (source_file
-  (directive_if
-    condition: (preproc_expression
-      (preproc_defined
-        name: (identifier))))
+  (top_level_shared_tail_function_branch
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (function_definition
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      body: (block
+        (variable_declaration
+          (variable_declarator
+            name: (identifier)
+            initializer: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))
+        (function_initializer_alternative_statement
+          (directive_else)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter_declaration
+              name: (identifier))
+            (parameter_declaration
+              name: (identifier)
+              default_value: (integer_literal)))
+          alternative_initializer: (variable_declaration
+            (variable_declarator
+              name: (identifier)
+              initializer: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (identifier)
+                  (identifier)))))
+          (directive_endif))
+        (return_statement
+          value: (identifier))))))
+
+====================================================
+shared-tail function branch nested initializer wrap
+====================================================
+
+#if defined FEATURE
+stock BuildThing(modelid)
+{
+    new thingid = BuildThing(modelid);
+#else
+stock BuildThing(modelid, priority = 0)
+{
+#if defined DEBUG
+    new thingid = BuildThing(modelid);
+#else
+    new thingid = BuildThing(modelid, priority);
+#endif
+#endif
+    return thingid;
+}
+
+---
+
+(source_file
+  (top_level_shared_tail_function_branch
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (function_definition
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      body: (block
+        (variable_declaration
+          (variable_declarator
+            name: (identifier)
+            initializer: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))
+        (function_initializer_alternative_statement
+          (directive_else)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter_declaration
+              name: (identifier))
+            (parameter_declaration
+              name: (identifier)
+              default_value: (integer_literal)))
+          alternative_initializer: (block_conditional
+            (directive_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            (variable_declaration
+              (variable_declarator
+                name: (identifier)
+                initializer: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)))))
+            alternative: (block_else
+              (directive_else)
+              (variable_declaration
+                (variable_declarator
+                  name: (identifier)
+                  initializer: (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (identifier)
+                      (identifier))))))
+            (directive_endif))
+          (directive_endif))
+        (return_statement
+          value: (identifier))))))
+
+===================================================
+block wrappers in loop bodies and after labels
+===================================================
+
+stock ProbeLoop(value)
+{
+    while (value > 0)
+    {
+#if defined FEATURE
+        return 1;
+#else
+        continue;
+#endif
+    }
+label_a:
+#if defined FEATURE
+    return 2;
+#else
+    return 3;
+#endif
+}
+
+---
+
+(source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier)))
     body: (block
-      (variable_declaration
-        (declaration_qualifier)
-        (variable_declarator
+      (while_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        body: (block
+          (block_conditional
+            (directive_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            (return_statement
+              value: (integer_literal))
+            alternative: (block_else
+              (directive_else)
+              (continue_statement))
+            (directive_endif))))
+      (label_statement
+        label: (identifier))
+      (block_conditional
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        (return_statement
+          value: (integer_literal))
+        alternative: (block_else
+          (directive_else)
+          (return_statement
+            value: (integer_literal)))
+        (directive_endif)))))
+
+===================================================
+block wrappers in switch case arms
+===================================================
+
+stock ProbeSwitch(value)
+{
+    switch (value)
+    {
+        case 1:
+#if defined FOO
+            return 10;
+#else
+            return 20;
+#endif
+        default:
+#if defined BAR
+            return 30;
+#else
+            return 40;
+#endif
+    }
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (switch_statement
+        condition: (identifier)
+        (case_statement
+          value: (integer_literal)
+          (block_conditional
+            (directive_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            (return_statement
+              value: (integer_literal))
+            alternative: (block_else
+              (directive_else)
+              (return_statement
+                value: (integer_literal)))
+            (directive_endif)))
+        (default_statement
+          (block_conditional
+            (directive_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            (return_statement
+              value: (integer_literal))
+            alternative: (block_else
+              (directive_else)
+              (return_statement
+                value: (integer_literal)))
+            (directive_endif)))))))
+
+=====================================
+directive-wrapped switch case labels
+=====================================
+
+stock ProbeSwitchCase(value)
+{
+    switch (value)
+    {
+        case 1: return 1;
+#if defined FEATURE
+        case 2: return 2;
+#endif
+        default: return 3;
+    }
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (switch_statement
+        condition: (identifier)
+        (case_statement
+          value: (integer_literal)
+          (return_statement
+            value: (integer_literal)))
+        (switch_item_conditional
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (case_statement
+            value: (integer_literal)
+            (return_statement
+              value: (integer_literal)))
+          (directive_endif))
+        (default_statement
+          (return_statement
+            value: (integer_literal)))))))
+
+===================================================
+block wrappers in ordinary if branches
+===================================================
+
+stock ProbeIf(value)
+{
+    if (value)
+#if defined FOO
+        return 1;
+#else
+        return 2;
+#endif
+    else
+        return 3;
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (if_statement
+        condition: (identifier)
+        consequence: (block_conditional
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (return_statement
+            value: (integer_literal))
+          alternative: (block_else
+            (directive_else)
+            (return_statement
+              value: (integer_literal)))
+          (directive_endif))
+        alternative: (return_statement
+          value: (integer_literal))))))
+
+===================================================
+block wrappers in nonblock loop and else bodies
+===================================================
+
+stock ProbeFlow(value)
+{
+    while (value)
+#if defined FOO
+        return 1;
+#else
+        return 2;
+#endif
+
+    for (; value; )
+#if defined FOO
+        return 3;
+#else
+        return 4;
+#endif
+
+    foreach (new i : value)
+#if defined FOO
+        return 5;
+#else
+        return 6;
+#endif
+
+    do
+#if defined FOO
+        value++;
+#else
+        value--;
+#endif
+    while (value);
+
+    if (value)
+        return 7;
+    else
+#if defined FOO
+        return 8;
+#else
+        return 9;
+#endif
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (while_statement
+        condition: (identifier)
+        body: (block_conditional
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (return_statement
+            value: (integer_literal))
+          alternative: (block_else
+            (directive_else)
+            (return_statement
+              value: (integer_literal)))
+          (directive_endif)))
+      (for_statement
+        condition: (identifier)
+        body: (block_conditional
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (return_statement
+            value: (integer_literal))
+          alternative: (block_else
+            (directive_else)
+            (return_statement
+              value: (integer_literal)))
+          (directive_endif)))
+      (foreach_statement
+        iterator: (foreach_iterator
           name: (identifier)
-          initializer: (call_expression
-            function: (identifier)
-            arguments: (argument_list
-              (identifier)))))
-      (function_initializer_alternative_statement
-        (directive_else)
-        alternative_signature: (visibility_modifier)
+          collection: (identifier))
+        body: (block_conditional
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (return_statement
+            value: (integer_literal))
+          alternative: (block_else
+            (directive_else)
+            (return_statement
+              value: (integer_literal)))
+          (directive_endif)))
+      (do_while_statement
+        body: (block_conditional
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (expression_statement
+            expression: (update_expression
+              argument: (identifier)))
+          alternative: (block_else
+            (directive_else)
+            (expression_statement
+              expression: (update_expression
+                argument: (identifier))))
+          (directive_endif))
+        condition: (identifier))
+      (if_statement
+        condition: (identifier)
+        consequence: (return_statement
+          value: (integer_literal))
+        alternative: (block_conditional
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (return_statement
+            value: (integer_literal))
+          alternative: (block_else
+            (directive_else)
+            (return_statement
+              value: (integer_literal)))
+          (directive_endif))))))
+
+===================================================
+top-level wrapper function bodies use block wrappers
+===================================================
+
+#if defined FEATURE
+stock ProbeWrapped(value)
+{
+#if defined INNER
+    return value;
+#else
+    return 0;
+#endif
+}
+#else
+stock ProbeWrapped(value, extra = 0)
+{
+#if defined INNER
+    return extra;
+#else
+    return value;
+#endif
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (function_definition
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      body: (block
+        (block_conditional
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (return_statement
+            value: (identifier))
+          alternative: (block_else
+            (directive_else)
+            (return_statement
+              value: (integer_literal)))
+          (directive_endif))))
+    alternative: (top_level_else
+      (directive_else)
+      (function_definition
         name: (identifier)
         parameters: (parameter_list
           (parameter_declaration
@@ -513,15 +1547,1604 @@ stock BuildThing(modelid, priority = 0)
           (parameter_declaration
             name: (identifier)
             default_value: (integer_literal)))
-        alternative_initializer: (variable_declaration
-          (declaration_qualifier)
+        body: (block
+          (block_conditional
+            (directive_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            (return_statement
+              value: (identifier))
+            alternative: (block_else
+              (directive_else)
+              (return_statement
+                value: (identifier)))
+            (directive_endif)))))
+    (directive_endif)))
+
+===================================================
+shared-tail function bare alternative variant
+===================================================
+
+#if defined FEATURE
+ProbeBare(modelid)
+{
+    return modelid;
+#else
+ProbeBare(modelid, extra = 0)
+{
+    return extra;
+#endif
+}
+
+---
+
+(source_file
+  (top_level_shared_tail_function_branch
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (function_definition
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      body: (block
+        (return_statement
+          value: (identifier))
+        (top_level_shared_tail_function_alternative_statement
+          (directive_else)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter_declaration
+              name: (identifier))
+            (parameter_declaration
+              name: (identifier)
+              default_value: (integer_literal)))
+          (return_statement
+            value: (identifier))
+          (directive_endif))))))
+
+===================================================
+shared-tail bare alternative nested wrappers
+===================================================
+
+#if defined FEATURE
+ProbeBareNested(modelid)
+{
+    {
+#if defined INNER
+        return modelid;
+#else
+        return 0;
+#endif
+    }
+#else
+ProbeBareNested(modelid, extra = 0)
+{
+#if defined ALT
+    return extra;
+#else
+    return modelid;
+#endif
+#endif
+}
+
+---
+
+(source_file
+  (top_level_shared_tail_function_branch
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (function_definition
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      body: (block
+        (block
+          (block_conditional
+            (directive_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            (return_statement
+              value: (identifier))
+            alternative: (block_else
+              (directive_else)
+              (return_statement
+                value: (integer_literal)))
+            (directive_endif)))
+        (top_level_shared_tail_function_alternative_statement
+          (directive_else)
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter_declaration
+              name: (identifier))
+            (parameter_declaration
+              name: (identifier)
+              default_value: (integer_literal)))
+          (block_conditional
+            (directive_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            (return_statement
+              value: (identifier))
+            alternative: (block_else
+              (directive_else)
+              (return_statement
+                value: (identifier)))
+            (directive_endif))
+          (directive_endif))))))
+
+===================================================
+nested top-level shared-tail branch
+===================================================
+
+#if defined OUTER
+#if defined FEATURE
+ProbeOuter(modelid)
+{
+    return modelid;
+#else
+ProbeOuter(modelid, extra = 0)
+{
+    return extra;
+#endif
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (top_level_shared_tail_function_branch
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        body: (block
+          (return_statement
+            value: (identifier))
+          (top_level_shared_tail_function_alternative_statement
+            (directive_else)
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier))
+              (parameter_declaration
+                name: (identifier)
+                default_value: (integer_literal)))
+            (return_statement
+              value: (identifier))
+            (directive_endif)))))
+    alternative: (top_level_else
+      (directive_else)
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list)
+        body: (block
+          (return_statement
+            value: (integer_literal)))))
+    (directive_endif)))
+
+===================================================
+top-level branch with three wrapped items
+===================================================
+
+#if defined OUTER
+#if defined FIRST
+#if defined FEATURE_A
+stock One(value)
+#else
+stock One(value, extra = 0)
+#endif
+{
+    return value;
+}
+#else
+stock FallbackOne()
+{
+    return 1;
+}
+#endif
+#if defined SECOND
+Two(value)
+{
+    return value;
+#else
+Two(value, extra = 0)
+{
+    return extra;
+#endif
+}
+#if defined THIRD
+#if defined FEATURE_C
+stock Three(value)
+#else
+stock Three(value, extra = 0)
+#endif
+{
+    return value;
+}
+#else
+stock FallbackThree()
+{
+    return 3;
+}
+#endif
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (top_level_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (conditional_function_definition
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        (directive_else)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier))
+          (parameter_declaration
+            name: (identifier)
+            default_value: (integer_literal)))
+        (directive_endif)
+        body: (block
+          (return_statement
+            value: (identifier))))
+      alternative: (top_level_else
+        (directive_else)
+        (function_definition
+          name: (identifier)
+          parameters: (parameter_list)
+          body: (block
+            (return_statement
+              value: (integer_literal)))))
+      (directive_endif))
+    (top_level_shared_tail_function_branch
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        body: (block
+          (return_statement
+            value: (identifier))
+          (top_level_shared_tail_function_alternative_statement
+            (directive_else)
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier))
+              (parameter_declaration
+                name: (identifier)
+                default_value: (integer_literal)))
+            (return_statement
+              value: (identifier))
+            (directive_endif)))))
+    (top_level_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (conditional_function_definition
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        (directive_else)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier))
+          (parameter_declaration
+            name: (identifier)
+            default_value: (integer_literal)))
+        (directive_endif)
+        body: (block
+          (return_statement
+            value: (identifier))))
+      alternative: (top_level_else
+        (directive_else)
+        (function_definition
+          name: (identifier)
+          parameters: (parameter_list)
+          body: (block
+            (return_statement
+              value: (integer_literal)))))
+      (directive_endif))
+    (directive_endif)))
+
+===================================================
+top-level branch with conditional then shared-tail
+===================================================
+
+#if defined OUTER
+#if defined INNER
+#if defined FEATURE
+stock Nested(value)
+#else
+stock Nested(value, extra = 0)
+#endif
+{
+    return value;
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+#if defined SECOND
+Two(value)
+{
+    return value;
+#else
+Two(value, extra = 0)
+{
+    return extra;
+#endif
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (top_level_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (conditional_function_definition
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        (directive_else)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier))
+          (parameter_declaration
+            name: (identifier)
+            default_value: (integer_literal)))
+        (directive_endif)
+        body: (block
+          (return_statement
+            value: (identifier))))
+      alternative: (top_level_else
+        (directive_else)
+        (function_definition
+          name: (identifier)
+          parameters: (parameter_list)
+          body: (block
+            (return_statement
+              value: (integer_literal)))))
+      (directive_endif))
+    (top_level_shared_tail_function_branch
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        body: (block
+          (return_statement
+            value: (identifier))
+          (top_level_shared_tail_function_alternative_statement
+            (directive_else)
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier))
+              (parameter_declaration
+                name: (identifier)
+                default_value: (integer_literal)))
+            (return_statement
+              value: (identifier))
+            (directive_endif)))))
+    (directive_endif)))
+
+===================================================
+top-level branch with repeated conditionals
+===================================================
+
+#if defined OUTER
+#if defined FIRST
+#if defined FEATURE_A
+stock One(value)
+#else
+stock One(value, extra = 0)
+#endif
+{
+    return value;
+}
+#else
+stock FallbackOne()
+{
+    return 1;
+}
+#endif
+#if defined SECOND
+#if defined FEATURE_B
+stock Two(value)
+#else
+stock Two(value, extra = 0)
+#endif
+{
+    return extra;
+}
+#else
+stock FallbackTwo()
+{
+    return 2;
+}
+#endif
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (top_level_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (conditional_function_definition
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        (directive_else)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier))
+          (parameter_declaration
+            name: (identifier)
+            default_value: (integer_literal)))
+        (directive_endif)
+        body: (block
+          (return_statement
+            value: (identifier))))
+      alternative: (top_level_else
+        (directive_else)
+        (function_definition
+          name: (identifier)
+          parameters: (parameter_list)
+          body: (block
+            (return_statement
+              value: (integer_literal)))))
+      (directive_endif))
+    (top_level_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (conditional_function_definition
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        (directive_else)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier))
+          (parameter_declaration
+            name: (identifier)
+            default_value: (integer_literal)))
+        (directive_endif)
+        body: (block
+          (return_statement
+            value: (identifier))))
+      alternative: (top_level_else
+        (directive_else)
+        (function_definition
+          name: (identifier)
+          parameters: (parameter_list)
+          body: (block
+            (return_statement
+              value: (integer_literal)))))
+      (directive_endif))
+    (directive_endif)))
+
+===================================================
+top-level branch with shared-tail then conditional
+===================================================
+
+#if defined OUTER
+#if defined FIRST
+One(value)
+{
+    return value;
+#else
+One(value, extra = 0)
+{
+    return extra;
+#endif
+}
+#if defined INNER
+#if defined FEATURE
+stock Nested(value)
+#else
+stock Nested(value, extra = 0)
+#endif
+{
+    return value;
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (top_level_shared_tail_function_branch
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        body: (block
+          (return_statement
+            value: (identifier))
+          (top_level_shared_tail_function_alternative_statement
+            (directive_else)
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier))
+              (parameter_declaration
+                name: (identifier)
+                default_value: (integer_literal)))
+            (return_statement
+              value: (identifier))
+            (directive_endif)))))
+    (top_level_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (conditional_function_definition
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        (directive_else)
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier))
+          (parameter_declaration
+            name: (identifier)
+            default_value: (integer_literal)))
+        (directive_endif)
+        body: (block
+          (return_statement
+            value: (identifier))))
+      alternative: (top_level_else
+        (directive_else)
+        (function_definition
+          name: (identifier)
+          parameters: (parameter_list)
+          body: (block
+            (return_statement
+              value: (integer_literal)))))
+      (directive_endif))
+    (directive_endif)))
+
+===================================================
+top-level branch with repeated shared-tail items
+===================================================
+
+#if defined OUTER
+#if defined FIRST
+One(value)
+{
+    return value;
+#else
+One(value, extra = 0)
+{
+    return extra;
+#endif
+}
+#if defined SECOND
+Two(value)
+{
+    return value;
+#else
+Two(value, extra = 0)
+{
+    return extra;
+#endif
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (top_level_shared_tail_function_branch
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        body: (block
+          (return_statement
+            value: (identifier))
+          (top_level_shared_tail_function_alternative_statement
+            (directive_else)
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier))
+              (parameter_declaration
+                name: (identifier)
+                default_value: (integer_literal)))
+            (return_statement
+              value: (identifier))
+            (directive_endif)))))
+    (top_level_shared_tail_function_branch
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        body: (block
+          (return_statement
+            value: (identifier))
+          (top_level_shared_tail_function_alternative_statement
+            (directive_else)
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier))
+              (parameter_declaration
+                name: (identifier)
+                default_value: (integer_literal)))
+            (return_statement
+              value: (identifier))
+            (directive_endif)))))
+    alternative: (top_level_else
+      (directive_else)
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list)
+        body: (block
+          (return_statement
+            value: (integer_literal)))))
+    (directive_endif)))
+
+===================================================
+top-level branch with repeated conditional functions
+===================================================
+
+#if defined OUTER
+#if defined FEATURE_A
+stock First(value)
+#else
+stock First(value, extra = 0)
+#endif
+{
+    return value;
+}
+#if defined FEATURE_B
+stock Second(value)
+#else
+stock Second(value, extra = 0)
+#endif
+{
+    return extra;
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (conditional_function_definition
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      (directive_else)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier))
+        (parameter_declaration
+          name: (identifier)
+          default_value: (integer_literal)))
+      (directive_endif)
+      body: (block
+        (return_statement
+          value: (identifier))))
+    (conditional_function_definition
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      (directive_else)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier))
+        (parameter_declaration
+          name: (identifier)
+          default_value: (integer_literal)))
+      (directive_endif)
+      body: (block
+        (return_statement
+          value: (identifier))))
+    alternative: (top_level_else
+      (directive_else)
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list)
+        body: (block
+          (return_statement
+            value: (integer_literal)))))
+    (directive_endif)))
+
+===================================================
+top-level branch with function and declaration items
+===================================================
+
+#if defined OUTER
+#if defined FEATURE_A
+stock One(value)
+#else
+stock One(value, extra = 0)
+#endif
+{
+    return value;
+}
+#if defined DECL
+new gValue = 1;
+#else
+new gValue = 2;
+#endif
+#if defined FEATURE_B
+Two(value)
+{
+    return value;
+#else
+Two(value, extra = 0)
+{
+    return extra;
+#endif
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (conditional_function_definition
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      (directive_else)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier))
+        (parameter_declaration
+          name: (identifier)
+          default_value: (integer_literal)))
+      (directive_endif)
+      body: (block
+        (return_statement
+          value: (identifier))))
+    (top_level_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          initializer: (integer_literal)))
+      alternative: (top_level_else
+        (directive_else)
+        (variable_declaration
           (variable_declarator
             name: (identifier)
-            initializer: (call_expression
-              function: (identifier)
-              arguments: (argument_list
-                (identifier)
-                (identifier)))))
-        (directive_endif))
-      (return_statement
-        value: (identifier)))))
+            initializer: (integer_literal))))
+      (directive_endif))
+    (top_level_shared_tail_function_branch
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        body: (block
+          (return_statement
+            value: (identifier))
+          (top_level_shared_tail_function_alternative_statement
+            (directive_else)
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier))
+              (parameter_declaration
+                name: (identifier)
+                default_value: (integer_literal)))
+            (return_statement
+              value: (identifier))
+            (directive_endif)))))
+    alternative: (top_level_else
+      (directive_else)
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list)
+        body: (block
+          (return_statement
+            value: (integer_literal)))))
+    (directive_endif)))
+
+===================================================
+top-level branch with function enum function
+===================================================
+
+#if defined OUTER
+#if defined FEATURE_A
+stock One(value)
+#else
+stock One(value, extra = 0)
+#endif
+{
+    return value;
+}
+#if defined ENUMS
+enum EThing
+{
+    ThingA,
+    ThingB,
+}
+#else
+new gValue = 1;
+#endif
+#if defined FEATURE_B
+Two(value)
+{
+    return value;
+#else
+Two(value, extra = 0)
+{
+    return extra;
+#endif
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (conditional_function_definition
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      (directive_else)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier))
+        (parameter_declaration
+          name: (identifier)
+          default_value: (integer_literal)))
+      (directive_endif)
+      body: (block
+        (return_statement
+          value: (identifier))))
+    (top_level_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (enum_declaration
+        name: (identifier)
+        (enum_entry
+          name: (identifier))
+        (enum_entry
+          name: (identifier)))
+      alternative: (top_level_else
+        (directive_else)
+        (variable_declaration
+          (variable_declarator
+            name: (identifier)
+            initializer: (integer_literal))))
+      (directive_endif))
+    (top_level_shared_tail_function_branch
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        body: (block
+          (return_statement
+            value: (identifier))
+          (top_level_shared_tail_function_alternative_statement
+            (directive_else)
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier))
+              (parameter_declaration
+                name: (identifier)
+                default_value: (integer_literal)))
+            (return_statement
+              value: (identifier))
+            (directive_endif)))))
+    alternative: (top_level_else
+      (directive_else)
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list)
+        body: (block
+          (return_statement
+            value: (integer_literal)))))
+    (directive_endif)))
+
+===================================================
+top-level branch with function declaration item
+===================================================
+
+#if defined OUTER
+#if defined FEATURE_A
+stock One(value)
+#else
+stock One(value, extra = 0)
+#endif
+{
+    return value;
+}
+#if defined DECL
+forward Helper(value);
+#else
+native Helper(value, extra = 0);
+#endif
+#if defined FEATURE_B
+Two(value)
+{
+    return value;
+#else
+Two(value, extra = 0)
+{
+    return extra;
+#endif
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (conditional_function_definition
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      (directive_else)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier))
+        (parameter_declaration
+          name: (identifier)
+          default_value: (integer_literal)))
+      (directive_endif)
+      body: (block
+        (return_statement
+          value: (identifier))))
+    (top_level_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_declaration
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier))))
+      alternative: (top_level_else
+        (directive_else)
+        (function_declaration
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter_declaration
+              name: (identifier))
+            (parameter_declaration
+              name: (identifier)
+              default_value: (integer_literal)))))
+      (directive_endif))
+    (top_level_shared_tail_function_branch
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        body: (block
+          (return_statement
+            value: (identifier))
+          (top_level_shared_tail_function_alternative_statement
+            (directive_else)
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier))
+              (parameter_declaration
+                name: (identifier)
+                default_value: (integer_literal)))
+            (return_statement
+              value: (identifier))
+            (directive_endif)))))
+    alternative: (top_level_else
+      (directive_else)
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list)
+        body: (block
+          (return_statement
+            value: (integer_literal)))))
+    (directive_endif)))
+
+===================================================
+top-level branch with hook forward item
+===================================================
+
+#if defined OUTER
+#if defined FEATURE_A
+stock One(value)
+#else
+stock One(value, extra = 0)
+#endif
+{
+    return value;
+}
+#if defined HOOK
+CHAIN_FORWARD:OnThing() = 1;
+#else
+CHAIN_FORWARD:OnThingExtra() = 2;
+#endif
+#if defined FEATURE_B
+Two(value)
+{
+    return value;
+#else
+Two(value, extra = 0)
+{
+    return extra;
+#endif
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (conditional_function_definition
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      (directive_else)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier))
+        (parameter_declaration
+          name: (identifier)
+          default_value: (integer_literal)))
+      (directive_endif)
+      body: (block
+        (return_statement
+          value: (identifier))))
+    (top_level_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (hook_forward_statement
+        return_type: (tagged_type
+          tag: (identifier))
+        name: (identifier)
+        parameters: (parameter_list)
+        value: (integer_literal))
+      alternative: (top_level_else
+        (directive_else)
+        (hook_forward_statement
+          return_type: (tagged_type
+            tag: (identifier))
+          name: (identifier)
+          parameters: (parameter_list)
+          value: (integer_literal)))
+      (directive_endif))
+    (top_level_shared_tail_function_branch
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        body: (block
+          (return_statement
+            value: (identifier))
+          (top_level_shared_tail_function_alternative_statement
+            (directive_else)
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier))
+              (parameter_declaration
+                name: (identifier)
+                default_value: (integer_literal)))
+            (return_statement
+              value: (identifier))
+            (directive_endif)))))
+    alternative: (top_level_else
+      (directive_else)
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list)
+        body: (block
+          (return_statement
+            value: (integer_literal)))))
+    (directive_endif)))
+
+===================================================
+top-level wrapper with conditional function branch
+===================================================
+
+#if defined OUTER
+#if defined FEATURE
+stock ProbeCombo(value)
+#else
+stock ProbeCombo(value, extra = 0)
+#endif
+{
+#if defined INNER
+    return value;
+#else
+    return extra;
+#endif
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (conditional_function_definition
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      (directive_else)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier))
+        (parameter_declaration
+          name: (identifier)
+          default_value: (integer_literal)))
+      (directive_endif)
+      body: (block
+        (block_conditional
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (return_statement
+            value: (identifier))
+          alternative: (block_else
+            (directive_else)
+            (return_statement
+              value: (identifier)))
+          (directive_endif))))
+    alternative: (top_level_else
+      (directive_else)
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list)
+        body: (block
+          (return_statement
+            value: (integer_literal)))))
+    (directive_endif)))
+
+===================================================
+mixed outer wrapper branch variants
+===================================================
+
+#if defined OUTER
+#if defined FEATURE
+stock ProbeMixed(value)
+#else
+stock ProbeMixed(value, extra = 0)
+#endif
+{
+    return value;
+}
+#elseif defined ALT
+#if defined INNER
+ProbeMixed(value)
+{
+    return value;
+#else
+ProbeMixed(value, extra = 0)
+{
+    return extra;
+#endif
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (conditional_function_definition
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      (directive_else)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier))
+        (parameter_declaration
+          name: (identifier)
+          default_value: (integer_literal)))
+      (directive_endif)
+      body: (block
+        (return_statement
+          value: (identifier))))
+    alternative: (top_level_elseif
+      (directive_elseif
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (top_level_shared_tail_function_branch
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        (function_definition
+          name: (identifier)
+          parameters: (parameter_list
+            (parameter_declaration
+              name: (identifier)))
+          body: (block
+            (return_statement
+              value: (identifier))
+            (top_level_shared_tail_function_alternative_statement
+              (directive_else)
+              name: (identifier)
+              parameters: (parameter_list
+                (parameter_declaration
+                  name: (identifier))
+                (parameter_declaration
+                  name: (identifier)
+                  default_value: (integer_literal)))
+              (return_statement
+                value: (identifier))
+              (directive_endif)))))
+      alternative: (top_level_else
+        (directive_else)
+        (function_definition
+          name: (identifier)
+          parameters: (parameter_list)
+          body: (block
+            (return_statement
+              value: (integer_literal))))))
+    (directive_endif)))
+
+===================================================
+top-level branch with multiple wrapped items
+===================================================
+
+#if defined OUTER
+#if defined FEATURE
+stock First(value)
+#else
+stock First(value, extra = 0)
+#endif
+{
+    return value;
+}
+#if defined INNER
+Second(value)
+{
+    return value;
+#else
+Second(value, extra = 0)
+{
+    return extra;
+#endif
+}
+#else
+stock Fallback()
+{
+    return 0;
+}
+#endif
+
+---
+
+(source_file
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (conditional_function_definition
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier)))
+      (directive_else)
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter_declaration
+          name: (identifier))
+        (parameter_declaration
+          name: (identifier)
+          default_value: (integer_literal)))
+      (directive_endif)
+      body: (block
+        (return_statement
+          value: (identifier))))
+    (top_level_shared_tail_function_branch
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list
+          (parameter_declaration
+            name: (identifier)))
+        body: (block
+          (return_statement
+            value: (identifier))
+          (top_level_shared_tail_function_alternative_statement
+            (directive_else)
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier))
+              (parameter_declaration
+                name: (identifier)
+                default_value: (integer_literal)))
+            (return_statement
+              value: (identifier))
+            (directive_endif)))))
+    alternative: (top_level_else
+      (directive_else)
+      (function_definition
+        name: (identifier)
+        parameters: (parameter_list)
+        body: (block
+          (return_statement
+            value: (integer_literal)))))
+    (directive_endif)))

@@ -11,7 +11,6 @@ static Helper(playerid)
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -19,6 +18,113 @@ static Helper(playerid)
     body: (block
       (return_statement
         value: (identifier)))))
+
+========================
+special function names
+========================
+
+forward @timer();
+native Float:operator*(Float:oper1, Float:oper2) = floatmul;
+native [2]Encode(index);
+native Tag:[2]Pack(value);
+stock operator~(value)
+{
+  return value;
+}
+stock Float:operator++(Float:value)
+{
+    return value;
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (at_identifier
+      (identifier))
+    parameters: (parameter_list))
+  (function_declaration
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (operator_name)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)))
+    alias: (identifier))
+  (function_declaration
+    return_size: (fixed_dimension
+      size: (integer_literal))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))))
+  (function_declaration
+    return_type: (tagged_type
+      tag: (identifier))
+    return_size: (fixed_dimension
+      size: (integer_literal))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))))
+  (function_definition
+    name: (operator_name)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (identifier))))
+  (function_definition
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (operator_name)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (identifier)))))
+
+=========================
+conditional function body
+=========================
+
+stock WrappedBody(value)
+#if defined FEATURE
+    return 1;
+#else
+    return 2;
+#endif
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (return_statement
+        value: (integer_literal))
+      alternative: (block_else
+        (directive_else)
+        (return_statement
+          value: (integer_literal)))
+      (directive_endif))))
 
 ===============
 pragma directives
@@ -56,7 +162,6 @@ stock FastAbs(value)
   (directive_emit
     value: (preproc_text))
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -82,19 +187,15 @@ stock static Float:GetScale()
 
 (source_file
   (function_definition
-    (function_modifier)
-    (function_modifier)
-    return_type: (type
-      (tagged_type
-        tag: (tag)))
+    return_type: (tagged_type
+      tag: (identifier))
     name: (identifier)
     parameters: (parameter_list)
     body: (block
       (return_statement
         value: (tagged_expression
-          type: (type
-            (tagged_type
-              tag: (tag)))
+          type: (tagged_type
+            tag: (identifier))
           value: (parenthesized_expression
             expression: (float_literal)))))))
 
@@ -119,7 +220,6 @@ next_step: goto invalid_value;
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -134,11 +234,11 @@ next_step: goto invalid_value;
       (return_statement
         value: (integer_literal))
       (label_statement
-        label: (statement_label))
+        label: (identifier))
       (return_statement
         value: (integer_literal))
       (label_statement
-        label: (statement_label)
+        label: (identifier)
         statement: (inline_labeled_statement
           (goto_statement
             label: (identifier)))))))
@@ -149,17 +249,18 @@ macro prefixed function variants
 
 HOOK_PUBLIC DestroyPickup(pickupid)
 {
-    foreach(new playerid : Player)
-        return pickupid;
+  foreach(new playerid : Player)
+    return pickupid;
 }
 
 macro_forward AntiCheatGetSpeed(playerid) return playerid;
+forward OnScriptInit SSCANF_BRACKETS;
 
 ---
 
 (source_file
   (function_definition
-    prefix: (function_prefix)
+    prefix: (identifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -172,13 +273,17 @@ macro_forward AntiCheatGetSpeed(playerid) return playerid;
         body: (return_statement
           value: (identifier)))))
   (function_definition
-    prefix: (function_prefix)
+    prefix: (identifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier)))
     body: (return_statement
-      value: (identifier))))
+      value: (identifier)))
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list_reference
+      (identifier))))
 
 ==============================
 conditional function signature
@@ -201,20 +306,19 @@ conditional function signature
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
-    prefix: (function_prefix)
+    prefix: (identifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier))
       (parameter_declaration
         name: (identifier))
       (parameter_declaration
         name: (identifier)))
     (directive_else)
-    prefix: (function_prefix)
+    prefix: (identifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -227,6 +331,55 @@ conditional function signature
     body: (block
       (return_statement
         value: (integer_literal)))))
+
+=======================================
+conditional function signature and body
+=======================================
+
+#if defined FEATURE
+stock Combo(value)
+#else
+stock Combo(value, extra = 0)
+#endif
+#if defined INNER
+    return value;
+#else
+    return extra;
+#endif
+
+---
+
+(source_file
+  (conditional_function_definition
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    (directive_else)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier)
+        default_value: (integer_literal)))
+    (directive_endif)
+    body: (block_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (return_statement
+        value: (identifier))
+      alternative: (block_else
+        (directive_else)
+        (return_statement
+          value: (identifier)))
+      (directive_endif))))
 
 =====================
 inline label variants
@@ -247,14 +400,13 @@ stock MoreInlineLabels(value)
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier)))
     body: (block
       (label_statement
-        label: (statement_label)
+        label: (identifier)
         statement: (inline_labeled_statement
           (if_statement
             condition: (binary_expression
@@ -264,21 +416,20 @@ stock MoreInlineLabels(value)
               (return_statement
                 value: (integer_literal))))))
       (label_statement
-        label: (statement_label)
+        label: (identifier)
         statement: (inline_labeled_statement
           (variable_declaration
-            (declaration_qualifier)
             (variable_declarator
               name: (identifier)
               initializer: (integer_literal)))))
       (label_statement
-        label: (statement_label)
+        label: (identifier)
         statement: (inline_labeled_statement
           (while_statement
             condition: (identifier)
             body: (break_statement))))
       (label_statement
-        label: (statement_label)
+        label: (identifier)
         statement: (inline_labeled_statement
           (switch_statement
             condition: (identifier)
@@ -296,9 +447,8 @@ CHAIN_FORWARD:OnThing() = 1;
 
 (source_file
   (hook_forward_statement
-    return_type: (type
-      (tagged_type
-        tag: (tag)))
+    return_type: (tagged_type
+      tag: (identifier))
     name: (identifier)
     parameters: (parameter_list)
     value: (integer_literal)))
@@ -318,20 +468,19 @@ stock InlineLabelBranches(value)
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier)))
     body: (block
       (label_statement
-        label: (statement_label)
+        label: (identifier)
         statement: (inline_labeled_statement
           (block
             (return_statement
               value: (integer_literal)))))
       (label_statement
-        label: (statement_label)
+        label: (identifier)
         statement: (inline_labeled_statement
           (for_statement
             condition: (binary_expression
@@ -341,7 +490,7 @@ stock InlineLabelBranches(value)
               argument: (identifier))
             body: (break_statement))))
       (label_statement
-        label: (statement_label)
+        label: (identifier)
         statement: (inline_labeled_statement
           (do_while_statement
             body: (expression_statement
@@ -362,6 +511,11 @@ stock InlineLabelDirectives(value)
     }
 
     emit_here: #emit ABS
+  wrapped_guard: #if defined TESTING
+    return 1;
+#else
+    return 2;
+#endif
 #if defined TESTING
     guard_here: #warning debug build
 #endif
@@ -371,7 +525,6 @@ stock InlineLabelDirectives(value)
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -383,24 +536,116 @@ stock InlineLabelDirectives(value)
           right: (integer_literal))
         body: (block
           (label_statement
-            label: (statement_label)
+            label: (identifier)
             statement: (inline_labeled_statement
               (continue_statement)))))
       (label_statement
-        label: (statement_label)
+        label: (identifier)
         statement: (inline_labeled_statement
           (directive_emit
             value: (preproc_text))))
-      (directive_if
-        condition: (preproc_expression
-          (preproc_defined
-            name: (identifier))))
       (label_statement
-        label: (statement_label)
+        label: (identifier)
         statement: (inline_labeled_statement
-          (directive_warning
-            message: (preproc_text))))
-      (directive_endif))))
+          (block_conditional
+            (directive_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            (return_statement
+              value: (integer_literal))
+            alternative: (block_else
+              (directive_else)
+              (return_statement
+                value: (integer_literal)))
+            (directive_endif))))
+      (block_conditional
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        (label_statement
+          label: (identifier)
+          statement: (inline_labeled_statement
+            (directive_warning
+              message: (preproc_text))))
+        (directive_endif)))))
+
+==============================
+inline label expression variants
+==============================
+
+stock InlineLabelExpressions(value)
+{
+    next_value: value++;
+    reset_value: value = 0;
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (label_statement
+        label: (identifier)
+        statement: (inline_labeled_statement
+          (expression_statement
+            expression: (update_expression
+              argument: (identifier)))))
+      (label_statement
+        label: (identifier)
+        statement: (inline_labeled_statement
+          (expression_statement
+            expression: (assignment_expression
+              left: (identifier)
+              right: (integer_literal))))))))
+
+===============================
+sizeof empty subscript variants
+===============================
+
+stock SizeofArraySlice(playerid)
+{
+    for(new i = sizeof(adArrayPTDs[]) - 1; i >= 0; --i)
+        adArrayPTDs[playerid][i] = PlayerText:65535;
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (for_statement
+        initializer: (variable_declarator
+          name: (identifier)
+          initializer: (binary_expression
+            left: (sizeof_expression
+              array: (identifier))
+            right: (integer_literal)))
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        update: (update_expression
+          argument: (identifier))
+        body: (expression_statement
+          expression: (assignment_expression
+            left: (subscript_expression
+              array: (subscript_expression
+                array: (identifier)
+                index: (identifier))
+              index: (identifier))
+            right: (tagged_expression
+              type: (tagged_type
+                tag: (identifier))
+              value: (integer_literal))))))))
 
 =================
 state classifiers
@@ -418,11 +663,15 @@ stock OnThing(playerid) <connected, idle>
     return 1;
 }
 
+stock OnThing(playerid) <_ALS : _ALS_x0, _ALS : _ALS_x1>
+{
+  return 1;
+}
+
 ---
 
 (source_file
   (function_declaration
-    kind: (function_declaration_kind)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -430,7 +679,6 @@ stock OnThing(playerid) <connected, idle>
     state: (state_classifier
       (state_name)))
   (function_declaration
-    kind: (function_declaration_kind)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -439,7 +687,6 @@ stock OnThing(playerid) <connected, idle>
       (state_name)
       (state_name)))
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -450,7 +697,6 @@ stock OnThing(playerid) <connected, idle>
       (return_statement
         value: (integer_literal))))
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -458,6 +704,21 @@ stock OnThing(playerid) <connected, idle>
     state: (state_classifier
       (state_name)
       (state_name))
+    body: (block
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    state: (state_classifier
+      (scoped_state_entry
+        scope: (state_name)
+        state: (state_name))
+      (scoped_state_entry
+        scope: (state_name)
+        state: (state_name)))
     body: (block
       (return_statement
         value: (integer_literal)))))

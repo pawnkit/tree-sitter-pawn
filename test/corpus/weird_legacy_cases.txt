@@ -23,19 +23,15 @@ static stock const Float:ranges[] = { 1.0, 2.0 };
 
 (source_file
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       (fixed_dimension
         size: (identifier))
       initializer: (array_literal
-        (boolean_literal)
-        (ellipsis))))
+        (boolean_literal))))
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier)
       (fixed_dimension
@@ -50,32 +46,26 @@ static stock const Float:ranges[] = { 1.0, 2.0 };
           (integer_literal)
           (integer_literal)))))
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag_wildcard)))
+      type: (tagged_type
+        tag: (tag_wildcard))
       name: (identifier)
       initializer: (integer_literal)))
   (function_definition
-    (function_modifier)
-    return_type: (type
-      (tagged_type
-        tag: (tag)))
+    return_type: (tagged_type
+      tag: (identifier))
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier)))
     body: (block
       (variable_declaration
-        (declaration_qualifier)
         (variable_declarator
           name: (identifier)
           initializer: (ternary_expression
             condition: (tagged_expression
-              type: (type
-                (tagged_type
-                  tag: (tag)))
+              type: (tagged_type
+                tag: (identifier))
               value: (subscript_expression
                 array: (identifier)
                 index: (identifier)))
@@ -83,38 +73,29 @@ static stock const Float:ranges[] = { 1.0, 2.0 };
             alternative: (integer_literal))))
       (return_statement
         value: (tagged_expression
-          type: (type
-            (tagged_type
-              tag: (tag)))
+          type: (tagged_type
+            tag: (identifier))
           value: (parenthesized_expression
             expression: (identifier))))))
   (function_definition
-    (function_modifier)
-    return_type: (type
-      (tagged_type
-        tag: (tag_wildcard)))
+    return_type: (tagged_type
+      tag: (tag_wildcard))
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier)))
     body: (block
       (return_statement
         value: (tagged_expression
-          type: (type
-            (tagged_type
-              tag: (tag_wildcard)))
+          type: (tagged_type
+            tag: (tag_wildcard))
           value: (identifier)))))
   (variable_declaration
-    (declaration_qualifier)
-    (visibility_modifier)
-    (declaration_qualifier)
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       (dimension)
       initializer: (array_literal

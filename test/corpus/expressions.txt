@@ -14,29 +14,23 @@ stock Float:Distance(Float:x, Float:y)
 
 (source_file
   (function_definition
-    (function_modifier)
-    return_type: (type
-      (tagged_type
-        tag: (tag)))
+    return_type: (tagged_type
+      tag: (identifier))
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier))
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier)))
     body: (block
       (variable_declaration
-        (declaration_qualifier)
         (variable_declarator
-          type: (type
-            (tagged_type
-              tag: (tag)))
+          type: (tagged_type
+            tag: (identifier))
           name: (identifier)
           initializer: (binary_expression
             left: (binary_expression
@@ -58,9 +52,8 @@ stock Float:Distance(Float:x, Float:y)
               right: (float_literal))
             consequence: (identifier)
             alternative: (tagged_expression
-              type: (type
-                (tagged_type
-                  tag: (tag)))
+              type: (tagged_type
+                tag: (identifier))
               value: (parenthesized_expression
                 expression: (float_literal))))))
       (return_statement
@@ -85,85 +78,114 @@ stock Float:Invoke()
 
 new Float:coords[3] = { Float:(1.0), Float:(2.0), Float:(3.0) };
 
+stock GetTagId()
+{
+  return tagof(Player:);
+}
+
+stock GetTagValue(value)
+{
+  return tagof value;
+}
+
+stock GetPublicRef()
+{
+  return expr_public(#_pp@indirect_call);
+}
+
 ---
 
 (source_file
   (function_definition
-    (function_modifier)
-    return_type: (type
-      (tagged_type
-        tag: (tag)))
+    return_type: (tagged_type
+      tag: (identifier))
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier)))
     body: (block
       (return_statement
         value: (tagged_expression
-          type: (type
-            (tagged_type
-              tag: (tag)))
+          type: (tagged_type
+            tag: (identifier))
           value: (parenthesized_expression
             expression: (ternary_expression
               condition: (binary_expression
                 left: (identifier)
                 right: (tagged_expression
-                  type: (type
-                    (tagged_type
-                      tag: (tag)))
+                  type: (tagged_type
+                    tag: (identifier))
                   value: (parenthesized_expression
                     expression: (float_literal))))
               consequence: (tagged_expression
-                type: (type
-                  (tagged_type
-                    tag: (tag)))
+                type: (tagged_type
+                  tag: (identifier))
                 value: (parenthesized_expression
                   expression: (float_literal)))
               alternative: (identifier)))))))
   (function_definition
-    (function_modifier)
-    return_type: (type
-      (tagged_type
-        tag: (tag)))
+    return_type: (tagged_type
+      tag: (identifier))
     name: (identifier)
     parameters: (parameter_list)
     body: (block
       (return_statement
         value: (tagged_expression
-          type: (type
-            (tagged_type
-              tag: (tag)))
+          type: (tagged_type
+            tag: (identifier))
           value: (call_expression
             function: (identifier)
             arguments: (argument_list))))))
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       (fixed_dimension
         size: (integer_literal))
       initializer: (array_literal
         (tagged_expression
-          type: (type
-            (tagged_type
-              tag: (tag)))
+          type: (tagged_type
+            tag: (identifier))
           value: (parenthesized_expression
             expression: (float_literal)))
         (tagged_expression
-          type: (type
-            (tagged_type
-              tag: (tag)))
+          type: (tagged_type
+            tag: (identifier))
           value: (parenthesized_expression
             expression: (float_literal)))
         (tagged_expression
-          type: (type
-            (tagged_type
-              tag: (tag)))
+          type: (tagged_type
+            tag: (identifier))
           value: (parenthesized_expression
-            expression: (float_literal)))))))
+            expression: (float_literal))))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (return_statement
+        value: (tagof_expression
+          argument: (bare_type_expression
+            type: (tagged_type
+              tag: (identifier)))))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (tagof_expression
+          argument: (identifier)))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (return_statement
+        value: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (function_reference_expression
+              argument: (identifier))))))))

@@ -16,9 +16,8 @@ enum
     (enum_entry
       name: (identifier))
     (enum_entry
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       (fixed_dimension
         size: (integer_literal)))
@@ -50,27 +49,28 @@ macro signature and complex preproc if
             (identifier))
           (preproc_expression
             (macro_parameter))))))
-  (directive_if
-    condition: (preproc_expression
-      (preproc_binary_expression
-        left: (preproc_expression
-          (preproc_unary_expression
-            argument: (preproc_expression
-              (preproc_defined
-                name: (identifier)))))
-        right: (preproc_expression
-          (preproc_binary_expression
-            left: (preproc_expression
-              (preproc_parenthesized_expression
-                expression: (preproc_expression
-                  (preproc_binary_expression
-                    left: (preproc_expression
-                      (identifier))
-                    right: (preproc_expression
-                      (integer_literal))))))
-            right: (preproc_expression
-              (integer_literal)))))))
-  (directive_endif))
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_binary_expression
+          left: (preproc_expression
+            (preproc_unary_expression
+              argument: (preproc_expression
+                (preproc_defined
+                  name: (identifier)))))
+          right: (preproc_expression
+            (preproc_binary_expression
+              left: (preproc_expression
+                (preproc_parenthesized_expression
+                  expression: (preproc_expression
+                    (preproc_binary_expression
+                      left: (preproc_expression
+                        (identifier))
+                      right: (preproc_expression
+                        (integer_literal))))))
+              right: (preproc_expression
+                (integer_literal)))))))
+    (directive_endif)))
 
 ==========================
 preprocessor wrapped enum
@@ -86,16 +86,17 @@ enum Test
 ---
 
 (source_file
-  (directive_if
-    condition: (preproc_expression
-      (preproc_defined
-        name: (identifier))))
-  (enum_declaration
-    name: (identifier)
-    (enum_entry
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (enum_declaration
       name: (identifier)
-      value: (integer_literal)))
-  (directive_endif))
+      (enum_entry
+        name: (identifier)
+        value: (integer_literal)))
+    (directive_endif)))
 
 =====================================
 typed enum entries and packed members
@@ -115,14 +116,12 @@ enum WeaponData
   (enum_declaration
     name: (identifier)
     (enum_entry
-      type: (type
-        (tagged_type
-          tag: (tag_wildcard)))
+      type: (tagged_type
+        tag: (tag_wildcard))
       name: (identifier))
     (enum_entry
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier))
     (enum_entry
       name: (identifier)
@@ -130,9 +129,8 @@ enum WeaponData
         size: (integer_literal)
         storage: (packed_storage)))
     (enum_entry
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       value: (boolean_literal))))
 
@@ -204,5 +202,56 @@ enum Offsets (= 5)
       value: (integer_literal))
     (enum_entry
       name: (identifier))
+    (enum_entry
+      name: (identifier))))
+
+==============================
+tagged named enum header forms
+==============================
+
+enum EntryType:
+{
+    ENTRY_NONE,
+    ENTRY_DATA
+};
+
+enum FlagBits:(<<= 1)
+{
+    FLAG_ONE = 1,
+    FLAG_TWO
+};
+
+enum ErrorGroup:ErrorTag (+= 1)
+{
+  ERROR_ONE = 1,
+  ERROR_TWO
+};
+
+---
+
+(source_file
+  (enum_declaration
+    name: (identifier)
+    (enum_entry
+      name: (identifier))
+    (enum_entry
+      name: (identifier)))
+  (enum_declaration
+    name: (identifier)
+    increment: (enum_increment_clause
+      value: (integer_literal))
+    (enum_entry
+      name: (identifier)
+      value: (integer_literal))
+    (enum_entry
+      name: (identifier)))
+  (enum_declaration
+    name: (identifier)
+    type: (identifier)
+    increment: (enum_increment_clause
+      value: (integer_literal))
+    (enum_entry
+      name: (identifier)
+      value: (integer_literal))
     (enum_entry
       name: (identifier))))

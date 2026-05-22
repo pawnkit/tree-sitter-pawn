@@ -25,18 +25,22 @@ stock FormatPlayerLabel(playerid)
   return 1;
 }
 
+stock Func:Claim<i>(Func:f<i>, &Func:d<>)
+{
+  new Func:local<>;
+  return @.f(local);
+}
+
 ---
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier)))
     body: (block
       (variable_declaration
-        (declaration_qualifier)
         (variable_declarator
           name: (identifier)
           (fixed_dimension
@@ -54,7 +58,6 @@ stock FormatPlayerLabel(playerid)
       (return_statement
         value: (integer_literal))))
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -80,14 +83,12 @@ stock FormatPlayerLabel(playerid)
       (return_statement
         value: (integer_literal))))
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier)))
     body: (block
       (variable_declaration
-        (declaration_qualifier)
         (variable_declarator
           name: (identifier)
           (fixed_dimension
@@ -102,12 +103,42 @@ stock FormatPlayerLabel(playerid)
               array: (identifier)
               index: (identifier))
             (sizeof_expression
-              argument: (subscript_expression
-                array: (identifier)
-                index: (identifier)))
+              array: (identifier)
+              index: (identifier))
             (string_literal)
             (subscript_expression
               array: (identifier)
               index: (identifier)))))
       (return_statement
-        value: (integer_literal)))))
+        value: (integer_literal))))
+  (function_definition
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (identifier)
+    callback_signature: (callback_signature
+      types: (identifier))
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)
+        callback_signature: (callback_signature
+          types: (identifier)))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)
+        callback_signature: (callback_signature)))
+    body: (block
+      (variable_declaration
+        (variable_declarator
+          type: (tagged_type
+            tag: (identifier))
+          name: (identifier)
+          callback_signature: (callback_signature)))
+      (return_statement
+        value: (call_expression
+          function: (callback_member_expression
+            name: (identifier))
+          arguments: (argument_list
+            (identifier)))))))

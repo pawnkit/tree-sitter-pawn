@@ -24,6 +24,16 @@ public OnPlayerConnect(playerid)
         playerid--;
     } while (playerid > 0);
 
+    WRAP(playerid)
+    {
+      return 7;
+    }
+
+    foreach (Player, playerid)
+    {
+      return 6;
+    }
+
     switch (playerid) {
         case 0:
             return 1;
@@ -42,7 +52,6 @@ public OnPlayerConnect(playerid)
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -54,7 +63,6 @@ public OnPlayerConnect(playerid)
           right: (integer_literal))
         consequence: (block
           (variable_declaration
-            (declaration_qualifier)
             (variable_declarator
               name: (identifier)
               initializer: (integer_literal))))
@@ -62,7 +70,6 @@ public OnPlayerConnect(playerid)
           (return_statement
             value: (integer_literal))))
       (for_statement
-        initializer: (declaration_qualifier)
         initializer: (variable_declarator
           name: (identifier)
           initializer: (integer_literal))
@@ -92,6 +99,20 @@ public OnPlayerConnect(playerid)
         condition: (binary_expression
           left: (identifier)
           right: (integer_literal)))
+      (macro_invocation_block_statement
+        name: (identifier)
+        arguments: (argument_list
+          (identifier))
+        body: (block
+          (return_statement
+            value: (integer_literal))))
+      (foreach_statement
+        iterator: (foreach_iterator
+          collection: (identifier)
+          name: (identifier))
+        body: (block
+          (return_statement
+            value: (integer_literal))))
       (switch_statement
         condition: (identifier)
         (case_statement

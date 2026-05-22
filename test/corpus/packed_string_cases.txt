@@ -9,14 +9,12 @@ new board[4][32 char];
 
 (source_file
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier)
       (packed_dimension
         size: (integer_literal)
         storage: (packed_storage))))
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier)
       (fixed_dimension
@@ -40,7 +38,6 @@ enum MessageInfo {
 
 (source_file
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier)
       (fixed_dimension
@@ -79,11 +76,9 @@ stock ShowMessage(const message[144 char])
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
-        (parameter_qualifier)
         name: (identifier)
         (packed_dimension
           size: (integer_literal)
@@ -108,7 +103,6 @@ stock CopyPacked(const source[32 char], dest[32 char])
 
 (source_file
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier)
       (fixed_dimension
@@ -120,14 +114,11 @@ stock CopyPacked(const source[32 char], dest[32 char])
         (unary_expression
           argument: (string_literal))
         (unary_expression
-          argument: (string_literal))
-        (ellipsis))))
+          argument: (string_literal)))))
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       (fixed_dimension
         size: (integer_literal))
@@ -140,11 +131,9 @@ stock CopyPacked(const source[32 char], dest[32 char])
         (unary_expression
           argument: (string_literal)))))
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
-        (parameter_qualifier)
         name: (identifier)
         (packed_dimension
           size: (integer_literal)
@@ -168,7 +157,6 @@ new packed[] = !"Hello";
 
 (source_file
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier)
       (dimension)
@@ -186,18 +174,22 @@ label_a:
     goto label_a;
 }
 
+stock PackedSizeExpr(const text[])
+{
+  new size = (strlen(text) + 1) char;
+  return (size char);
+}
+
 ---
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list)
     body: (block
       (label_statement
-        label: (statement_label))
+        label: (identifier))
       (variable_declaration
-        (declaration_qualifier)
         (variable_declarator
           name: (identifier)
           (fixed_dimension
@@ -208,8 +200,83 @@ label_a:
           initializer: (array_literal
             (unary_expression
               argument: (string_literal))
-            (ellipsis)
             (unary_expression
               argument: (string_literal)))))
       (goto_statement
-        label: (identifier)))))
+        label: (identifier))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)
+        (dimension)))
+    body: (block
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          initializer: (packed_storage_expression
+            value: (parenthesized_expression
+              expression: (binary_expression
+                left: (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (identifier)))
+                right: (integer_literal)))
+            storage: (packed_storage))))
+      (return_statement
+        value: (parenthesized_expression
+          expression: (packed_storage_expression
+            value: (identifier)
+            storage: (packed_storage)))))))
+
+====================
+packed brace indexes
+====================
+
+stock PackedAccess(playerid, index)
+{
+    if (!items[playerid][index]{0}) {
+        items[playerid][index]{3} = '.';
+    }
+    return items[playerid][index]{2};
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (if_statement
+        condition: (unary_expression
+          argument: (packed_subscript_expression
+            array: (subscript_expression
+              array: (subscript_expression
+                array: (identifier)
+                index: (identifier))
+              index: (identifier))
+            index: (integer_literal)))
+        consequence: (block
+          (expression_statement
+            expression: (assignment_expression
+              left: (packed_subscript_expression
+                array: (subscript_expression
+                  array: (subscript_expression
+                    array: (identifier)
+                    index: (identifier))
+                  index: (identifier))
+                index: (integer_literal))
+              right: (char_literal)))))
+      (return_statement
+        value: (packed_subscript_expression
+          array: (subscript_expression
+            array: (subscript_expression
+              array: (identifier)
+              index: (identifier))
+            index: (identifier))
+          index: (integer_literal))))))

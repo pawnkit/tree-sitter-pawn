@@ -72,24 +72,27 @@ directives
   (directive_file
     path: (string_literal))
   (directive_endinput)
-  (directive_if
-    condition: (preproc_expression
-      (preproc_binary_expression
-        left: (preproc_expression
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_binary_expression
+          left: (preproc_expression
+            (preproc_defined
+              name: (identifier)))
+          right: (preproc_expression
+            (preproc_binary_expression
+              left: (preproc_expression
+                (identifier))
+              right: (preproc_expression
+                (integer_literal)))))))
+    alternative: (top_level_elseif
+      (directive_elseif
+        condition: (preproc_expression
           (preproc_defined
-            name: (identifier)))
-        right: (preproc_expression
-          (preproc_binary_expression
-            left: (preproc_expression
-              (identifier))
-            right: (preproc_expression
-              (integer_literal)))))))
-  (directive_elseif
-    condition: (preproc_expression
-      (preproc_defined
-        name: (identifier))))
-  (directive_else)
-  (directive_endif))
+            name: (identifier))))
+      alternative: (top_level_else
+        (directive_else)))
+    (directive_endif)))
 
 =================================
 structured macro replacement forms
@@ -100,6 +103,22 @@ structured macro replacement forms
 #define SET_ELEM(%0,%1,%2) %0[%1] = %2
 #define WITH_SIZE(%0) sizeof(%0)
 #define MULTI_STMT(%0,%1) { %0 = %1; %1 = %0; }
+#define TAGGED_NEG (_:-1)
+#define TAGGED_NEG_TRAIL (_:-1,)
+#define COMPLEX_HDR(_:(%0,%1),%2(%3,%9)) CALL(_:(%0),%2(%3))
+#define OPEN_ALIAS( REAL_OPEN_ALIAS(
+#define MAP_WRAP({%0}%1) LAMBDA_i<Map>{%0}(%1)
+#define STRUCT_NO_SPACE(%0)(%0)
+#define TAG_SET {TagA,TagB}
+#define TAG_LIST TagA,TagB
+#define TAG_WILDCARD_LIST _,TagA
+#define TAGGED_CHAIN(%0) TagA:Value:Tail:%0
+#define STORAGE_CLASS static
+#define TAGGED_AT (_:@foo)
+#define TAGGED_AT_CHAIN(%0) (_:@foo:@bar:(%0))
+#define BCD(%0) (_:MORE_BCD:NO_MORE_BCD:%0.$0)
+#define VERSION_BCD (BCD(VERSION_MAJOR.VERSION_MINOR.VERSION_BUILD))
+#define VERSION_STRING #VERSION_MAJOR "." #VERSION_MINOR "." #VERSION_BUILD
 
 ---
 
@@ -168,7 +187,202 @@ structured macro replacement forms
               (preproc_assignment_expression
                 left: (macro_parameter)
                 right: (preproc_expression
-                  (macro_parameter))))))))))
+                  (macro_parameter)))))))))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_parenthesized_expression
+          expression: (preproc_expression
+            (preproc_tagged_expression
+              type: (tagged_type
+                tag: (tag_wildcard))
+              value: (preproc_unary_expression
+                argument: (preproc_expression
+                  (integer_literal)))))))))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_parenthesized_expression
+          expression: (preproc_expression
+            (preproc_tagged_expression
+              type: (tagged_type
+                tag: (tag_wildcard))
+              value: (preproc_unary_expression
+                argument: (preproc_expression
+                  (integer_literal)))))))))
+  (directive_define
+    name: (identifier)
+    parameters: (complex_macro_parameter_list
+      left: (complex_macro_parameter_header
+        type: (tagged_type
+          tag: (tag_wildcard))
+        parameters: (macro_parameter_list
+          (macro_parameter)
+          (macro_parameter)))
+      right: (complex_macro_parameter_header
+        name: (macro_parameter)
+        parameters: (macro_parameter_list
+          (macro_parameter)
+          (macro_parameter))))
+    value: (preproc_text))
+  (directive_define
+    name: (identifier)
+    value: (preproc_text))
+  (directive_define
+    name: (identifier)
+    parameters: (structured_macro_parameter_list
+      (braced_macro_parameter
+        (macro_parameter))
+      (macro_parameter))
+    value: (preproc_text))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (preproc_text))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_tag_set
+          (identifier)
+          (identifier)))))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression_list
+        left: (preproc_expression
+          (identifier))
+        right: (preproc_expression
+          (identifier)))))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression_list
+        left: (preproc_expression
+          (tag_wildcard))
+        right: (preproc_expression
+          (identifier)))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (preproc_text))
+  (directive_define
+    name: (identifier)
+    value: (preproc_text))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_parenthesized_expression
+          expression: (preproc_expression
+            (preproc_tagged_expression
+              type: (tagged_type
+                tag: (tag_wildcard))
+              value: (macro_at_identifier
+                (identifier))))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_parenthesized_expression
+          expression: (preproc_expression
+            (preproc_tagged_expression
+              type: (tagged_type
+                tag: (tag_wildcard))
+              value: (preproc_tagged_expression
+                type: (tagged_type
+                  tag: (macro_at_identifier
+                    (identifier)))
+                value: (preproc_tagged_expression
+                  type: (tagged_type
+                    tag: (macro_at_identifier
+                      (identifier)))
+                  value: (preproc_parenthesized_expression
+                    expression: (preproc_expression
+                      (macro_parameter)))))))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_parenthesized_expression
+          expression: (preproc_expression
+            (preproc_tagged_expression
+              type: (tagged_type
+                tag: (tag_wildcard))
+              value: (preproc_tagged_expression
+                type: (tagged_type
+                  tag: (identifier))
+                value: (preproc_tagged_expression
+                  type: (tagged_type
+                    tag: (identifier))
+                  value: (preproc_member_expression
+                    object: (macro_parameter)
+                    property: (preproc_dollar_expression
+                      argument: (integer_literal)))))))))))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_parenthesized_expression
+          expression: (preproc_expression
+            (preproc_call_expression
+              function: (identifier)
+              (preproc_expression
+                (preproc_member_expression
+                  object: (preproc_member_expression
+                    object: (identifier)
+                    property: (identifier))
+                  property: (identifier)))))))))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_adjacent_string_expression
+          left: (preproc_stringify_expression
+            argument: (identifier))
+          right: (string_literal)
+          right: (preproc_stringify_expression
+            argument: (identifier))
+          right: (string_literal)
+          right: (preproc_stringify_expression
+            argument: (identifier)))))))
+
+=====================================
+unsupported define header recovery
+=====================================
+
+#define WRAP<%0> Value@%0
+#define WRAP2(%0,""#,%1) Value@%0
+stock AfterUnsupportedDefine()
+{
+    return 1;
+}
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    unsupported_header: (preproc_text)
+    value: (preproc_text))
+  (directive_define
+    name: (identifier)
+    unsupported_parameters: (preproc_text)
+    value: (preproc_text))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (return_statement
+        value: (integer_literal)))))
 
 =========================
 macro pasted identifiers
@@ -196,6 +410,293 @@ macro pasted identifiers
             function: (macro_pasted_identifier)
             (preproc_expression
               (macro_parameter))))))))
+
+=================================
+declaration led macro replacement
+=================================
+
+#define CONVERT_TIME(%0,%1,%2,%3,%4) new Float:%0 = floatdiv(%1, 60000.0); %2 = floatround(%0, floatround_tozero); %3 = floatround(floatmul(%0 - %2, 60.0), floatround_tozero); %4 = floatround(floatmul(floatmul(%0 - %2, 60.0) - %3, 1000.0), floatround_tozero)
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_declaration_sequence
+        (macro_variable_declaration
+          type: (tagged_type
+            tag: (identifier))
+          name: (macro_parameter)
+          initializer: (preproc_expression
+            (preproc_call_expression
+              function: (identifier)
+              (preproc_expression
+                (macro_parameter))
+              (preproc_expression
+                (float_literal)))))
+        (macro_expression_statement
+          expression: (preproc_expression
+            (preproc_assignment_expression
+              left: (macro_parameter)
+              right: (preproc_expression
+                (preproc_call_expression
+                  function: (identifier)
+                  (preproc_expression
+                    (macro_parameter))
+                  (preproc_expression
+                    (identifier)))))))
+        (macro_expression_statement
+          expression: (preproc_expression
+            (preproc_assignment_expression
+              left: (macro_parameter)
+              right: (preproc_expression
+                (preproc_call_expression
+                  function: (identifier)
+                  (preproc_expression
+                    (preproc_call_expression
+                      function: (identifier)
+                      (preproc_expression
+                        (preproc_binary_expression
+                          left: (preproc_expression
+                            (macro_parameter))
+                          right: (preproc_expression
+                            (macro_parameter))))
+                      (preproc_expression
+                        (float_literal))))
+                  (preproc_expression
+                    (identifier)))))))
+        tail: (preproc_expression
+          (preproc_assignment_expression
+            left: (macro_parameter)
+            right: (preproc_expression
+              (preproc_call_expression
+                function: (identifier)
+                (preproc_expression
+                  (preproc_call_expression
+                    function: (identifier)
+                    (preproc_expression
+                      (preproc_binary_expression
+                        left: (preproc_expression
+                          (preproc_call_expression
+                            function: (identifier)
+                            (preproc_expression
+                              (preproc_binary_expression
+                                left: (preproc_expression
+                                  (macro_parameter))
+                                right: (preproc_expression
+                                  (macro_parameter))))
+                            (preproc_expression
+                              (float_literal))))
+                        right: (preproc_expression
+                          (macro_parameter))))
+                    (preproc_expression
+                      (float_literal))))
+                (preproc_expression
+                  (identifier))))))))))
+
+======================================
+spaced forward public macro replacement
+======================================
+
+#define fpublic%0(%1) forward %0(%1); public %0(%1)
+
+---
+
+(source_file
+  (directive_define
+    name: (macro_pasted_identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_function_sequence
+        (macro_terminated_function_statement
+          (macro_function_statement
+            name: (macro_parameter)
+            parameters: (macro_parameter_list
+              (macro_parameter))))
+        tail: (macro_function_statement
+          name: (macro_parameter)
+          parameters: (macro_parameter_list
+            (macro_parameter)))))))
+
+=================================
+at-prefixed macro function names
+=================================
+
+#define INI_Parse(%1,%2) \
+    forward @INI_%1_%2(name[], value[]); \
+    @INI_%1_%2(name[], value[])
+
+#define CHAIN_HOOK(%0) forward @CO_%0();public @CO_%0(){return 1;}
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_function_sequence
+        (macro_terminated_function_statement
+          (macro_function_statement
+            name: (macro_at_identifier
+              (macro_pasted_identifier))
+            parameters: (parameter_list
+              (parameter_declaration
+                name: (identifier)
+                (dimension))
+              (parameter_declaration
+                name: (identifier)
+                (dimension)))))
+        tail: (macro_bare_function_statement
+          name: (macro_at_identifier
+            (macro_pasted_identifier))
+          parameters: (parameter_list
+            (parameter_declaration
+              name: (identifier)
+              (dimension))
+            (parameter_declaration
+              name: (identifier)
+              (dimension)))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_function_sequence
+        (macro_terminated_function_statement
+          (macro_function_statement
+            name: (macro_at_identifier
+              (macro_pasted_identifier))
+            parameters: (parameter_list)))
+        tail: (macro_function_definition_statement
+          name: (macro_at_identifier
+            (macro_pasted_identifier))
+          parameters: (parameter_list)
+          body: (macro_block
+            (macro_statement
+              (macro_return_statement
+                value: (preproc_expression
+                  (integer_literal))))))))))
+
+=================================
+macro operator function names
+=================================
+
+#define BIN_OP(%0,%1) \
+    forward operator+(%0:arg1, %1:arg2); \
+    operator+(%0:arg1, %1:arg2)
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_function_sequence
+        (macro_terminated_function_statement
+          (macro_function_statement
+            name: (operator_name)
+            parameters: (macro_parameter_list
+              (macro_colon_parameter
+                left: (macro_parameter)
+                right: (identifier))
+              (macro_colon_parameter
+                left: (macro_parameter)
+                right: (identifier)))))
+        tail: (macro_bare_function_statement
+          name: (operator_name)
+          parameters: (macro_parameter_list
+            (macro_colon_parameter
+              left: (macro_parameter)
+              right: (identifier))
+            (macro_colon_parameter
+              left: (macro_parameter)
+              right: (identifier))))))))
+
+====================================
+macro stringify and comma grouping
+====================================
+
+#define strcpy(%0,%1,%2) strcat((%0[0] = '\0', %0), %1, %2)
+#define dcmd2(%1,%2,%3) if(!strcmp((%3)[1], #%1, true, (%2))) return 1
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_call_expression
+          function: (identifier)
+          (preproc_expression
+            (preproc_parenthesized_expression
+              expression: (preproc_expression_list
+                left: (preproc_expression
+                  (preproc_assignment_expression
+                    left: (preproc_subscript_expression
+                      array: (macro_parameter)
+                      index: (preproc_expression
+                        (integer_literal)))
+                    right: (preproc_expression
+                      (char_literal
+                        (escape_sequence)))))
+                right: (preproc_expression
+                  (macro_parameter)))))
+          (preproc_expression
+            (macro_parameter))
+          (preproc_expression
+            (macro_parameter))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_if_statement
+        condition: (preproc_expression
+          (preproc_unary_expression
+            argument: (preproc_expression
+              (preproc_call_expression
+                function: (identifier)
+                (preproc_expression
+                  (preproc_subscript_expression
+                    array: (preproc_parenthesized_expression
+                      expression: (preproc_expression
+                        (macro_parameter)))
+                    index: (preproc_expression
+                      (integer_literal))))
+                (preproc_expression
+                  (preproc_stringify_expression
+                    argument: (macro_parameter)))
+                (preproc_expression
+                  (boolean_literal))
+                (preproc_expression
+                  (preproc_parenthesized_expression
+                    expression: (preproc_expression
+                      (macro_parameter))))))))
+        consequence: (macro_control_statement
+          (macro_return_statement
+            value: (preproc_expression
+              (integer_literal))))))))
 
 ================================
 statement-like macro replacements
@@ -276,6 +777,9 @@ loop and control macro replacements
 #define WHILE_WRAP(%0,%1) while (%0) %1;
 #define DO_WRAP(%0,%1) do { %0; } while (%1)
 #define FOR_WRAP(%0,%1,%2,%3) for (%0; %1; %2) %3;
+#define FOR_DECL_WRAP(%0,%1,%2,%3) for (new Tag:%0 = %1; %0; %2) %3;
+#define FOR_IF_WRAP(%0,%1,%2,%3) for (%0; %1; %2) if (%3)
+#define FOR_LIST_WRAP(%0:%1) for (new Iter:%0 = list_iter(%1); iter_inside(%0); iter_move_next(%0))
 #define BREAK_WRAP break
 #define CONTINUE_WRAP continue
 
@@ -327,6 +831,73 @@ loop and control macro replacements
         body: (macro_control_statement
           (macro_expression_statement
             expression: (preproc_expression
+              (macro_parameter)))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_for_statement
+        type: (tagged_type
+          tag: (identifier))
+        name: (macro_parameter)
+        initializer: (preproc_expression
+          (macro_parameter))
+        condition: (preproc_expression
+          (macro_parameter))
+        update: (preproc_expression
+          (macro_parameter))
+        body: (macro_control_statement
+          (macro_expression_statement
+            expression: (preproc_expression
+              (macro_parameter)))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (macro_for_statement
+        initializer: (preproc_expression
+          (macro_parameter))
+        condition: (preproc_expression
+          (macro_parameter))
+        update: (preproc_expression
+          (macro_parameter))
+        body: (macro_control_statement
+          (macro_open_if_statement
+            condition: (preproc_expression
+              (macro_parameter)))))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_colon_parameter
+        left: (macro_parameter)
+        right: (macro_parameter)))
+    value: (macro_replacement
+      (macro_for_statement
+        type: (tagged_type
+          tag: (identifier))
+        name: (macro_parameter)
+        initializer: (preproc_expression
+          (preproc_call_expression
+            function: (identifier)
+            (preproc_expression
+              (macro_parameter))))
+        condition: (preproc_expression
+          (preproc_call_expression
+            function: (identifier)
+            (preproc_expression
+              (macro_parameter))))
+        update: (preproc_expression
+          (preproc_call_expression
+            function: (identifier)
+            (preproc_expression
               (macro_parameter)))))))
   (directive_define
     name: (identifier)
@@ -417,6 +988,8 @@ weird supported defines
 #define ZERO_RETURN return;
 #define EMPTY_BLOCK { }
 #define NESTED_IF(%0,%1) if (%0) if (%1) return 1; else return 0
+#define EMPTY_BRACKETS ()
+#define COLON_CHAIN(%0,_:A:B:%1) %0
 
 ---
 
@@ -449,4 +1022,23 @@ weird supported defines
             alternative: (macro_control_statement
               (macro_return_statement
                 value: (preproc_expression
-                  (integer_literal))))))))))
+                  (integer_literal)))))))))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_parenthesized_expression))))
+  (directive_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_colon_parameter
+        left: (identifier)
+        right: (macro_colon_parameter
+          left: (identifier)
+          right: (macro_colon_parameter
+            left: (identifier)
+            right: (macro_parameter)))))
+    value: (macro_replacement
+      (preproc_expression
+        (macro_parameter)))))

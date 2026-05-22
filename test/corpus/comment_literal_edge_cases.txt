@@ -12,7 +12,6 @@ stock Foo /*sig*/ ()
 
 (source_file
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier)
       (comment)
@@ -24,7 +23,6 @@ stock Foo /*sig*/ ()
         (integer_literal)
         (integer_literal))))
   (function_definition
-    (function_modifier)
     name: (identifier)
     (comment)
     parameters: (parameter_list)
@@ -44,6 +42,7 @@ stock TestLiterals()
     new message[] = "Line\n\"quoted\"\x41\u0042\\";
     new letter = 'ab';
     new escaped = '\x41';
+  new short_escape = '\x';
     return 1;
 }
 
@@ -51,12 +50,10 @@ stock TestLiterals()
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list)
     body: (block
       (variable_declaration
-        (declaration_qualifier)
         (variable_declarator
           name: (identifier)
           (dimension)
@@ -68,12 +65,15 @@ stock TestLiterals()
             (escape_sequence)
             (escape_sequence))))
       (variable_declaration
-        (declaration_qualifier)
         (variable_declarator
           name: (identifier)
           initializer: (char_literal)))
       (variable_declaration
-        (declaration_qualifier)
+        (variable_declarator
+          name: (identifier)
+          initializer: (char_literal
+            (escape_sequence))))
+      (variable_declaration
         (variable_declarator
           name: (identifier)
           initializer: (char_literal

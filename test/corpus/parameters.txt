@@ -5,8 +5,11 @@ parameter patterns
 forward Foo(...);
 forward SetSpawn(Float:x, Float:y, Float:z = 0.0);
 forward SendClientMessagef(playerid, color, const format[], {Float,_}:...);
+native pawn_call_native(const function[], const format[], AnyTag:...);
 native GetPlayerPos(playerid, &Float:x, &Float:y, &Float:z);
 native Bar(const name[], &Float:x = 1.0);
+forward expr_func({TagA,TagB}:func, tag_id=tagof(func));
+forward await_task(Task<_>:task);
 
 public OnPlayerCommandText(playerid, cmdtext[])
 {
@@ -33,32 +36,26 @@ forward CreateGroup(const worlds[] = { -1 }, const Float:coords[] = { 1.0, 2.0 }
 
 (source_file
   (function_declaration
-    kind: (function_declaration_kind)
     name: (identifier)
     parameters: (parameter_list
       (variadic_parameter)))
   (function_declaration
-    kind: (function_declaration_kind)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier))
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier))
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier)
         default_value: (float_literal))))
   (function_declaration
-    kind: (function_declaration_kind)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -66,54 +63,74 @@ forward CreateGroup(const worlds[] = { -1 }, const Float:coords[] = { 1.0, 2.0 }
       (parameter_declaration
         name: (identifier))
       (parameter_declaration
-        (parameter_qualifier)
         name: (identifier)
         (dimension))
       (variadic_parameter
         tag_set: (variadic_tag_set
-          (tag)
+          (identifier)
           (tag_wildcard)))))
   (function_declaration
-    kind: (function_declaration_kind)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
-        name: (identifier))
-      (parameter_declaration
-        (reference_modifier)
-        type: (type
-          (tagged_type
-            tag: (tag)))
-        name: (identifier))
-      (parameter_declaration
-        (reference_modifier)
-        type: (type
-          (tagged_type
-            tag: (tag)))
-        name: (identifier))
-      (parameter_declaration
-        (reference_modifier)
-        type: (type
-          (tagged_type
-            tag: (tag)))
-        name: (identifier))))
-  (function_declaration
-    kind: (function_declaration_kind)
-    name: (identifier)
-    parameters: (parameter_list
-      (parameter_declaration
-        (parameter_qualifier)
         name: (identifier)
         (dimension))
       (parameter_declaration
-        (reference_modifier)
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        name: (identifier)
+        (dimension))
+      (variadic_parameter
+        type: (tagged_type
+          tag: (identifier)))) )
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier))))
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)
+        (dimension))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier)
         default_value: (float_literal))))
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tag_set_type
+          (identifier)
+          (identifier))
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier)
+        default_value: (tagof_expression
+          argument: (identifier)))))
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier)
+          callback_signature: (callback_signature
+            types: (tag_wildcard)))
+        name: (identifier))))
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -138,7 +155,6 @@ forward CreateGroup(const worlds[] = { -1 }, const Float:coords[] = { 1.0, 2.0 }
       (return_statement
         value: (integer_literal))))
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -156,7 +172,6 @@ forward CreateGroup(const worlds[] = { -1 }, const Float:coords[] = { 1.0, 2.0 }
       (return_statement
         value: (integer_literal))))
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -164,32 +179,27 @@ forward CreateGroup(const worlds[] = { -1 }, const Float:coords[] = { 1.0, 2.0 }
       (parameter_declaration
         name: (identifier))
       (parameter_declaration
-        (parameter_qualifier)
         name: (identifier)
         (dimension))
       (variadic_parameter
         tag_set: (variadic_tag_set
-          (tag)
+          (identifier)
           (tag_wildcard))))
     body: (block
       (return_statement
         value: (integer_literal))))
   (function_declaration
-    kind: (function_declaration_kind)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
-        (parameter_qualifier)
         name: (identifier)
         (dimension)
         default_value: (array_literal
           (unary_expression
             argument: (integer_literal))))
       (parameter_declaration
-        (parameter_qualifier)
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier)
         (dimension)
         default_value: (array_literal

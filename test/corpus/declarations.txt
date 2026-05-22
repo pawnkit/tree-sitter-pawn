@@ -10,10 +10,29 @@ static const gFlags = 1;
 public numHaleKills = 0;
 stock Float:gSpawnY = 1.0;
 public Float:gPos[3] = { 1.0, 2.0, 3.0 };
+Y_PREFIX stock Func:gCallback<> = Func:0<>;
+Y_PREFIX stock gPrefixedValue;
+static Include_open@mp_directly;
+stock const VERSION_STRING[] = #VERSION_MAJOR "." #VERSION_MINOR "." #VERSION_BUILD;
+const VERSION_BCD = BCD(VERSION_MAJOR.VERSION_MINOR.VERSION_BUILD);
+const SSCANF_STATIC__ SSCANF_OnNPCModeInit = 0;
+
+#define PP_SYNTAX_@
+#define @ str_new_static
+#define @@ str_val
+#if defined PP_SYNTAX_@
+static Has_at_sign_define;
+#endif
 
 forward Float:GetSpawnX(playerid);
 native SetPlayerPos(playerid, Float:x, Float:y, Float:z);
 native Float:GetVectorLength(Float:x, Float:y) = VectorSize;
+FUNC_PAWNDOC(Float:GetSpawnX(playerid));
+__COMPILER_TAG_DATA(Vehicle, INVALID_VEHICLE_ID);
+__COMPILER_TAG_DATA(T_CP_TYPE, 0)
+PP_VARIANT_BIN_OP(+, var_add);
+PP_VARIANT_LOG_BIN_OP(==, var_eq);
+PP_VARIANT_LOG_UN_OP(!, var_not);
 
 enum PlayerState {
     PLAYER_STATE_NONE,
@@ -25,64 +44,49 @@ enum PlayerState {
 
 (source_file
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier)))
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       initializer: (float_literal)))
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       (fixed_dimension
         size: (identifier))))
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       initializer: (tagged_expression
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         value: (parenthesized_expression
           expression: (float_literal)))))
   (variable_declaration
-    (declaration_qualifier)
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier)
       initializer: (integer_literal)))
   (variable_declaration
-    (visibility_modifier)
     (variable_declarator
       name: (identifier)
       initializer: (integer_literal)))
   (variable_declaration
-    (visibility_modifier)
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       initializer: (float_literal)))
   (variable_declaration
-    (visibility_modifier)
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       (fixed_dimension
         size: (integer_literal))
@@ -90,54 +94,147 @@ enum PlayerState {
         (float_literal)
         (float_literal)
         (float_literal))))
+  (variable_declaration
+    prefix: (identifier)
+    (variable_declarator
+      type: (tagged_type
+        tag: (identifier))
+      name: (identifier)
+      callback_signature: (callback_signature)
+      initializer: (callback_suffix_expression
+        value: (tagged_expression
+          type: (tagged_type
+            tag: (identifier))
+          value: (integer_literal))
+        callback_signature: (callback_signature))))
+  (variable_declaration
+    prefix: (identifier)
+    (variable_declarator
+      name: (identifier)))
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)))
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      (dimension)
+      initializer: (adjacent_string_expression
+        left: (function_reference_expression
+          argument: (identifier))
+        right: (string_literal)
+        right: (function_reference_expression
+          argument: (identifier))
+        right: (string_literal)
+        right: (function_reference_expression
+          argument: (identifier)))))
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      initializer: (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (member_expression
+            object: (member_expression
+              object: (identifier)
+              property: (identifier))
+            property: (identifier))))))
+  (variable_declaration
+    qualifier_reference: (declaration_qualifier_reference
+      (identifier))
+    (variable_declarator
+      name: (identifier)
+      initializer: (integer_literal)))
+  (directive_define
+    name: (identifier))
+  (directive_define
+    name: (define_at_identifier
+      (identifier)))
+  (directive_define
+    name: (define_at_identifier
+      (define_at_identifier
+        (identifier))))
+  (top_level_conditional
+    (directive_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (variable_declaration
+      (variable_declarator
+        name: (identifier)))
+    (directive_endif))
   (function_declaration
-    kind: (function_declaration_kind)
-    return_type: (type
-      (tagged_type
-        tag: (tag)))
+    return_type: (tagged_type
+      tag: (identifier))
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier))))
   (function_declaration
-    kind: (function_declaration_kind)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
         name: (identifier))
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier))
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier))
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier))))
   (function_declaration
-    kind: (function_declaration_kind)
-    return_type: (type
-      (tagged_type
-        tag: (tag)))
+    return_type: (tagged_type
+      tag: (identifier))
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier))
       (parameter_declaration
-        type: (type
-          (tagged_type
-            tag: (tag)))
+        type: (tagged_type
+          tag: (identifier))
         name: (identifier)))
     alias: (identifier))
+  (macro_invocation_statement
+    name: (identifier)
+    arguments: (argument_list
+      (tagged_expression
+        type: (tagged_type
+          tag: (identifier))
+        value: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (identifier))))))
+  (macro_invocation_statement
+    name: (identifier)
+    arguments: (argument_list
+      (identifier)
+      (identifier)))
+  (macro_invocation_statement
+    name: (identifier)
+    arguments: (argument_list
+      (identifier)
+      (integer_literal)))
+  (macro_invocation_statement
+    name: (identifier)
+    arguments: (argument_list
+      (operator_symbol)
+      (identifier)))
+  (macro_invocation_statement
+    name: (identifier)
+    arguments: (argument_list
+      (operator_symbol)
+      (identifier)))
+  (macro_invocation_statement
+    name: (identifier)
+    arguments: (argument_list
+      (operator_symbol)
+      (identifier)))
   (enum_declaration
     name: (identifier)
     (enum_entry
@@ -146,7 +243,6 @@ enum PlayerState {
       name: (identifier)
       value: (integer_literal))
     (enum_entry
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier))))

@@ -8,11 +8,9 @@ new Float:x = 1.0, y[4], bool:z = true;
 
 (source_file
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       initializer: (float_literal))
     (variable_declarator
@@ -20,9 +18,8 @@ new Float:x = 1.0, y[4], bool:z = true;
       (fixed_dimension
         size: (integer_literal)))
     (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       initializer: (boolean_literal))))
 
@@ -44,23 +41,23 @@ stock Foo()
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list)
     body: (block
-      (directive_if
-        condition: (preproc_expression
-          (preproc_defined
-            name: (identifier))))
-      (variable_declaration
-        (declaration_qualifier)
-        (variable_declarator
-          name: (identifier)
-          initializer: (integer_literal)))
-      (directive_else)
-      (return_statement
-        value: (integer_literal))
-      (directive_endif)
+      (block_conditional
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        (variable_declaration
+          (variable_declarator
+            name: (identifier)
+            initializer: (integer_literal)))
+        alternative: (block_else
+          (directive_else)
+          (return_statement
+            value: (integer_literal)))
+        (directive_endif))
       (return_statement
         value: (integer_literal)))))
 
@@ -77,7 +74,6 @@ stock Foo()
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list)
     body: (block
@@ -91,4 +87,3 @@ stock Foo()
             expression: (expression_list
               left: (identifier)
               right: (identifier))))))))
-

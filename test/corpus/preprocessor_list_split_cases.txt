@@ -18,21 +18,22 @@ stock Foo(
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
-      (directive_if
-        condition: (preproc_expression
-          (preproc_defined
-            name: (identifier))))
-      (parameter_declaration
-        name: (identifier))
-      (directive_else)
-      (parameter_declaration
-        name: (identifier))
-      (parameter_declaration
-        name: (identifier))
-      (directive_endif)
+      (parameter_conditional
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        (parameter_declaration
+          name: (identifier))
+        alternative: (parameter_else
+          (directive_else)
+          (parameter_declaration
+            name: (identifier))
+          (parameter_declaration
+            name: (identifier)))
+        (directive_endif))
       (parameter_declaration
         name: (identifier)))
     body: (block
@@ -57,16 +58,18 @@ enum Mode {
 (source_file
   (enum_declaration
     name: (identifier)
-    (directive_if
-      condition: (preproc_expression
-        (preproc_defined
-          name: (identifier))))
-    (enum_entry
-      name: (identifier))
-    (directive_else)
-    (enum_entry
-      name: (identifier))
-    (directive_endif)
+    (enum_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (enum_entry
+        name: (identifier))
+      alternative: (enum_else
+        (directive_else)
+        (enum_entry
+          name: (identifier)))
+      (directive_endif))
     (enum_entry
       name: (identifier))))
 
@@ -87,19 +90,20 @@ new values[] = {
 
 (source_file
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier)
       (dimension)
       initializer: (array_literal
-        (directive_if
-          condition: (preproc_expression
-            (preproc_defined
-              name: (identifier))))
-        (integer_literal)
-        (directive_else)
-        (integer_literal)
-        (directive_endif)
+        (array_literal_conditional
+          (directive_if
+            condition: (preproc_expression
+              (preproc_defined
+                name: (identifier))))
+          (integer_literal)
+          alternative: (array_literal_else
+            (directive_else)
+            (integer_literal))
+          (directive_endif))
         (integer_literal)))))
 
 ====================
@@ -121,7 +125,6 @@ stock ArgSplit(playerid)
 
 (source_file
   (function_definition
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration
@@ -132,14 +135,16 @@ stock ArgSplit(playerid)
           function: (identifier)
           arguments: (argument_list
             (identifier)
-            (directive_if
-              condition: (preproc_expression
-                (preproc_defined
-                  name: (identifier))))
-            (hex_literal)
-            (directive_else)
-            (hex_literal)
-            (directive_endif)
+            (argument_conditional
+              (directive_if
+                condition: (preproc_expression
+                  (preproc_defined
+                    name: (identifier))))
+              (hex_literal)
+              alternative: (argument_else
+                (directive_else)
+                (hex_literal))
+              (directive_endif))
             (string_literal)))))))
 
 ===============================
@@ -165,44 +170,91 @@ new values[] = {1},
 
 (source_file
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier))
-    (directive_if
-      condition: (preproc_expression
-        (preproc_defined
-          name: (identifier))))
+    (variable_declarator_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (variable_declarator
+        name: (identifier))
+      alternative: (variable_declarator_else
+        (directive_else)
+        (variable_declarator
+          name: (identifier)))
+      (directive_endif))
     (variable_declarator
-      name: (identifier))
-    (directive_else)
-    (variable_declarator
-      name: (identifier))
-    (directive_endif)
-    (variable_declarator
-      type: (type
-        (tagged_type
-          tag: (tag)))
+      type: (tagged_type
+        tag: (identifier))
       name: (identifier)
       initializer: (boolean_literal)))
   (variable_declaration
-    (declaration_qualifier)
     (variable_declarator
       name: (identifier)
       (dimension)
       initializer: (array_literal
         (integer_literal)))
-    (directive_if
-      condition: (preproc_expression
-        (preproc_defined
-          name: (identifier))))
-    (variable_declarator
-      name: (identifier)
-      (dimension)
-      initializer: (array_literal
-        (integer_literal)))
-    (directive_endif)
+    (variable_declarator_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (variable_declarator
+        name: (identifier)
+        (dimension)
+        initializer: (array_literal
+          (integer_literal)))
+      (directive_endif))
     (variable_declarator
       name: (identifier)
       (dimension)
       initializer: (array_literal
         (integer_literal)))))
+
+=======================================
+nested split variable declarator lists
+=======================================
+
+static
+    first,
+#if defined OUTER
+    #if defined INNER
+        second[10],
+    #else
+        second,
+    #endif
+#endif
+    bool:ready = true;
+
+---
+
+(source_file
+  (variable_declaration
+    (variable_declarator
+      name: (identifier))
+    (variable_declarator_conditional
+      (directive_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (variable_declarator_conditional
+        (directive_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        (variable_declarator
+          name: (identifier)
+          (fixed_dimension
+            size: (integer_literal)))
+        alternative: (variable_declarator_else
+          (directive_else)
+          (variable_declarator
+            name: (identifier)))
+        (directive_endif))
+      (directive_endif))
+    (variable_declarator
+      type: (tagged_type
+        tag: (identifier))
+      name: (identifier)
+      initializer: (boolean_literal))))
