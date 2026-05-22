@@ -46,6 +46,7 @@ module.exports = grammar({
   word: ($) => $.identifier,
 
   externals: ($) => [
+    $._callback_signature_start,
     $._conditional_if_else_preamble,
     $._conditional_if_else_if_preamble,
     $._conditional_if_block_preamble,
@@ -291,7 +292,7 @@ module.exports = grammar({
     state_name: ($) => token(choice("default", /[A-Za-z_][A-Za-z0-9_]*/)),
 
     callback_signature: ($) => seq(
-      token.immediate("<"),
+      $._callback_signature_start,
       optional(field("types", choice($.identifier, $.tag_wildcard, $.macro_parameter))),
       ">",
     ),

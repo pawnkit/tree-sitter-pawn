@@ -156,3 +156,119 @@ public OnPlayerConnect(playerid)
         (default_statement
           (return_statement
             value: (integer_literal)))))))
+
+===========================
+for init spacing variants
+===========================
+
+stock Test()
+{
+    for (new i=0; i < 10; i++)
+        DoSomething(i);
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (for_statement
+        initializer: (variable_declarator
+          name: (identifier)
+          initializer: (integer_literal))
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        update: (update_expression
+          argument: (identifier))
+        body: (expression_statement
+          expression: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))))))
+
+==============================================
+for init spacing variants with forward context
+==============================================
+
+forward Foo();
+public Foo() {
+    for (new i=0; i < 10; i++) { }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (for_statement
+        initializer: (variable_declarator
+          name: (identifier)
+          initializer: (integer_literal))
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        update: (update_expression
+          argument: (identifier))
+        body: (block)))))
+
+=========================================
+for init spacing variants with block body
+=========================================
+
+stock F()
+{
+    for (new i=0; i < 10; i++) { }
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (for_statement
+        initializer: (variable_declarator
+          name: (identifier)
+          initializer: (integer_literal))
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        update: (update_expression
+          argument: (identifier))
+        body: (block)))))
+
+===============================================
+for loop with bare less-than condition no spaces
+===============================================
+
+stock F()
+{
+    for (new i = 0; i<10; i++) { }
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (for_statement
+        initializer: (variable_declarator
+          name: (identifier)
+          initializer: (integer_literal))
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        update: (update_expression
+          argument: (identifier))
+        body: (block)))))

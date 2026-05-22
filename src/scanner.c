@@ -7,8 +7,11 @@
 #include <string.h>
 
 // The external scanner is intentionally narrow: it only classifies shared-if
-// layouts that need cross-line lookahead after directive selection.
+// layouts that need cross-line lookahead after directive selection, plus the
+// immediate `<` that opens callback signatures without stealing bare `i<10`
+// relational expressions.
 enum TokenType {
+  CALLBACK_SIGNATURE_START,
   CONDITIONAL_IF_ELSE_PREAMBLE,
   CONDITIONAL_IF_ELSE_IF_PREAMBLE,
   CONDITIONAL_IF_BLOCK_PREAMBLE,
@@ -42,6 +45,7 @@ typedef enum {
 static bool scan_balanced_block_followed_by_else(TSLexer *lexer);
 static bool scan_block_tail_after_open_brace(TSLexer *lexer, IfBranchKind *kind);
 static bool scan_nested_shared_if_header(TSLexer *lexer, IfBranchKind *kind);
+static bool scan_callback_signature_start(TSLexer *lexer);
 static bool scan_line_comment_after_slash(TSLexer *lexer);
 static bool scan_block_comment_after_slash(TSLexer *lexer);
 static bool scan_unsupported_define_header(TSLexer *lexer);
@@ -189,6 +193,19 @@ static bool scan_directive_name(TSLexer *lexer, const char *name) {
   }
 
   return scan_keyword(lexer, name);
+}
+
+static bool scan_callback_signature_start(TSLexer *lexer) {
+  if (lexer->lookahead != '<') return false;
+
+  advance(lexer);
+  int32_t next = lexer->lookahead;
+  if (!(next == '>' || next == '_' || next == '%' || isalpha((unsigned char)next))) {
+    return false;
+  }
+
+  lexer->mark_end(lexer);
+  return true;
 }
 
 static DirectiveType scan_directive_type(TSLexer *lexer) {
@@ -1115,6 +1132,11 @@ void tree_sitter_pawn_external_scanner_deserialize(void *payload, const char *bu
 
 bool tree_sitter_pawn_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
   (void)payload;
+
+  if (valid_symbols[CALLBACK_SIGNATURE_START] && scan_callback_signature_start(lexer)) {
+    lexer->result_symbol = CALLBACK_SIGNATURE_START;
+    return true;
+  }
 
   if (valid_symbols[OPAQUE_DEFINE_VALUE] && (scan_keyword_define_value(lexer) || scan_opaque_define_value(lexer))) {
     lexer->result_symbol = OPAQUE_DEFINE_VALUE;
