@@ -272,3 +272,86 @@ stock F()
         update: (update_expression
           argument: (identifier))
         body: (block)))))
+
+=========================
+state statement variants
+=========================
+
+@keypressed(key) <plain> { state (key == '/') slash; }
+main() { state plain }
+main2() { state plain; }
+main3() { state gps:handshake; }
+
+---
+
+(source_file
+  (function_definition
+    name: (at_identifier
+      (identifier))
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    state: (state_classifier
+      (state_name))
+    body: (block
+      (state_statement
+        condition: (parenthesized_expression
+          expression: (binary_expression
+            left: (identifier)
+            right: (char_literal)))
+        scope: (state_name))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (state_statement
+        scope: (state_name))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (state_statement
+        scope: (state_name))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (state_statement
+        scope: (state_name)
+        (state_name)))))
+
+===============================
+member assignment expressions
+===============================
+
+stock F() {
+    player.score = 0;
+    player.score += 1;
+    new v = player.score;
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (expression_statement
+        expression: (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (integer_literal)))
+      (expression_statement
+        expression: (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (identifier))
+          right: (integer_literal)))
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          initializer: (member_expression
+            object: (identifier)
+            property: (identifier)))))))

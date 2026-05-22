@@ -250,10 +250,18 @@ module.exports = grammar({
 
     function_declaration: ($) => seq(
       field("kind", choice("forward", "native")),
-      functionDeclarationSignatureTail($),
+      choice(
+        functionDeclarationSignatureTail($),
+        seq(
+          field("name", alias($._function_member_name, $.member_expression)),
+          field("parameters", alias($.empty_parameter_list, $.parameter_list)),
+        ),
+      ),
       optional(seq("=", field("alias", $.identifier))),
       ";",
     ),
+
+    empty_parameter_list: () => seq("(", ")"),
 
     hook_forward_statement: ($) => choice(
       seq(
@@ -635,12 +643,13 @@ module.exports = grammar({
 
     state_statement: ($) => seq(
       "state",
+      optional(field("condition", $.parenthesized_expression)),
       field("scope", $.state_name),
       optional(seq(
         ":",
         commaSep1($.state_name),
       )),
-      ";",
+      optional(";"),
     ),
 
     function_initializer_alternative_statement: ($) => directiveElseAlternative($, {
@@ -1093,7 +1102,14 @@ module.exports = grammar({
     )),
 
     assignment_expression: ($) => prec.right(PREC.ASSIGNMENT, seq(
-      field("left", choice($.identifier, $.subscript_expression, $.packed_subscript_expression, $.tagged_expression)),
+      field("left", choice(
+        $.identifier,
+        $.subscript_expression,
+        $.packed_subscript_expression,
+        $.tagged_expression,
+        $.member_expression,
+        $.callback_member_expression,
+      )),
       field("operator", choice(...ASSIGNMENT_OPERATORS)),
       field("right", $._expression),
     )),
@@ -1150,6 +1166,12 @@ module.exports = grammar({
       ".",
       field("name", $.identifier),
     )),
+
+    _function_member_name: ($) => seq(
+      field("object", $.identifier),
+      ".",
+      field("property", $.identifier),
+    ),
 
     callback_suffix_expression: ($) => prec.left(PREC.CALL, seq(
       field("value", choice(

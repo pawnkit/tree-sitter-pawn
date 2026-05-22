@@ -444,6 +444,7 @@ hook forward statement
 CHAIN_FORWARD:OnThing() = 1;
 hook Float:GetSpeed(playerid);
 hook Float:GetSpeed(playerid) { return 0.0; }
+forward callback.OnGameModeInit();
 
 ---
 
@@ -470,7 +471,12 @@ hook Float:GetSpeed(playerid) { return 0.0; }
         name: (identifier)))
     body: (block
       (return_statement
-        value: (float_literal)))))
+        value: (float_literal))))
+  (function_declaration
+    name: (member_expression
+      object: (identifier)
+      property: (identifier))
+    parameters: (parameter_list)))
 
 ===========================
 inline label branch variants

@@ -928,7 +928,15 @@
         "required": true,
         "types": [
           {
+            "type": "callback_member_expression",
+            "named": true
+          },
+          {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "member_expression",
             "named": true
           },
           {
@@ -6214,6 +6222,10 @@
             "named": true
           },
           {
+            "type": "member_expression",
+            "named": true
+          },
+          {
             "type": "operator_name",
             "named": true
           }
@@ -10558,6 +10570,16 @@
     "type": "state_statement",
     "named": true,
     "fields": {
+      "condition": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          }
+        ]
+      },
       "scope": {
         "multiple": false,
         "required": true,
