@@ -8,7 +8,7 @@
   name: (identifier) @name) @definition.macro
 
 (label_statement
-  label: (statement_label) @name) @definition.label
+  label: (identifier) @name) @definition.label
 
 (enum_declaration
   name: (identifier) @name) @definition.type

@@ -21,9 +21,13 @@
     "LICENSE"
   ],
   "scripts": {
-    "generate": "node scripts/run-tree-sitter.js generate",
-    "test": "node scripts/run-tree-sitter.js test",
-    "parse": "node scripts/run-tree-sitter.js parse",
+    "generate": "tree-sitter generate",
+    "test": "tree-sitter test",
+    "test:external:fetch": "bash test/external/fetch.sh",
+    "test:external": "bash test/external/parse.sh",
+    "test:external:list": "find .fixtures/pawn-projects -type f | sort",
+    "check:external": "npm run test:external:fetch && npm run test:external",
+    "parse": "tree-sitter parse",
     "check": "npm run generate && npm test",
     "pack:check": "npm pack --dry-run",
     "prepack": "npm run generate"

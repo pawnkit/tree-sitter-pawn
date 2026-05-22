@@ -17,22 +17,23 @@
 (enum_entry
   name: (identifier) @constant)
 (label_statement
-  label: (statement_label) @label)
+  label: (identifier) @label)
 (goto_statement
   label: (identifier) @label)
 (state_name) @label
 (packed_storage) @type.builtin
 
 ; Tags
-(tag) @type
+(variadic_tag_set
+  (identifier) @type)
+(tagged_type
+  tag: (identifier) @type)
 (tagged_expression
-  type: (type
-    (tagged_type
-      tag: (tag_wildcard) @type.builtin)))
+  type: (tagged_type
+    tag: (tag_wildcard) @type.builtin))
 (tagged_expression
-  type: (type
-    (tagged_type
-      tag: (tag) @type.cast)))
+  type: (tagged_type
+    tag: (identifier) @type.cast))
 
 ; Directives
 [
