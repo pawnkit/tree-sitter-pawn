@@ -6678,12 +6678,26 @@
           {
             "type": "parameter_list",
             "named": true
+          },
+          {
+            "type": "parameter_list_reference",
+            "named": true
+          }
+        ]
+      },
+      "return_size": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "fixed_dimension",
+            "named": true
           }
         ]
       },
       "return_type": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "tagged_type",
@@ -6691,9 +6705,19 @@
           }
         ]
       },
+      "state": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "state_classifier",
+            "named": true
+          }
+        ]
+      },
       "value": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "_expression",
@@ -10505,7 +10529,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "scoped_state_entry",
@@ -12327,6 +12351,10 @@
   {
     "type": "hex_literal",
     "named": true
+  },
+  {
+    "type": "hook",
+    "named": false
   },
   {
     "type": "identifier",

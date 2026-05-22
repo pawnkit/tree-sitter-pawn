@@ -16,6 +16,9 @@ public OnPlayerConnect(playerid)
         }
     }
 
+    for (new j=0; j < 3; j++)
+      break;
+
     while (playerid > 0) {
         break;
     }
@@ -85,6 +88,16 @@ public OnPlayerConnect(playerid)
               right: (integer_literal))
             consequence: (block
               (continue_statement)))))
+      (for_statement
+        initializer: (variable_declarator
+          name: (identifier)
+          initializer: (integer_literal))
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        update: (update_expression
+          argument: (identifier))
+        body: (break_statement))
       (while_statement
         condition: (binary_expression
           left: (identifier)

@@ -248,14 +248,21 @@ module.exports = grammar({
       ";",
     ),
 
-    hook_forward_statement: ($) => prec.dynamic(5, seq(
-      field("return_type", $.tagged_type),
-      $._function_named_identifier,
-      field("parameters", $.parameter_list),
-      "=",
-      field("value", choice($.expression_list, $._expression)),
-      ";",
-    )),
+    hook_forward_statement: ($) => choice(
+      prec.dynamic(10, seq(
+        "hook",
+        functionDeclarationSignatureTail($),
+        ";",
+      )),
+      prec.dynamic(5, seq(
+        field("return_type", $.tagged_type),
+        $._function_named_identifier,
+        field("parameters", $.parameter_list),
+        "=",
+        field("value", choice($.expression_list, $._expression)),
+        ";",
+      )),
+    ),
 
     _function_modifier: ($) => choice(
       "public",
@@ -265,7 +272,7 @@ module.exports = grammar({
 
     state_classifier: ($) => seq(
       "<",
-      commaSep1(choice($.scoped_state_entry, $.state_name)),
+      optional(commaSep1(choice($.scoped_state_entry, $.state_name))),
       ">",
     ),
 

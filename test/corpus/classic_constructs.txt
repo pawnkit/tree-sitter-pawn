@@ -442,6 +442,7 @@ hook forward statement
 ======================
 
 CHAIN_FORWARD:OnThing() = 1;
+hook Float:GetSpeed(playerid);
 
 ---
 
@@ -451,7 +452,14 @@ CHAIN_FORWARD:OnThing() = 1;
       tag: (identifier))
     name: (identifier)
     parameters: (parameter_list)
-    value: (integer_literal)))
+    value: (integer_literal))
+  (hook_forward_statement
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))))
 
 ===========================
 inline label branch variants
@@ -658,6 +666,11 @@ stock OnThing(playerid) <default>
     return 1;
 }
 
+stock OnThing(playerid) <>
+{
+  return 1;
+}
+
 stock OnThing(playerid) <connected, idle>
 {
     return 1;
@@ -693,6 +706,15 @@ stock OnThing(playerid) <_ALS : _ALS_x0, _ALS : _ALS_x1>
         name: (identifier)))
     state: (state_classifier
       (state_name))
+    body: (block
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    state: (state_classifier)
     body: (block
       (return_statement
         value: (integer_literal))))
