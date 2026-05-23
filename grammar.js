@@ -254,14 +254,12 @@ module.exports = grammar({
         functionDeclarationSignatureTail($),
         seq(
           field("name", alias($._function_member_name, $.member_expression)),
-          field("parameters", alias($.empty_parameter_list, $.parameter_list)),
+          field("parameters", choice($.parameter_list, $.parameter_list_reference)),
         ),
       ),
       optional(seq("=", field("alias", $.identifier))),
       ";",
     ),
-
-    empty_parameter_list: () => seq("(", ")"),
 
     hook_forward_statement: ($) => choice(
       seq(

@@ -2884,13 +2884,17 @@
                   "type": "FIELD",
                   "name": "parameters",
                   "content": {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "empty_parameter_list"
-                    },
-                    "named": true,
-                    "value": "parameter_list"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "parameter_list"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "parameter_list_reference"
+                      }
+                    ]
                   }
                 }
               ]
@@ -2925,19 +2929,6 @@
         {
           "type": "STRING",
           "value": ";"
-        }
-      ]
-    },
-    "empty_parameter_list": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "("
-        },
-        {
-          "type": "STRING",
-          "value": ")"
         }
       ]
     },

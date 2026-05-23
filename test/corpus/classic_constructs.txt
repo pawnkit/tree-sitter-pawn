@@ -36,6 +36,20 @@ stock Float:operator++(Float:value)
     return value;
 }
 
+task TimerTick()
+{
+  return 1;
+}
+
+ptask PlayerTick(playerid)
+{
+  return 1;
+}
+
+void NoReturn()
+{
+}
+
 ---
 
 (source_file
@@ -92,7 +106,28 @@ stock Float:operator++(Float:value)
         name: (identifier)))
     body: (block
       (return_statement
-        value: (identifier)))))
+        value: (identifier))))
+  (function_definition
+    prefix: (identifier)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    prefix: (identifier)
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    prefix: (identifier)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block)))
 
 =========================
 conditional function body
@@ -444,6 +479,7 @@ hook forward statement
 CHAIN_FORWARD:OnThing() = 1;
 hook Float:GetSpeed(playerid);
 hook Float:GetSpeed(playerid) { return 0.0; }
+forward callback.OnPlayerConnect(playerid);
 forward callback.OnGameModeInit();
 
 ---
@@ -472,6 +508,13 @@ forward callback.OnGameModeInit();
     body: (block
       (return_statement
         value: (float_literal))))
+  (function_declaration
+    name: (member_expression
+      object: (identifier)
+      property: (identifier))
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))))
   (function_declaration
     name: (member_expression
       object: (identifier)
