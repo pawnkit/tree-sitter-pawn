@@ -198,6 +198,10 @@
         "named": true
       },
       {
+        "type": "defer_statement",
+        "named": true
+      },
+      {
         "type": "directive_assert",
         "named": true
       },
@@ -1258,6 +1262,10 @@
           "named": true
         },
         {
+          "type": "defer_statement",
+          "named": true
+        },
+        {
           "type": "directive_assert",
           "named": true
         },
@@ -1472,6 +1480,10 @@
           "named": true
         },
         {
+          "type": "defer_statement",
+          "named": true
+        },
+        {
           "type": "directive_assert",
           "named": true
         },
@@ -1668,6 +1680,10 @@
         },
         {
           "type": "continue_statement",
+          "named": true
+        },
+        {
+          "type": "defer_statement",
           "named": true
         },
         {
@@ -1878,6 +1894,10 @@
         },
         {
           "type": "continue_statement",
+          "named": true
+        },
+        {
+          "type": "defer_statement",
           "named": true
         },
         {
@@ -3097,6 +3117,10 @@
             "named": true
           },
           {
+            "type": "defer_statement",
+            "named": true
+          },
+          {
             "type": "directive_assert",
             "named": true
           },
@@ -3246,6 +3270,16 @@
           },
           {
             "type": "tagged_type",
+            "named": true
+          }
+        ]
+      },
+      "interval": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "fixed_dimension",
             "named": true
           }
         ]
@@ -4325,6 +4359,10 @@
             "named": true
           },
           {
+            "type": "defer_statement",
+            "named": true
+          },
+          {
             "type": "directive_assert",
             "named": true
           },
@@ -4532,6 +4570,10 @@
           },
           {
             "type": "continue_statement",
+            "named": true
+          },
+          {
+            "type": "defer_statement",
             "named": true
           },
           {
@@ -4748,6 +4790,10 @@
           },
           {
             "type": "continue_statement",
+            "named": true
+          },
+          {
+            "type": "defer_statement",
             "named": true
           },
           {
@@ -4978,6 +5024,10 @@
           },
           {
             "type": "continue_statement",
+            "named": true
+          },
+          {
+            "type": "defer_statement",
             "named": true
           },
           {
@@ -5233,6 +5283,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "defer_statement",
+    "named": true,
+    "fields": {
+      "call": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "call_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -6302,6 +6368,10 @@
             "named": true
           },
           {
+            "type": "defer_statement",
+            "named": true
+          },
+          {
             "type": "directive_assert",
             "named": true
           },
@@ -6397,6 +6467,16 @@
         "types": [
           {
             "type": "callback_signature",
+            "named": true
+          }
+        ]
+      },
+      "interval": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "fixed_dimension",
             "named": true
           }
         ]
@@ -11531,6 +11611,10 @@
           "named": true
         },
         {
+          "type": "defer_statement",
+          "named": true
+        },
+        {
           "type": "directive_assert",
           "named": true
         },
@@ -12324,6 +12408,10 @@
   },
   {
     "type": "default",
+    "named": false
+  },
+  {
+    "type": "defer",
     "named": false
   },
   {

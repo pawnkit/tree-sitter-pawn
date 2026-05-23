@@ -947,3 +947,87 @@ CMD:goto(playerid, params[])         { return 1; }
     body: (block
       (return_statement
         value: (integer_literal)))))
+
+==========================
+scheduled function intervals
+==========================
+
+task RestartUpdate[1000]()
+{
+  return 1;
+}
+
+timer MoveCamera[500](playerid) {
+  return 1;
+}
+
+static ptask _PlayerAutoSave[(1000 * 60) * 3](playerid) {
+  return 1;
+}
+
+---
+
+(source_file
+  (function_definition
+    prefix: (identifier)
+    name: (identifier)
+    interval: (fixed_dimension
+      size: (integer_literal))
+    parameters: (parameter_list)
+    body: (block
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    prefix: (identifier)
+    name: (identifier)
+    interval: (fixed_dimension
+      size: (integer_literal))
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    prefix: (identifier)
+    name: (identifier)
+    interval: (fixed_dimension
+      size: (binary_expression
+        left: (parenthesized_expression
+          expression: (binary_expression
+            left: (integer_literal)
+            right: (integer_literal)))
+        right: (integer_literal)))
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (integer_literal)))))
+
+================
+defer statements
+================
+
+stock TestDeferredCalls() {
+  defer ASCII_Print[5000]();
+  defer UpdateTablist();
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (defer_statement
+        call: (call_expression
+          function: (subscript_expression
+            array: (identifier)
+            index: (integer_literal))
+          arguments: (argument_list)))
+      (defer_statement
+        call: (call_expression
+          function: (identifier)
+          arguments: (argument_list))))))

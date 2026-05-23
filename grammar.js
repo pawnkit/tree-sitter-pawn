@@ -199,7 +199,7 @@ module.exports = grammar({
     _prefixed_function_definition_signature: ($) => seq(
       repeat($._function_modifier),
       field("prefix", $.identifier),
-      functionSignatureTail($),
+      prefixedFunctionSignatureTail($),
     ),
 
     _hook_function_definition_signature: ($) => seq(
@@ -989,6 +989,12 @@ module.exports = grammar({
     break_statement: ($) => seq("break", ";"),
 
     continue_statement: ($) => seq("continue", ";"),
+
+    defer_statement: ($) => seq(
+      "defer",
+      field("call", $.call_expression),
+      ";",
+    ),
 
     expression_statement: ($) => seq(
       field("expression", choice($.expression_list, $._expression)),
@@ -2143,6 +2149,17 @@ function functionSignatureTail($) {
   );
 }
 
+function prefixedFunctionSignatureTail($) {
+  return seq(
+    optional(field("return_type", $.tagged_type)),
+    repeat(field("return_size", $.fixed_dimension)),
+    $._function_named_identifier,
+    optional(field("interval", $.fixed_dimension)),
+    field("parameters", $.parameter_list),
+    optional(field("state", $.state_classifier)),
+  );
+}
+
 function functionDeclarationSignatureTail($) {
   return seq(
     optional(field("return_type", $.tagged_type)),
@@ -2448,6 +2465,7 @@ function functionBodyChoice($, {
     $.return_statement,
     $.break_statement,
     $.continue_statement,
+    $.defer_statement,
     $.expression_statement,
     ...nonBranchDirectiveStatementChoices($),
   );
@@ -2502,6 +2520,7 @@ function statementChoice($, {
     $.return_statement,
     $.break_statement,
     $.continue_statement,
+    $.defer_statement,
     $.expression_statement,
     ...directiveStatementChoices($, {
       includeConditionalIf,

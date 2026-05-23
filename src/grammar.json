@@ -1879,6 +1879,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "defer_statement"
+        },
+        {
+          "type": "SYMBOL",
           "name": "expression_statement"
         },
         {
@@ -2134,6 +2138,22 @@
             {
               "type": "SYMBOL",
               "name": "_function_named_identifier"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "interval",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "fixed_dimension"
+                  }
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
             },
             {
               "type": "FIELD",
@@ -2526,6 +2546,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "defer_statement"
+        },
+        {
+          "type": "SYMBOL",
           "name": "expression_statement"
         },
         {
@@ -2637,6 +2661,10 @@
         {
           "type": "SYMBOL",
           "name": "continue_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "defer_statement"
         },
         {
           "type": "SYMBOL",
@@ -4795,6 +4823,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "defer_statement"
+        },
+        {
+          "type": "SYMBOL",
           "name": "expression_statement"
         },
         {
@@ -4995,6 +5027,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "defer_statement"
+        },
+        {
+          "type": "SYMBOL",
           "name": "expression_statement"
         },
         {
@@ -5186,6 +5222,10 @@
         {
           "type": "SYMBOL",
           "name": "continue_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "defer_statement"
         },
         {
           "type": "SYMBOL",
@@ -5383,6 +5423,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "defer_statement"
+        },
+        {
+          "type": "SYMBOL",
           "name": "expression_statement"
         },
         {
@@ -5566,6 +5610,10 @@
         {
           "type": "SYMBOL",
           "name": "continue_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "defer_statement"
         },
         {
           "type": "SYMBOL",
@@ -8393,6 +8441,27 @@
         {
           "type": "STRING",
           "value": "continue"
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "defer_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "defer"
+        },
+        {
+          "type": "FIELD",
+          "name": "call",
+          "content": {
+            "type": "SYMBOL",
+            "name": "call_expression"
+          }
         },
         {
           "type": "STRING",
