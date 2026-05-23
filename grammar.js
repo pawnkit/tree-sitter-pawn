@@ -2683,22 +2683,3 @@ function binaryExpression(rule, table) {
     ))),
   );
 }
-
-module.exports.PREC = PREC;
-module.exports.directiveBranchChain = directiveBranchChain;
-module.exports.directiveElseAlternative = directiveElseAlternative;
-module.exports.directiveIfGroup = directiveIfGroup;
-module.exports.directiveListGroup = directiveListGroup;
-module.exports.directiveListItems = directiveListItems;
-module.exports.directiveListElseConflicts = directiveListElseConflicts;
-module.exports.directiveSignatureChain = directiveSignatureChain;
-module.exports.directiveStatementChoices = directiveStatementChoices;
-module.exports.conditionalDirectiveChoices = conditionalDirectiveChoices;
-module.exports.functionBodyChoice = functionBodyChoice;
-module.exports.preprocessor = preprocessor;
-module.exports.commaSep = commaSep;
-module.exports.commaSep1 = commaSep1;
-module.exports.binaryExpression = binaryExpression;
-module.exports.blockStatementBaseChoice = blockStatementBaseChoice;
-module.exports.loopBodyStatementChoice = loopBodyStatementChoice;
-module.exports.statementChoice = statementChoice;
