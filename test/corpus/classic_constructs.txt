@@ -902,6 +902,22 @@ stock Float:floatabs(Float:value)
             tag: (identifier))
           value: (identifier))))))
 
+===========================
+braceless state body
+===========================
+
+main()
+state plain
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (state_statement
+      scope: (state_name))))
+
 ================================
 command-style function wrappers
 ================================

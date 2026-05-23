@@ -16,6 +16,9 @@ static Include_open@mp_directly;
 stock const VERSION_STRING[] = #VERSION_MAJOR "." #VERSION_MINOR "." #VERSION_BUILD;
 const VERSION_BCD = BCD(VERSION_MAJOR.VERSION_MINOR.VERSION_BUILD);
 const SSCANF_STATIC__ SSCANF_OnNPCModeInit = 0;
+new lightswitch<green>;
+new bool:button_memo<red_wait, green_wait_interim, yellow_wait>
+new bool:button_memo2<parser:red_wait, parser:green_wait_interim>
 
 #define PP_SYNTAX_@
 #define @ str_new_static
@@ -144,6 +147,32 @@ enum PlayerState {
     (variable_declarator
       name: (identifier)
       initializer: (integer_literal)))
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      state: (state_classifier
+        (state_name))))
+  (variable_declaration
+    (variable_declarator
+      type: (tagged_type
+        tag: (identifier))
+      name: (identifier)
+      state: (state_classifier
+        (state_name)
+        (state_name)
+        (state_name))))
+  (variable_declaration
+    (variable_declarator
+      type: (tagged_type
+        tag: (identifier))
+      name: (identifier)
+      state: (state_classifier
+        (scoped_state_entry
+          scope: (state_name)
+          state: (state_name))
+        (scoped_state_entry
+          scope: (state_name)
+          state: (state_name)))))
   (directive_define
     name: (identifier))
   (directive_define

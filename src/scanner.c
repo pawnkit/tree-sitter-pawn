@@ -9,9 +9,11 @@
 // The external scanner is intentionally narrow: it only classifies shared-if
 // layouts that need cross-line lookahead after directive selection, plus the
 // immediate `<` that opens callback signatures without stealing bare `i<10`
-// relational expressions.
+// relational expressions, plus a narrow line terminator used for official
+// statement forms whose semicolon may be omitted at end of line.
 enum TokenType {
   CALLBACK_SIGNATURE_START,
+  STATEMENT_LINE_TERMINATOR,
   CONDITIONAL_IF_ELSE_PREAMBLE,
   CONDITIONAL_IF_ELSE_IF_PREAMBLE,
   CONDITIONAL_IF_BLOCK_PREAMBLE,
@@ -46,6 +48,7 @@ static bool scan_balanced_block_followed_by_else(TSLexer *lexer);
 static bool scan_block_tail_after_open_brace(TSLexer *lexer, IfBranchKind *kind);
 static bool scan_nested_shared_if_header(TSLexer *lexer, IfBranchKind *kind);
 static bool scan_callback_signature_start(TSLexer *lexer);
+static bool scan_statement_line_terminator(TSLexer *lexer);
 static bool scan_line_comment_after_slash(TSLexer *lexer);
 static bool scan_block_comment_after_slash(TSLexer *lexer);
 static bool scan_unsupported_define_header(TSLexer *lexer);
@@ -199,13 +202,170 @@ static bool scan_callback_signature_start(TSLexer *lexer) {
   if (lexer->lookahead != '<') return false;
 
   advance(lexer);
-  int32_t next = lexer->lookahead;
-  if (!(next == '>' || next == '_' || next == '%' || isalpha((unsigned char)next))) {
+  lexer->mark_end(lexer);
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\r') {
+    skip(lexer);
+  }
+
+  bool saw_content = false;
+  if (lexer->lookahead == '>') {
+    return true;
+  }
+
+  if (lexer->lookahead == '_') {
+    saw_content = true;
+    advance(lexer);
+  } else if (lexer->lookahead == '%') {
+    saw_content = true;
+    advance(lexer);
+    if (!is_identifier_char(lexer->lookahead)) {
+      return false;
+    }
+    while (is_identifier_char(lexer->lookahead)) {
+      advance(lexer);
+    }
+  } else if (isalpha((unsigned char)lexer->lookahead)) {
+    saw_content = true;
+    while (is_identifier_char(lexer->lookahead)) {
+      advance(lexer);
+    }
+  } else {
     return false;
   }
 
-  lexer->mark_end(lexer);
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\r') {
+    skip(lexer);
+  }
+
+  if (lexer->lookahead != '>') {
+    return false;
+  }
+
+  advance(lexer);
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\r') {
+    skip(lexer);
+  }
+
+  if (saw_content) {
+    if (lexer->lookahead == 0 || lexer->lookahead == '\n' || lexer->lookahead == ';') {
+      return false;
+    }
+
+    if (lexer->lookahead == '/') {
+      advance(lexer);
+      if (scan_line_comment_after_slash(lexer)) {
+        return false;
+      }
+      if (scan_block_comment_after_slash(lexer)) {
+        while (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\r') {
+          skip(lexer);
+        }
+        if (lexer->lookahead == 0 || lexer->lookahead == '\n' || lexer->lookahead == ';') {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+  }
+
   return true;
+}
+
+static bool is_statement_continuation_char(int32_t c) {
+  switch (c) {
+    case '(':
+    case '[':
+    case '.':
+    case ',':
+    case '?':
+    case ':':
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+    case '%':
+    case '<':
+    case '>':
+    case '=':
+    case '!':
+    case '&':
+    case '|':
+    case '^':
+      return true;
+    default:
+      return false;
+  }
+}
+
+static bool scan_statement_line_terminator(TSLexer *lexer) {
+  for (;;) {
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\r') {
+      skip(lexer);
+    }
+
+    if (lexer->lookahead == '\\') {
+      advance(lexer);
+      if (lexer->lookahead == '\r') {
+        skip(lexer);
+      }
+      if (lexer->lookahead == '\n') {
+        skip(lexer);
+        continue;
+      }
+      return false;
+    }
+
+    if (lexer->lookahead != '/') {
+      break;
+    }
+
+    advance(lexer);
+    if (scan_line_comment_after_slash(lexer) || scan_block_comment_after_slash(lexer)) {
+      continue;
+    }
+
+    return false;
+  }
+
+  if (lexer->lookahead == 0) {
+    lexer->mark_end(lexer);
+    return true;
+  }
+
+  if (lexer->lookahead != '\n') {
+    return false;
+  }
+
+  skip(lexer);
+  lexer->mark_end(lexer);
+
+  for (;;) {
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\r' || lexer->lookahead == '\n') {
+      skip(lexer);
+    }
+
+    if (lexer->lookahead != '/') {
+      break;
+    }
+
+    advance(lexer);
+    if (scan_line_comment_after_slash(lexer) || scan_block_comment_after_slash(lexer)) {
+      continue;
+    }
+
+    return false;
+  }
+
+  if (lexer->lookahead == 0) {
+    return true;
+  }
+
+  if (lexer->lookahead == '{') {
+    return false;
+  }
+
+  return !is_statement_continuation_char(lexer->lookahead);
 }
 
 static DirectiveType scan_directive_type(TSLexer *lexer) {
@@ -1135,6 +1295,11 @@ bool tree_sitter_pawn_external_scanner_scan(void *payload, TSLexer *lexer, const
 
   if (valid_symbols[CALLBACK_SIGNATURE_START] && scan_callback_signature_start(lexer)) {
     lexer->result_symbol = CALLBACK_SIGNATURE_START;
+    return true;
+  }
+
+  if (valid_symbols[STATEMENT_LINE_TERMINATOR] && scan_statement_line_terminator(lexer)) {
+    lexer->result_symbol = STATEMENT_LINE_TERMINATOR;
     return true;
   }
 

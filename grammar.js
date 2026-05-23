@@ -47,6 +47,7 @@ module.exports = grammar({
 
   externals: ($) => [
     $._callback_signature_start,
+    $._statement_line_terminator,
     $._conditional_if_else_preamble,
     $._conditional_if_else_if_preamble,
     $._conditional_if_block_preamble,
@@ -72,7 +73,10 @@ module.exports = grammar({
 
   conflicts: ($) => [
     [$._declaration_qualifier, $._function_modifier],
-    [$.variable_declaration, $._function_modifier],
+    [$._function_modifier, $.variable_declaration],
+    [$._callback_named_identifier, $.variable_declarator],
+    [$._callback_named_identifier, $.variable_declarator, $._state_variable_declarator],
+    [$.variable_declarator, $._state_variable_declarator],
     // A generic top-level macro invocation and a bare function signature both start with `identifier(`.
     [$.macro_invocation_statement, $._function_name],
     [$._function_name, $.tagged_type],
@@ -96,6 +100,8 @@ module.exports = grammar({
     [$.sizeof_expression, $._sizeof_subscript_expression],
     [$._preproc_sizeof_subscript_expression, $.preproc_subscript_expression],
     [$.preproc_parenthesized_expression, $.preproc_sizeof_expression],
+    [$.expression_list, $._argument_list_item],
+    [$.parenthesized_expression, $._argument_list_item],
     [$._statement, $._nonblock_statement],
     [$._block_conditional_item, $._conditional_if_split_wrapped_else_setup_statement],
     [$._prefixed_function_definition_signature, $.variable_declaration],
@@ -382,12 +388,21 @@ module.exports = grammar({
 
     tag_wildcard: ($) => "_",
 
-    variable_declaration: ($) => seq(
-      repeat(field("prefix", $.identifier)),
-      $._variable_declaration_prefix,
-      repeat(field("qualifier_reference", $.declaration_qualifier_reference)),
-      $._variable_declarator_list,
-      ";",
+    variable_declaration: ($) => choice(
+      seq(
+        repeat(field("prefix", $.identifier)),
+        $._variable_declaration_prefix,
+        repeat(field("qualifier_reference", $.declaration_qualifier_reference)),
+        $._variable_declarator_list,
+        ";",
+      ),
+      prec(1, seq(
+        repeat(field("prefix", $.identifier)),
+        $._variable_declaration_prefix,
+        repeat(field("qualifier_reference", $.declaration_qualifier_reference)),
+        alias($._state_variable_declarator, $.variable_declarator),
+        statementTerminator($),
+      )),
     ),
 
     _variable_declaration_prefix: ($) => repeat1(choice(
@@ -418,11 +433,26 @@ module.exports = grammar({
       "static",
     ),
 
-    variable_declarator: ($) => seq(
+    variable_declarator: ($) => choice(
+      seq(
+        optional(field("type", $.tagged_type)),
+        $._callback_named_identifier,
+        repeat(choice($.dimension, $.fixed_dimension, $.packed_dimension)),
+        optional(seq("=", field("initializer", choice($.array_literal, $._expression)))),
+      ),
+      seq(
+        optional(field("type", $.tagged_type)),
+        field("name", $.identifier),
+        repeat(choice($.dimension, $.fixed_dimension, $.packed_dimension)),
+        field("state", $.state_classifier),
+      ),
+    ),
+
+    _state_variable_declarator: ($) => seq(
       optional(field("type", $.tagged_type)),
-      $._callback_named_identifier,
+      field("name", $.identifier),
       repeat(choice($.dimension, $.fixed_dimension, $.packed_dimension)),
-      optional(seq("=", field("initializer", choice($.array_literal, $._expression)))),
+      field("state", $.state_classifier),
     ),
 
     enum_declaration: ($) => seq(
@@ -955,6 +985,10 @@ module.exports = grammar({
       $.block,
       $.variable_declaration,
       $.inline_callback_definition,
+      $.call_statement,
+      $.assert_statement,
+      $.exit_statement,
+      $.sleep_statement,
       $.conditional_else_statement,
       $.if_statement,
       $.switch_statement,
@@ -1013,9 +1047,32 @@ module.exports = grammar({
       ";",
     ),
 
+    assert_statement: ($) => seq(
+      "assert",
+      field("condition", choice($.expression_list, $._expression)),
+      statementTerminator($),
+    ),
+
+    exit_statement: ($) => seq(
+      "exit",
+      optional(field("value", choice($.expression_list, $._expression))),
+      statementTerminator($),
+    ),
+
+    sleep_statement: ($) => seq(
+      "sleep",
+      optional(field("value", choice($.expression_list, $._expression))),
+      statementTerminator($),
+    ),
+
+    call_statement: ($) => prec.dynamic(5, seq(
+      field("call", alias($._bare_call_expression, $.call_expression)),
+      statementTerminator($),
+    )),
+
     expression_statement: ($) => seq(
-      field("expression", choice($.expression_list, $._expression)),
-      ";",
+      field("expression", choice($.statement_expression_list, $._statement_expression)),
+      statementTerminator($),
     ),
 
     expression_list: ($) => prec.left(seq(
@@ -1023,8 +1080,18 @@ module.exports = grammar({
       repeat1(seq(",", field("right", $._expression))),
     )),
 
+    statement_expression_list: ($) => prec.left(seq(
+      field("left", $._statement_expression),
+      repeat1(seq(",", field("right", $._statement_expression))),
+    )),
+
     _expression: ($) => choice(
       $._expression_not_binary,
+      $.binary_expression,
+    ),
+
+    _statement_expression: ($) => choice(
+      $._statement_expression_not_binary,
       $.binary_expression,
     ),
 
@@ -1032,6 +1099,28 @@ module.exports = grammar({
       $.assignment_expression,
       $.ternary_expression,
       $.adjacent_string_expression,
+      $.bare_type_expression,
+      $.packed_storage_expression,
+      $.callback_suffix_expression,
+      $.tagged_expression,
+      $.tagof_expression,
+      $.function_reference_expression,
+      $.sizeof_expression,
+      $.unary_expression,
+      $.update_expression,
+      $.member_expression,
+      $.call_expression,
+      $.callback_member_expression,
+      $.packed_subscript_expression,
+      $.subscript_expression,
+      $.parenthesized_expression,
+      $.identifier,
+      $._literal,
+    ),
+
+    _statement_expression_not_binary: ($) => choice(
+      $.assignment_expression,
+      $.ternary_expression,
       $.bare_type_expression,
       $.packed_storage_expression,
       $.callback_suffix_expression,
@@ -1259,6 +1348,44 @@ module.exports = grammar({
       )),
       field("arguments", $.argument_list),
     )),
+
+    _bare_call_expression: ($) => prec.dynamic(1, prec.left(PREC.CALL, seq(
+      field("function", choice(
+        $.identifier,
+        $.callback_member_expression,
+        $.member_expression,
+        $.subscript_expression,
+        $.tagged_expression,
+      )),
+      field("arguments", alias($._bare_argument_list, $.argument_list)),
+    ))),
+
+    _bare_call_argument: ($) => choice(
+      $.array_literal,
+      $.named_argument,
+      $.using_inline_expression,
+      $.tag_wildcard,
+      $.bare_type_expression,
+      $.packed_storage_expression,
+      $.callback_suffix_expression,
+      $.tagged_expression,
+      $.tagof_expression,
+      $.function_reference_expression,
+      $.sizeof_expression,
+      $.update_expression,
+      $.member_expression,
+      $.call_expression,
+      $.callback_member_expression,
+      $.packed_subscript_expression,
+      $.subscript_expression,
+      $.identifier,
+      $._literal,
+    ),
+
+    _bare_argument_list: ($) => seq(
+      $._bare_call_argument,
+      repeat(seq(",", $._bare_call_argument)),
+    ),
 
     argument_list: ($) => seq(
       "(",
@@ -2510,6 +2637,13 @@ function conditionalDirectiveChoices($, {
   ];
 }
 
+function statementTerminator($) {
+  return choice(
+    ";",
+    $._statement_line_terminator,
+  );
+}
+
 function functionBodyChoice($, {
   blockRule,
   conditionalRule = null,
@@ -2525,6 +2659,11 @@ function functionBodyChoice($, {
     $.do_while_statement,
     $.for_statement,
     $.goto_statement,
+    $.state_statement,
+    $.call_statement,
+    $.assert_statement,
+    $.exit_statement,
+    $.sleep_statement,
     alias($._unterminated_return_statement, $.return_statement),
     $.return_statement,
     $.break_statement,
@@ -2581,6 +2720,10 @@ function statementChoice($, {
     $.do_while_statement,
     $.for_statement,
     $.goto_statement,
+    $.call_statement,
+    $.assert_statement,
+    $.exit_statement,
+    $.sleep_statement,
     $.label_statement,
     $.return_statement,
     $.break_statement,

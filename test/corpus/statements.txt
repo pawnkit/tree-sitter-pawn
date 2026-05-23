@@ -355,3 +355,112 @@ stock F() {
           initializer: (member_expression
             object: (identifier)
             property: (identifier)))))))
+
+====================================
+official statement forms without parens
+====================================
+
+main() {
+    printf "Hello world\n"
+    getstring str, sizeof str
+    assert n > 0
+    sleep 1000
+    exit 3
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (call_statement
+        call: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal
+              (escape_sequence)))))
+      (call_statement
+        call: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (identifier)
+            (sizeof_expression
+              argument: (identifier)))))
+      (assert_statement
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal)))
+      (sleep_statement
+        value: (integer_literal))
+      (exit_statement
+        value: (integer_literal)))))
+
+=============================
+optional semicolons at line end
+=============================
+
+main() {
+    a = 1
+    b = 2
+    i++
+    value = 1 +
+        2;
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (expression_statement
+        expression: (assignment_expression
+          left: (identifier)
+          right: (integer_literal)))
+      (expression_statement
+        expression: (assignment_expression
+          left: (identifier)
+          right: (integer_literal)))
+      (expression_statement
+        expression: (update_expression
+          argument: (identifier)))
+      (expression_statement
+        expression: (assignment_expression
+          left: (identifier)
+          right: (binary_expression
+            left: (integer_literal)
+            right: (integer_literal)))))))
+
+===============================================
+semicolonless state declarations in block scope
+===============================================
+
+main() {
+    new lightswitch<green>
+    new bool:button_memo<red_wait, green_wait_interim, yellow_wait>
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (variable_declaration
+        (variable_declarator
+          name: (identifier)
+          state: (state_classifier
+            (state_name))))
+      (variable_declaration
+        (variable_declarator
+          type: (tagged_type
+            tag: (identifier))
+          name: (identifier)
+          state: (state_classifier
+            (state_name)
+            (state_name)
+            (state_name)))))))
