@@ -626,6 +626,37 @@ macro operator function names
               left: (macro_parameter)
               right: (identifier))))))))
 
+=============================================
+adjacent identifier string define replacements
+=============================================
+
+#define DIRECTORY_MAIN "data/"
+#define ACCOUNT_DATABASE DIRECTORY_MAIN"accounts.db"
+#define WORLD_DATABASE DIRECTORY_MAIN"world.db"
+
+---
+
+(source_file
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (string_literal))))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_adjacent_string_expression
+          left: (identifier)
+          right: (string_literal)))))
+  (directive_define
+    name: (identifier)
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_adjacent_string_expression
+          left: (identifier)
+          right: (string_literal))))))
+
 ====================================
 macro stringify and comma grouping
 ====================================

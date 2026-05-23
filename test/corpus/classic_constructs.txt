@@ -1031,3 +1031,126 @@ stock TestDeferredCalls() {
         call: (call_expression
           function: (identifier)
           arguments: (argument_list))))))
+
+=========================
+inline callback statements
+=========================
+
+stock TestInline() {
+    inline HalloweenPlayerData() {
+        new rows, fields, count;
+    }
+    MySQL_TQueryInline(mysql, using inline HalloweenPlayerData, query, "");
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (inline_callback_definition
+        name: (identifier)
+        parameters: (parameter_list)
+        body: (block
+          (variable_declaration
+            (variable_declarator
+              name: (identifier))
+            (variable_declarator
+              name: (identifier))
+            (variable_declarator
+              name: (identifier)))))
+      (expression_statement
+        expression: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (identifier)
+            (using_inline_expression
+              name: (identifier))
+            (identifier)
+            (string_literal)))))))
+
+=====================================
+semicolonless braceless return body
+=====================================
+
+stock bool:strequal(const string1[], const string2[], bool:ignorecase=false, length=cellmax)
+    return strcmp(string1, string2, ignorecase, length) == 0
+
+---
+
+(source_file
+  (function_definition
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)
+        (dimension))
+      (parameter_declaration
+        name: (identifier)
+        (dimension))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)
+        default_value: (boolean_literal))
+      (parameter_declaration
+        name: (identifier)
+        default_value: (identifier)))
+    body: (return_statement
+      value: (binary_expression
+        left: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (identifier)
+            (identifier)
+            (identifier)
+            (identifier)))
+        right: (integer_literal)))))
+
+======================================
+adjacent identifier string expressions
+======================================
+
+stock TestPaths() {
+    if(!Exists(DIRECTORY_SCRIPTFILES DIRECTORY_MAIN)) {
+        print("ERROR: Directory '"DIRECTORY_SCRIPTFILES DIRECTORY_MAIN"' not found.");
+        CreateDir(DIRECTORY_SCRIPTFILES DIRECTORY_MAIN);
+    }
+}
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (if_statement
+        condition: (unary_expression
+          argument: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (adjacent_string_expression
+                left: (identifier)
+                right: (identifier)))))
+        consequence: (block
+          (expression_statement
+            expression: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (adjacent_string_expression
+                  left: (string_literal)
+                  right: (identifier)
+                  right: (identifier)
+                  right: (string_literal)))))
+          (expression_statement
+            expression: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (adjacent_string_expression
+                  left: (identifier)
+                  right: (identifier))))))))))

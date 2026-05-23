@@ -91,6 +91,9 @@ module.exports = grammar({
     [$._loop_header, $.for_statement],
     [$._direct_loop_statement_variant, $._loop_header],
     [$._sizeof_subscript_expression, $.subscript_expression],
+    // Semicolonless braceless return bodies expose the existing `sizeof value[...]`
+    // ambiguity between a complete sizeof-expression and a longer sizeof-subscript tail.
+    [$.sizeof_expression, $._sizeof_subscript_expression],
     [$._preproc_sizeof_subscript_expression, $.preproc_subscript_expression],
     [$.preproc_parenthesized_expression, $.preproc_sizeof_expression],
     [$._statement, $._nonblock_statement],
@@ -951,6 +954,7 @@ module.exports = grammar({
       $.block_conditional,
       $.block,
       $.variable_declaration,
+      $.inline_callback_definition,
       $.conditional_else_statement,
       $.if_statement,
       $.switch_statement,
@@ -986,9 +990,22 @@ module.exports = grammar({
       ";",
     ),
 
+    _unterminated_return_statement: ($) => prec.right(1, seq(
+      "return",
+      field("value", $._unterminated_return_value),
+    )),
+
     break_statement: ($) => seq("break", ";"),
 
     continue_statement: ($) => seq("continue", ";"),
+
+    inline_callback_definition: ($) => seq(
+      "inline",
+      optional(field("qualifier", "const")),
+      field("name", $._function_name),
+      field("parameters", $.parameter_list),
+      field("body", $.block),
+    ),
 
     defer_statement: ($) => seq(
       "defer",
@@ -1034,6 +1051,30 @@ module.exports = grammar({
       $._literal,
     ),
 
+    _unterminated_return_value: ($) => choice(
+      $.expression_list,
+      $.binary_expression,
+      $.assignment_expression,
+      $.ternary_expression,
+      $.adjacent_string_expression,
+      $.bare_type_expression,
+      $.packed_storage_expression,
+      $.callback_suffix_expression,
+      $.tagged_expression,
+      $.tagof_expression,
+      $.function_reference_expression,
+      $.unary_expression,
+      $.update_expression,
+      $.member_expression,
+      $.call_expression,
+      $.callback_member_expression,
+      $.packed_subscript_expression,
+      $.subscript_expression,
+      $.parenthesized_expression,
+      $.identifier,
+      $._literal,
+    ),
+
     _adjacent_string_atom: ($) => choice(
       $.identifier,
       $.string_literal,
@@ -1044,6 +1085,11 @@ module.exports = grammar({
       seq(
         field("left", $.function_reference_expression),
         field("right", $.string_literal),
+        repeat(field("right", $._adjacent_string_atom)),
+      ),
+      seq(
+        field("left", $.identifier),
+        field("right", $.identifier),
         repeat(field("right", $._adjacent_string_atom)),
       ),
       seq(
@@ -1223,9 +1269,16 @@ module.exports = grammar({
     _argument_list_item: ($) => choice(
       $.array_literal,
       $.named_argument,
+      $.using_inline_expression,
       $.operator_symbol,
       $.tag_wildcard,
       $._expression,
+    ),
+
+    using_inline_expression: ($) => seq(
+      "using",
+      "inline",
+      field("name", $.identifier),
     ),
 
     _argument_list_items: ($) => directiveListItems($, {
@@ -1761,17 +1814,27 @@ module.exports = grammar({
       seq(
         field("left", $.preproc_stringify_expression),
         field("right", $.string_literal),
-        repeat(field("right", choice($.preproc_stringify_expression, $.string_literal))),
+        repeat(field("right", choice($.identifier, $.preproc_stringify_expression, $.string_literal))),
+      ),
+      seq(
+        field("left", $.identifier),
+        field("right", $.string_literal),
+        repeat(field("right", choice($.identifier, $.preproc_stringify_expression, $.string_literal))),
       ),
       seq(
         field("left", $.string_literal),
         field("right", $.preproc_stringify_expression),
-        repeat(field("right", choice($.preproc_stringify_expression, $.string_literal))),
+        repeat(field("right", choice($.identifier, $.preproc_stringify_expression, $.string_literal))),
+      ),
+      seq(
+        field("left", $.string_literal),
+        field("right", $.identifier),
+        repeat(field("right", choice($.identifier, $.preproc_stringify_expression, $.string_literal))),
       ),
       seq(
         field("left", $.string_literal),
         field("right", $.string_literal),
-        repeat(field("right", choice($.preproc_stringify_expression, $.string_literal))),
+        repeat(field("right", choice($.identifier, $.preproc_stringify_expression, $.string_literal))),
       ),
     )),
     preproc_parenthesized_expression: ($) => seq(
@@ -2462,6 +2525,7 @@ function functionBodyChoice($, {
     $.do_while_statement,
     $.for_statement,
     $.goto_statement,
+    alias($._unterminated_return_statement, $.return_statement),
     $.return_statement,
     $.break_statement,
     $.continue_statement,
@@ -2489,6 +2553,7 @@ function statementChoice($, {
     ...(includeBlock ? [$.block] : []),
     ...(includeTopLevelConditionalBlock ? [alias($._top_level_conditional_block, $.block)] : []),
     ...(includeTopLevelSharedTailIfHeader ? [$._if_header] : []),
+    $.inline_callback_definition,
     $.variable_declaration,
     $.state_statement,
     ...(includeFunctionInitializerAlternative ? [$.function_initializer_alternative_statement] : []),
