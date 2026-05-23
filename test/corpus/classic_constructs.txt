@@ -804,3 +804,146 @@ stock OnThing(playerid) <_ALS : _ALS_x0, _ALS : _ALS_x1>
     body: (block
       (return_statement
         value: (integer_literal)))))
+
+===================
+pragma enum boundary
+===================
+
+enum first_enum {
+    value_a
+}
+#pragma library Float
+
+enum floatround_method {
+    value_b
+}
+
+---
+
+(source_file
+  (enum_declaration
+    name: (identifier)
+    (enum_entry
+      name: (identifier)))
+  (directive_pragma
+    name: (identifier)
+    value: (preproc_text))
+  (enum_declaration
+    name: (identifier)
+    (enum_entry
+      name: (identifier))))
+
+=================================
+additional operator definitions
+=================================
+
+stock Float:operator--(Float:oper) { return oper - 1.0; }
+stock Float:operator-(Float:oper)  { return oper ^ Float:cellmin; }
+
+---
+
+(source_file
+  (function_definition
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (operator_name)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (binary_expression
+          left: (identifier)
+          right: (float_literal)))))
+  (function_definition
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (operator_name)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (binary_expression
+          left: (identifier)
+          right: (tagged_expression
+            type: (tagged_type
+              tag: (identifier))
+            value: (identifier)))))))
+
+=========================
+plain braceless function
+=========================
+
+stock Float:floatabs(Float:value)
+    return value & Float:cellmax;
+
+---
+
+(source_file
+  (function_definition
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)))
+    body: (return_statement
+      value: (binary_expression
+        left: (identifier)
+        right: (tagged_expression
+          type: (tagged_type
+            tag: (identifier))
+          value: (identifier))))))
+
+================================
+command-style function wrappers
+================================
+
+ACMD:teleport(playerid, params[])    { return 1; }
+hook OnPlayerConnect(playerid)       { return 1; }
+CMD:goto(playerid, params[])         { return 1; }
+
+---
+
+(source_file
+  (function_definition
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier)
+        (dimension)))
+    body: (block
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier)))
+    body: (block
+      (return_statement
+        value: (integer_literal))))
+  (function_definition
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier)
+        (dimension)))
+    body: (block
+      (return_statement
+        value: (integer_literal)))))

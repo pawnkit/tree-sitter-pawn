@@ -246,3 +246,98 @@ enum PlayerState {
       type: (tagged_type
         tag: (identifier))
       name: (identifier))))
+
+================================
+enum-tag array dimensions
+================================
+
+new HalloweenLocations[][E_HALLOWEEN_DATA] = {
+    {1, 2},
+    {3, 4}
+};
+
+---
+
+(source_file
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      (dimension)
+      (fixed_dimension
+        size: (identifier))
+      initializer: (array_literal
+        (array_literal
+          (integer_literal)
+          (integer_literal))
+        (array_literal
+          (integer_literal)
+          (integer_literal))))))
+
+========================================
+relational operator overload declarations
+========================================
+
+native bool:operator==(Float:oper1, Float:oper2) = float_eq;
+native bool:operator!=(Float:oper1, Float:oper2) = float_ne;
+native bool:operator>=(Float:oper1, Float:oper2) = float_ge;
+native bool:operator<=(Float:oper1, Float:oper2) = float_le;
+
+---
+
+(source_file
+  (function_declaration
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (operator_name)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)))
+    alias: (identifier))
+  (function_declaration
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (operator_name)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)))
+    alias: (identifier))
+  (function_declaration
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (operator_name)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)))
+    alias: (identifier))
+  (function_declaration
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (operator_name)
+    parameters: (parameter_list
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier))
+      (parameter_declaration
+        type: (tagged_type
+          tag: (identifier))
+        name: (identifier)))
+    alias: (identifier)))
