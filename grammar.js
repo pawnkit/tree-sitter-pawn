@@ -81,11 +81,11 @@ module.exports = grammar({
     [$.macro_invocation_statement, $._function_name],
     [$._function_name, $.tagged_type],
     ...directiveListElseConflicts($, [
-      "argument",
-      "array_literal",
-      "enum",
-      "parameter",
-      "variable_declarator",
+      "_argument",
+      "_array_literal",
+      "_enum",
+      "_parameter",
+      "_variable_declarator",
     ]),
     [$._top_level_conditional_block, $._top_level_shared_tail_function_block],
     [$.if_statement, $._if_header],
@@ -161,15 +161,15 @@ module.exports = grammar({
       elseName: "block_else",
     }, ($) => $._block_conditional_item, 1),
 
-    ...directiveListGroup("enum", ($) => $.enum_entry),
+    ...directiveListGroup("_enum", ($) => $.enum_entry),
 
-    ...directiveListGroup("argument", ($) => $._argument_list_item),
+    ...directiveListGroup("_argument", ($) => $._argument_list_item),
 
-    ...directiveListGroup("array_literal", ($) => $._array_literal_item),
+    ...directiveListGroup("_array_literal", ($) => $._array_literal_item),
 
-    ...directiveListGroup("parameter", ($) => $._parameter_list_item),
+    ...directiveListGroup("_parameter", ($) => $._parameter_list_item),
 
-    ...directiveListGroup("variable_declarator", ($) => $.variable_declarator),
+    ...directiveListGroup("_variable_declarator", ($) => $.variable_declarator),
 
     _top_level_conditional_item: ($) => choice(
       $.top_level_shared_tail_function_branch,
@@ -348,8 +348,8 @@ module.exports = grammar({
 
     _parameter_list_items: ($) => directiveListItems($, {
       item: $._parameter_list_item,
-      conditional: $.parameter_conditional,
-      conditionalNoComma: $.parameter_conditional_no_comma,
+      conditional: $._parameter_conditional,
+      conditionalNoComma: $._parameter_conditional_no_comma,
     }),
 
     parameter_declaration: ($) => seq(
@@ -425,8 +425,8 @@ module.exports = grammar({
 
     _variable_declarator_list: ($) => directiveListItems($, {
       item: $.variable_declarator,
-      conditional: $.variable_declarator_conditional,
-      conditionalNoComma: $.variable_declarator_conditional_no_comma,
+      conditional: $._variable_declarator_conditional,
+      conditionalNoComma: $._variable_declarator_conditional_no_comma,
     }),
 
     _declaration_qualifier: ($) => choice(
@@ -492,8 +492,8 @@ module.exports = grammar({
 
     _enum_entries: ($) => directiveListItems($, {
       item: $.enum_entry,
-      conditional: $.enum_conditional,
-      conditionalNoComma: $.enum_conditional_no_comma,
+      conditional: $._enum_conditional,
+      conditionalNoComma: $._enum_conditional_no_comma,
     }),
 
     enum_entry: ($) => seq(
@@ -1412,8 +1412,8 @@ module.exports = grammar({
 
     _argument_list_items: ($) => directiveListItems($, {
       item: $._argument_list_item,
-      conditional: $.argument_conditional,
-      conditionalNoComma: $.argument_conditional_no_comma,
+      conditional: $._argument_conditional,
+      conditionalNoComma: $._argument_conditional_no_comma,
     }),
 
     named_argument: ($) => seq(
@@ -1514,8 +1514,8 @@ module.exports = grammar({
 
     _array_literal_items: ($) => directiveListItems($, {
       item: $._array_literal_item,
-      conditional: $.array_literal_conditional,
-      conditionalNoComma: $.array_literal_conditional_no_comma,
+      conditional: $._array_literal_conditional,
+      conditionalNoComma: $._array_literal_conditional_no_comma,
     }),
 
     preproc_include: ($) => includeDirective($, "include"),
@@ -2490,7 +2490,7 @@ function namedDirective($, keyword, ...items) {
   );
 }
 
-function directiveIfGroup(names, content, precedence = 0) {
+function directiveIfGroup(names, content, precedence = 0, fieldAlternatives = true) {
   const { ifName, elseifName, elseName } = names;
   const wrapRight = (rule) => precedence === 0 ? prec.right(rule) : prec.right(precedence, rule);
 
@@ -2498,14 +2498,18 @@ function directiveIfGroup(names, content, precedence = 0) {
     [ifName]: ($) => wrapRight(seq(
       $.preproc_if,
       repeat(content($)),
-      field("alternative", optional(choice($[elseifName], $[elseName]))),
+      ...(fieldAlternatives
+        ? [field("alternative", optional(choice($[elseifName], $[elseName])))]
+        : [optional(choice($[elseifName], $[elseName]))]),
       $.preproc_endif,
     )),
 
     [elseifName]: ($) => wrapRight(seq(
       $.preproc_elseif,
       repeat(content($)),
-      field("alternative", optional(choice($[elseifName], $[elseName]))),
+      ...(fieldAlternatives
+        ? [field("alternative", optional(choice($[elseifName], $[elseName])))]
+        : [optional(choice($[elseifName], $[elseName]))]),
     )),
 
     [elseName]: ($) => seq(
@@ -2524,13 +2528,13 @@ function directiveListGroup(baseName, item) {
     }, ($) => choice(
       seq(item($), ","),
       $[`${baseName}_conditional`],
-    )),
+    ), 0, false),
 
     ...directiveIfGroup({
       ifName: `${baseName}_conditional_no_comma`,
       elseifName: `${baseName}_elseif_no_comma`,
       elseName: `${baseName}_else_no_comma`,
-    }, item, -1),
+    }, item, -1, false),
   };
 }
 

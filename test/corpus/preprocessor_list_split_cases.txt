@@ -20,20 +20,18 @@ stock Foo(
   (function_definition
     name: (identifier)
     parameters: (parameter_list
-      (parameter_conditional
-        (preproc_if
-          condition: (preproc_expression
-            (preproc_defined
-              name: (identifier))))
-        (parameter_declaration
-          name: (identifier))
-        alternative: (parameter_else
-          (preproc_else)
-          (parameter_declaration
-            name: (identifier))
-          (parameter_declaration
-            name: (identifier)))
-        (preproc_endif))
+      (preproc_if
+        condition: (preproc_expression
+          (preproc_defined
+            name: (identifier))))
+      (parameter_declaration
+        name: (identifier))
+      (preproc_else)
+      (parameter_declaration
+        name: (identifier))
+      (parameter_declaration
+        name: (identifier))
+      (preproc_endif)
       (parameter_declaration
         name: (identifier)))
     body: (block
@@ -58,18 +56,16 @@ enum Mode {
 (source_file
   (enum_declaration
     name: (identifier)
-    (enum_conditional
-      (preproc_if
-        condition: (preproc_expression
-          (preproc_defined
-            name: (identifier))))
-      (enum_entry
-        name: (identifier))
-      alternative: (enum_else
-        (preproc_else)
-        (enum_entry
-          name: (identifier)))
-      (preproc_endif))
+    (preproc_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (enum_entry
+      name: (identifier))
+    (preproc_else)
+    (enum_entry
+      name: (identifier))
+    (preproc_endif)
     (enum_entry
       name: (identifier))))
 
@@ -94,16 +90,14 @@ new values[] = {
       name: (identifier)
       (dimension)
       initializer: (array_literal
-        (array_literal_conditional
-          (preproc_if
-            condition: (preproc_expression
-              (preproc_defined
-                name: (identifier))))
-          (integer_literal)
-          alternative: (array_literal_else
-            (preproc_else)
-            (integer_literal))
-          (preproc_endif))
+        (preproc_if
+          condition: (preproc_expression
+            (preproc_defined
+              name: (identifier))))
+        (integer_literal)
+        (preproc_else)
+        (integer_literal)
+        (preproc_endif)
         (integer_literal)))))
 
 ====================
@@ -135,16 +129,14 @@ stock ArgSplit(playerid)
           function: (identifier)
           arguments: (argument_list
             (identifier)
-            (argument_conditional
-              (preproc_if
-                condition: (preproc_expression
-                  (preproc_defined
-                    name: (identifier))))
-              (hex_literal)
-              alternative: (argument_else
-                (preproc_else)
-                (hex_literal))
-              (preproc_endif))
+            (preproc_if
+              condition: (preproc_expression
+                (preproc_defined
+                  name: (identifier))))
+            (hex_literal)
+            (preproc_else)
+            (hex_literal)
+            (preproc_endif)
             (string_literal)))))))
 
 ===============================
@@ -172,18 +164,16 @@ new values[] = {1},
   (variable_declaration
     (variable_declarator
       name: (identifier))
-    (variable_declarator_conditional
-      (preproc_if
-        condition: (preproc_expression
-          (preproc_defined
-            name: (identifier))))
-      (variable_declarator
-        name: (identifier))
-      alternative: (variable_declarator_else
-        (preproc_else)
-        (variable_declarator
-          name: (identifier)))
-      (preproc_endif))
+    (preproc_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (variable_declarator
+      name: (identifier))
+    (preproc_else)
+    (variable_declarator
+      name: (identifier))
+    (preproc_endif)
     (variable_declarator
       type: (tagged_type
         tag: (identifier))
@@ -195,17 +185,16 @@ new values[] = {1},
       (dimension)
       initializer: (array_literal
         (integer_literal)))
-    (variable_declarator_conditional
-      (preproc_if
-        condition: (preproc_expression
-          (preproc_defined
-            name: (identifier))))
-      (variable_declarator
-        name: (identifier)
-        (dimension)
-        initializer: (array_literal
-          (integer_literal)))
-      (preproc_endif))
+    (preproc_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (variable_declarator
+      name: (identifier)
+      (dimension)
+      initializer: (array_literal
+        (integer_literal)))
+    (preproc_endif)
     (variable_declarator
       name: (identifier)
       (dimension)
@@ -233,26 +222,23 @@ static
   (variable_declaration
     (variable_declarator
       name: (identifier))
-    (variable_declarator_conditional
-      (preproc_if
-        condition: (preproc_expression
-          (preproc_defined
-            name: (identifier))))
-      (variable_declarator_conditional
-        (preproc_if
-          condition: (preproc_expression
-            (preproc_defined
-              name: (identifier))))
-        (variable_declarator
-          name: (identifier)
-          (fixed_dimension
-            size: (integer_literal)))
-        alternative: (variable_declarator_else
-          (preproc_else)
-          (variable_declarator
-            name: (identifier)))
-        (preproc_endif))
-      (preproc_endif))
+    (preproc_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (preproc_if
+      condition: (preproc_expression
+        (preproc_defined
+          name: (identifier))))
+    (variable_declarator
+      name: (identifier)
+      (fixed_dimension
+        size: (integer_literal)))
+    (preproc_else)
+    (variable_declarator
+      name: (identifier))
+    (preproc_endif)
+    (preproc_endif)
     (variable_declarator
       type: (tagged_type
         tag: (identifier))
