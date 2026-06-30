@@ -1041,13 +1041,15 @@ stock TestDeferredCalls() {
     name: (identifier)
     parameters: (parameter_list)
     body: (block
-      (defer_statement
+      (prefixed_call_statement
+        prefix: (identifier)
         call: (call_expression
           function: (subscript_expression
             array: (identifier)
             index: (integer_literal))
           arguments: (argument_list)))
-      (defer_statement
+      (prefixed_call_statement
+        prefix: (identifier)
         call: (call_expression
           function: (identifier)
           arguments: (argument_list))))))
@@ -1086,7 +1088,9 @@ stock TestInline() {
           function: (identifier)
           arguments: (argument_list
             (identifier)
-            (using_inline_expression
+            (macro_reference_expression
+              prefix: (identifier)
+              modifier: (identifier)
               name: (identifier))
             (identifier)
             (string_literal)))))))

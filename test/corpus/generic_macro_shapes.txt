@@ -36,3 +36,34 @@ stock Test() {
               function: (identifier)
               arguments: (argument_list
                 (identifier)))))))))
+
+=============================================
+generic modifiers calls and symbol references
+=============================================
+
+Decorator public OnSomething() {
+    Schedule Run();
+    Consume(With Modifier Callback);
+}
+
+---
+
+(source_file
+  (function_definition
+    prefix: (identifier)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (prefixed_call_statement
+        prefix: (identifier)
+        call: (call_expression
+          function: (identifier)
+          arguments: (argument_list)))
+      (expression_statement
+        expression: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (macro_reference_expression
+              prefix: (identifier)
+              modifier: (identifier)
+              name: (identifier))))))))

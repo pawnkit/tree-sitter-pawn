@@ -105,6 +105,7 @@ module.exports = grammar({
     [$._statement, $._nonblock_statement],
     [$._block_conditional_item, $._conditional_if_split_wrapped_else_setup_statement],
     [$._prefixed_function_definition_signature, $.prefixed_function_declaration, $.variable_declaration],
+    [$._prefixed_function_definition_signature, $.variable_declaration],
     [$.macro_iterator, $._expression],
   ],
 
@@ -208,10 +209,17 @@ module.exports = grammar({
       tailBuilder: ($) => field("body", $._function_body),
     }),
 
-    _prefixed_function_definition_signature: ($) => seq(
-      repeat($._function_modifier),
-      field("prefix", $.identifier),
-      prefixedFunctionSignatureTail($),
+    _prefixed_function_definition_signature: ($) => choice(
+      seq(
+        repeat($._function_modifier),
+        field("prefix", $.identifier),
+        prefixedFunctionSignatureTail($),
+      ),
+      seq(
+        field("prefix", $.identifier),
+        repeat1($._function_modifier),
+        prefixedFunctionSignatureTail($),
+      ),
     ),
 
     _plain_function_definition_signature: ($) => seq(
@@ -1038,11 +1046,11 @@ module.exports = grammar({
       field("body", $.block),
     ),
 
-    defer_statement: ($) => seq(
-      "defer",
+    prefixed_call_statement: ($) => prec(1, seq(
+      field("prefix", $.identifier),
       field("call", $.call_expression),
       ";",
-    ),
+    )),
 
     assert_statement: ($) => seq(
       "assert",
@@ -1360,7 +1368,7 @@ module.exports = grammar({
     _bare_call_argument: ($) => choice(
       $.array_literal,
       $.named_argument,
-      $.using_inline_expression,
+      $.macro_reference_expression,
       $.tag_wildcard,
       $.bare_type_expression,
       $.packed_storage_expression,
@@ -1393,17 +1401,17 @@ module.exports = grammar({
     _argument_list_item: ($) => choice(
       $.array_literal,
       $.named_argument,
-      $.using_inline_expression,
+      $.macro_reference_expression,
       $.operator_symbol,
       $.tag_wildcard,
       $._expression,
     ),
 
-    using_inline_expression: ($) => seq(
-      "using",
-      "inline",
+    macro_reference_expression: ($) => prec(1, seq(
+      field("prefix", $.identifier),
+      field("modifier", $.identifier),
       field("name", $.identifier),
-    ),
+    )),
 
     _argument_list_items: ($) => directiveListItems($, {
       item: $._argument_list_item,
@@ -2676,7 +2684,7 @@ function functionBodyChoice($, {
     $.return_statement,
     $.break_statement,
     $.continue_statement,
-    $.defer_statement,
+    $.prefixed_call_statement,
     $.expression_statement,
     ...nonBranchDirectiveStatementChoices($),
   );
@@ -2736,7 +2744,7 @@ function statementChoice($, {
     $.return_statement,
     $.break_statement,
     $.continue_statement,
-    $.defer_statement,
+    $.prefixed_call_statement,
     $.expression_statement,
     ...directiveStatementChoices($, {
       includeConditionalIf,

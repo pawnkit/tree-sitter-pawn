@@ -13,6 +13,8 @@ Macro-shaped declarations, statements, labels, and block openers are accepted by
 their syntax alone. Declaration prefixes and iterator-style loops are represented
 by `prefixed_function_declaration` and `macro_iterator_loop_statement`; names such
 as `hook` and `foreach` have no privileged status in the grammar.
+Modifier-before-name definitions (`SomeMacro public OnSomething()`), prefixed calls,
+and multi-token references are likewise represented by their generic source shape.
 
 The target is the Pawn 3 language described by the CompuPhase reference, plus
 widely implemented compiler syntax such as tags, states, packed arrays, callbacks,

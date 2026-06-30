@@ -216,10 +216,6 @@
         "named": true
       },
       {
-        "type": "defer_statement",
-        "named": true
-      },
-      {
         "type": "do_while_statement",
         "named": true
       },
@@ -261,6 +257,10 @@
       },
       {
         "type": "macro_iterator_loop_statement",
+        "named": true
+      },
+      {
+        "type": "prefixed_call_statement",
         "named": true
       },
       {
@@ -466,6 +466,10 @@
           "named": true
         },
         {
+          "type": "macro_reference_expression",
+          "named": true
+        },
+        {
           "type": "named_argument",
           "named": true
         },
@@ -491,10 +495,6 @@
         },
         {
           "type": "tag_wildcard",
-          "named": true
-        },
-        {
-          "type": "using_inline_expression",
           "named": true
         }
       ]
@@ -902,10 +902,6 @@
           "named": true
         },
         {
-          "type": "defer_statement",
-          "named": true
-        },
-        {
           "type": "do_while_statement",
           "named": true
         },
@@ -951,6 +947,10 @@
         },
         {
           "type": "macro_iterator_loop_statement",
+          "named": true
+        },
+        {
+          "type": "prefixed_call_statement",
           "named": true
         },
         {
@@ -1140,10 +1140,6 @@
           "named": true
         },
         {
-          "type": "defer_statement",
-          "named": true
-        },
-        {
           "type": "do_while_statement",
           "named": true
         },
@@ -1185,6 +1181,10 @@
         },
         {
           "type": "macro_iterator_loop_statement",
+          "named": true
+        },
+        {
+          "type": "prefixed_call_statement",
           "named": true
         },
         {
@@ -1363,10 +1363,6 @@
           "named": true
         },
         {
-          "type": "defer_statement",
-          "named": true
-        },
-        {
           "type": "do_while_statement",
           "named": true
         },
@@ -1408,6 +1404,10 @@
         },
         {
           "type": "macro_iterator_loop_statement",
+          "named": true
+        },
+        {
+          "type": "prefixed_call_statement",
           "named": true
         },
         {
@@ -1597,10 +1597,6 @@
           "named": true
         },
         {
-          "type": "defer_statement",
-          "named": true
-        },
-        {
           "type": "do_while_statement",
           "named": true
         },
@@ -1642,6 +1638,10 @@
         },
         {
           "type": "macro_iterator_loop_statement",
+          "named": true
+        },
+        {
+          "type": "prefixed_call_statement",
           "named": true
         },
         {
@@ -2681,10 +2681,6 @@
             "named": true
           },
           {
-            "type": "defer_statement",
-            "named": true
-          },
-          {
             "type": "do_while_statement",
             "named": true
           },
@@ -2714,6 +2710,10 @@
           },
           {
             "type": "macro_iterator_loop_statement",
+            "named": true
+          },
+          {
+            "type": "prefixed_call_statement",
             "named": true
           },
           {
@@ -3937,10 +3937,6 @@
             "named": true
           },
           {
-            "type": "defer_statement",
-            "named": true
-          },
-          {
             "type": "do_while_statement",
             "named": true
           },
@@ -4003,6 +3999,10 @@
           {
             "type": "new",
             "named": false
+          },
+          {
+            "type": "prefixed_call_statement",
+            "named": true
           },
           {
             "type": "preproc_assert",
@@ -4167,10 +4167,6 @@
             "named": true
           },
           {
-            "type": "defer_statement",
-            "named": true
-          },
-          {
             "type": "do_while_statement",
             "named": true
           },
@@ -4212,6 +4208,10 @@
           },
           {
             "type": "macro_iterator_loop_statement",
+            "named": true
+          },
+          {
+            "type": "prefixed_call_statement",
             "named": true
           },
           {
@@ -4407,10 +4407,6 @@
             "named": true
           },
           {
-            "type": "defer_statement",
-            "named": true
-          },
-          {
             "type": "do_while_statement",
             "named": true
           },
@@ -4469,6 +4465,10 @@
           {
             "type": "new",
             "named": false
+          },
+          {
+            "type": "prefixed_call_statement",
+            "named": true
           },
           {
             "type": "preproc_assert",
@@ -4657,10 +4657,6 @@
             "named": true
           },
           {
-            "type": "defer_statement",
-            "named": true
-          },
-          {
             "type": "do_while_statement",
             "named": true
           },
@@ -4719,6 +4715,10 @@
           {
             "type": "new",
             "named": false
+          },
+          {
+            "type": "prefixed_call_statement",
+            "named": true
           },
           {
             "type": "preproc_assert",
@@ -4931,22 +4931,6 @@
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "defer_statement",
-    "named": true,
-    "fields": {
-      "call": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "call_expression",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -5586,10 +5570,6 @@
             "named": true
           },
           {
-            "type": "defer_statement",
-            "named": true
-          },
-          {
             "type": "do_while_statement",
             "named": true
           },
@@ -5619,6 +5599,10 @@
           },
           {
             "type": "macro_iterator_loop_statement",
+            "named": true
+          },
+          {
+            "type": "prefixed_call_statement",
             "named": true
           },
           {
@@ -7277,6 +7261,42 @@
     }
   },
   {
+    "type": "macro_reference_expression",
+    "named": true,
+    "fields": {
+      "modifier": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "prefix": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "macro_replacement",
     "named": true,
     "fields": {
@@ -8322,6 +8342,32 @@
           },
           {
             "type": "expression_list",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "prefixed_call_statement",
+    "named": true,
+    "fields": {
+      "call": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "call_expression",
+            "named": true
+          }
+        ]
+      },
+      "prefix": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -11496,10 +11542,6 @@
           "named": true
         },
         {
-          "type": "defer_statement",
-          "named": true
-        },
-        {
           "type": "do_while_statement",
           "named": true
         },
@@ -11537,6 +11579,10 @@
         },
         {
           "type": "macro_iterator_loop_statement",
+          "named": true
+        },
+        {
+          "type": "prefixed_call_statement",
           "named": true
         },
         {
@@ -11708,22 +11754,6 @@
           {
             "type": "--",
             "named": false
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "using_inline_expression",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
           }
         ]
       }
@@ -12152,10 +12182,6 @@
     "named": false
   },
   {
-    "type": "defer",
-    "named": false
-  },
-  {
     "type": "defined",
     "named": false
   },
@@ -12313,10 +12339,6 @@
   },
   {
     "type": "true",
-    "named": false
-  },
-  {
-    "type": "using",
     "named": false
   },
   {

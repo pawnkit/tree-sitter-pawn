@@ -75,6 +75,10 @@
   name: (identifier) @function.call)
 (macro_iterator_loop_statement
   name: (identifier) @function.call)
+(prefixed_call_statement
+  prefix: (identifier) @function.macro)
+(macro_reference_expression
+  name: (identifier) @function)
 (sizeof_expression) @function.builtin
 (preproc_call_expression
   function: (identifier) @function.call

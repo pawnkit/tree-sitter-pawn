@@ -34,6 +34,9 @@
 (macro_iterator_loop_statement
   name: (identifier) @name) @reference.call
 
+(macro_reference_expression
+  name: (identifier) @name) @reference.call
+
 (preproc_call_expression
   function: (identifier) @name
   (#not-match? @name "^(if|for|while|switch)$")) @reference.call
