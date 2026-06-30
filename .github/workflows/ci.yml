@@ -30,5 +30,8 @@ jobs:
       - name: Run corpus tests
         run: npm test
 
+      - name: Run query tests
+        run: npm run test:queries
+
       - name: Verify publish tarball
         run: npm run pack:check

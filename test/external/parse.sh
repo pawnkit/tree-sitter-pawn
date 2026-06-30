@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="/workspace/test/external"
-DOWNLOADS="/workspace/.fixtures/pawn-projects"
+REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+ROOT="$REPO_ROOT/test/external"
+DOWNLOADS="$REPO_ROOT/.fixtures/pawn-projects"
 CONFIG="$ROOT/tree-sitter-config.json"
+
+cd "$REPO_ROOT"
 
 if [[ ! -d "$DOWNLOADS" ]]; then
   echo "missing $DOWNLOADS; run npm run test:external:fetch first" >&2
@@ -32,11 +35,11 @@ for file in "${files[@]}"; do
   fi
 
   if [[ $file_failed -eq 0 ]]; then
-    echo "ok  ${file#/workspace/}"
+    echo "ok  ${file#"$REPO_ROOT"/}"
   else
     failed=1
     failed_count=$((failed_count + 1))
-    echo "fail ${file#/workspace/}"
+    echo "fail ${file#"$REPO_ROOT"/}"
     sed -n '1,40p' "$tmp_output"
   fi
 

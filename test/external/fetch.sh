@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="/workspace/test/external"
+REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+ROOT="$REPO_ROOT/test/external"
 MANIFEST="$ROOT/sources.tsv"
-DOWNLOADS="/workspace/.fixtures/pawn-projects"
+DOWNLOADS="$REPO_ROOT/.fixtures/pawn-projects"
 
+mkdir -p "$(dirname "$DOWNLOADS")"
 tmp_downloads="$(mktemp -d "${DOWNLOADS}.tmp.XXXXXX")"
 cleanup() {
   if [[ -n "${tmp_downloads:-}" && -d "$tmp_downloads" ]]; then
