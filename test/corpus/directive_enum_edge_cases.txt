@@ -36,7 +36,7 @@ macro signature and complex preproc if
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (identifier)
@@ -50,7 +50,7 @@ macro signature and complex preproc if
           (preproc_expression
             (macro_parameter))))))
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_binary_expression
           left: (preproc_expression
@@ -70,7 +70,7 @@ macro signature and complex preproc if
                         (integer_literal))))))
               right: (preproc_expression
                 (integer_literal)))))))
-    (directive_endif)))
+    (preproc_endif)))
 
 ==========================
 preprocessor wrapped enum
@@ -87,7 +87,7 @@ enum Test
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
@@ -96,7 +96,7 @@ enum Test
       (enum_entry
         name: (identifier)
         value: (integer_literal)))
-    (directive_endif)))
+    (preproc_endif)))
 
 =====================================
 typed enum entries and packed members
@@ -145,7 +145,7 @@ multi-line replacement body
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)

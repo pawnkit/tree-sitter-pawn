@@ -93,7 +93,7 @@ stock SharedIfElseBlock(value)
           (preproc_defined
             name: (identifier)))
         (block_conditional
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
@@ -102,12 +102,12 @@ stock SharedIfElseBlock(value)
               function: (identifier)
               arguments: (argument_list)))
           alternative: (block_else
-            (directive_else)
+            (preproc_else)
             (expression_statement
               expression: (call_expression
                 function: (identifier)
                 arguments: (argument_list))))
-          (directive_endif))))))
+          (preproc_endif))))))
 
 ========================================================
 shared else block with alternate inline branch
@@ -317,7 +317,7 @@ stock WrappedElse(playerid)
             function: (identifier)
             arguments: (argument_list
               (identifier))))
-        (directive_endif)))))
+        (preproc_endif)))))
 
 =====================================================
 split shared if-header wrapped close with inline else
@@ -348,7 +348,7 @@ stock WrappedSplit(playerid)
         name: (identifier)))
     body: (block
       (conditional_if_split_wrapped_else_statement
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -356,19 +356,19 @@ stock WrappedSplit(playerid)
           function: (identifier)
           arguments: (argument_list
             (identifier)))
-        (directive_else)
+        (preproc_else)
         alternative: (expression_statement
           expression: (call_expression
             function: (identifier)
             arguments: (argument_list
               (identifier))))
-        (directive_endif)
+        (preproc_endif)
         (expression_statement
           expression: (call_expression
             function: (identifier)
             arguments: (argument_list
               (identifier))))
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -377,7 +377,7 @@ stock WrappedSplit(playerid)
             function: (identifier)
             arguments: (argument_list
               (identifier))))
-        (directive_endif)))))
+        (preproc_endif)))))
 
 ===================================
 wrapped inline labels and directives
@@ -408,7 +408,7 @@ label_a: return 1;
         name: (identifier)))
     body: (block
       (block_conditional
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -418,7 +418,7 @@ label_a: return 1;
             (return_statement
               value: (integer_literal))))
         alternative: (block_elseif
-          (directive_elseif
+          (preproc_elseif
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
@@ -428,7 +428,7 @@ label_a: return 1;
               right: (integer_literal))
             body: (block
               (block_conditional
-                (directive_if
+                (preproc_if
                   condition: (preproc_expression
                     (preproc_defined
                       name: (identifier))))
@@ -436,15 +436,15 @@ label_a: return 1;
                   label: (identifier)
                   statement: (inline_labeled_statement
                     (continue_statement)))
-                (directive_endif))))
+                (preproc_endif))))
           alternative: (block_else
-            (directive_else)
+            (preproc_else)
             (label_statement
               label: (identifier)
               statement: (inline_labeled_statement
-                (directive_warning
+                (preproc_warning
                   message: (preproc_text))))))
-        (directive_endif)))))
+        (preproc_endif)))))
 
 =======================================
 directive-wrapped else expression forms
@@ -477,7 +477,7 @@ stock WrappedElseExpr(value)
         consequence: (return_statement
           value: (integer_literal)))
       (conditional_else_expression_statement
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -486,13 +486,13 @@ stock WrappedElseExpr(value)
             function: (identifier)
             arguments: (argument_list
               (identifier))))
-        (directive_else)
+        (preproc_else)
         alternative: (expression_statement
           expression: (call_expression
             function: (identifier)
             arguments: (argument_list
               (identifier))))
-        (directive_endif)))))
+        (preproc_endif)))))
 
 ========================================
 directive-wrapped else-if branch variants
@@ -541,7 +541,7 @@ stock WrappedElseIfWithElse(value)
         consequence: (return_statement
           value: (integer_literal)))
       (conditional_else_if_branch_statement
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -551,14 +551,14 @@ stock WrappedElseIfWithElse(value)
             right: (identifier))
           consequence: (return_statement
             value: (integer_literal)))
-        (directive_else)
+        (preproc_else)
         alternative: (if_statement
           condition: (binary_expression
             left: (identifier)
             right: (integer_literal))
           consequence: (return_statement
             value: (integer_literal)))
-        (directive_endif))))
+        (preproc_endif))))
   (function_definition
     name: (identifier)
     parameters: (parameter_list
@@ -572,7 +572,7 @@ stock WrappedElseIfWithElse(value)
         consequence: (return_statement
           value: (integer_literal)))
       (conditional_else_if_branch_statement
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -582,14 +582,14 @@ stock WrappedElseIfWithElse(value)
             right: (identifier))
           consequence: (return_statement
             value: (integer_literal)))
-        (directive_else)
+        (preproc_else)
         alternative: (if_statement
           condition: (binary_expression
             left: (identifier)
             right: (integer_literal))
           consequence: (return_statement
             value: (integer_literal)))
-        (directive_endif)
+        (preproc_endif)
         shared_alternative: (return_statement
           value: (integer_literal))))))
 
@@ -658,16 +658,16 @@ stock SharedLoop()
     parameters: (parameter_list)
     body: (block
       (conditional_loop_statement
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
         iterator: (foreach_iterator
           name: (identifier)
           collection: (identifier))
-        (directive_else)
+        (preproc_else)
         alternative: (loop_preamble
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
@@ -681,7 +681,7 @@ stock SharedLoop()
             right: (integer_literal))
           update: (update_expression
             argument: (identifier))
-          (directive_else)
+          (preproc_else)
           initializer: (variable_declarator
             name: (identifier)
             initializer: (binary_expression
@@ -692,7 +692,7 @@ stock SharedLoop()
             right: (integer_literal))
           update: (update_expression
             argument: (identifier))
-          (directive_endif)
+          (preproc_endif)
           (if_statement
             condition: (unary_expression
               argument: (call_expression
@@ -700,7 +700,7 @@ stock SharedLoop()
                 arguments: (argument_list
                   (identifier))))
             consequence: (continue_statement)))
-        (directive_endif)
+        (preproc_endif)
         (expression_statement
           expression: (call_expression
             function: (identifier)
@@ -738,7 +738,7 @@ stock ToggleAll(enable)
         name: (identifier)))
     body: (block
       (conditional_loop_fallback_statement
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -752,9 +752,9 @@ stock ToggleAll(enable)
                 array: (identifier)
                 index: (identifier))
               right: (identifier))))
-        (directive_else)
+        (preproc_else)
         alternative: (loop_header_selection_statement
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
@@ -768,7 +768,7 @@ stock ToggleAll(enable)
             right: (integer_literal))
           update: (update_expression
             argument: (identifier))
-          (directive_else)
+          (preproc_else)
           initializer: (variable_declarator
             name: (identifier)
             initializer: (binary_expression
@@ -779,7 +779,7 @@ stock ToggleAll(enable)
             right: (integer_literal))
           update: (update_expression
             argument: (identifier))
-          (directive_endif)
+          (preproc_endif)
           body: (block
             (if_statement
               condition: (unary_expression
@@ -794,7 +794,7 @@ stock ToggleAll(enable)
                   array: (identifier)
                   index: (identifier))
                 right: (identifier)))))
-        (directive_endif)))))
+        (preproc_endif)))))
 
 ===========================================
 direct shared loop header selection wrapper
@@ -906,14 +906,14 @@ stock RemoveBuilding(modelid, Float:fX, Float:fY, Float:fZ, Float:fRadius)
             expression: (update_expression
               argument: (identifier)))
           (loop_header_selection_statement
-            (directive_if
+            (preproc_if
               condition: (preproc_expression
                 (preproc_defined
                   name: (identifier))))
             iterator: (foreach_iterator
               name: (identifier)
               collection: (identifier))
-            (directive_else)
+            (preproc_else)
             initializer: (variable_declarator
               name: (identifier)
               initializer: (call_expression
@@ -924,7 +924,7 @@ stock RemoveBuilding(modelid, Float:fX, Float:fY, Float:fZ, Float:fRadius)
               right: (integer_literal))
             update: (update_expression
               argument: (identifier))
-            (directive_endif)
+            (preproc_endif)
             body: (block
               (expression_statement
                 expression: (call_expression
@@ -975,14 +975,14 @@ stock SharedLoopPreamble(value)
         name: (identifier)))
     body: (block
       (loop_header_selection_statement
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
         iterator: (foreach_iterator
           name: (identifier)
           collection: (identifier))
-        (directive_else)
+        (preproc_else)
         initializer: (variable_declarator
           name: (identifier)
           initializer: (integer_literal))
@@ -991,10 +991,10 @@ stock SharedLoopPreamble(value)
           right: (identifier))
         update: (update_expression
           argument: (identifier))
-        (directive_endif)
+        (preproc_endif)
         body: (block
           (block_conditional
-            (directive_if
+            (preproc_if
               condition: (preproc_expression
                 (preproc_defined
                   name: (identifier))))
@@ -1002,11 +1002,11 @@ stock SharedLoopPreamble(value)
               condition: (identifier)
               consequence: (continue_statement))
             alternative: (block_else
-              (directive_else)
+              (preproc_else)
               (if_statement
                 condition: (identifier)
                 consequence: (continue_statement)))
-            (directive_endif))
+            (preproc_endif))
           (return_statement
             value: (integer_literal)))))))
 
@@ -1030,7 +1030,7 @@ stock BuildThing(modelid, priority = 0)
 
 (source_file
   (top_level_shared_tail_function_branch
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
@@ -1048,7 +1048,7 @@ stock BuildThing(modelid, priority = 0)
               arguments: (argument_list
                 (identifier)))))
         (function_initializer_alternative_statement
-          (directive_else)
+          (preproc_else)
           name: (identifier)
           parameters: (parameter_list
             (parameter_declaration
@@ -1064,7 +1064,7 @@ stock BuildThing(modelid, priority = 0)
                 arguments: (argument_list
                   (identifier)
                   (identifier)))))
-          (directive_endif))
+          (preproc_endif))
         (return_statement
           value: (identifier))))))
 
@@ -1092,7 +1092,7 @@ stock BuildThing(modelid, priority = 0)
 
 (source_file
   (top_level_shared_tail_function_branch
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
@@ -1110,7 +1110,7 @@ stock BuildThing(modelid, priority = 0)
               arguments: (argument_list
                 (identifier)))))
         (function_initializer_alternative_statement
-          (directive_else)
+          (preproc_else)
           name: (identifier)
           parameters: (parameter_list
             (parameter_declaration
@@ -1119,7 +1119,7 @@ stock BuildThing(modelid, priority = 0)
               name: (identifier)
               default_value: (integer_literal)))
           alternative_initializer: (block_conditional
-            (directive_if
+            (preproc_if
               condition: (preproc_expression
                 (preproc_defined
                   name: (identifier))))
@@ -1131,7 +1131,7 @@ stock BuildThing(modelid, priority = 0)
                   arguments: (argument_list
                     (identifier)))))
             alternative: (block_else
-              (directive_else)
+              (preproc_else)
               (variable_declaration
                 (variable_declarator
                   name: (identifier)
@@ -1140,8 +1140,8 @@ stock BuildThing(modelid, priority = 0)
                     arguments: (argument_list
                       (identifier)
                       (identifier))))))
-            (directive_endif))
-          (directive_endif))
+            (preproc_endif))
+          (preproc_endif))
         (return_statement
           value: (identifier))))))
 
@@ -1182,30 +1182,30 @@ label_a:
           right: (integer_literal))
         body: (block
           (block_conditional
-            (directive_if
+            (preproc_if
               condition: (preproc_expression
                 (preproc_defined
                   name: (identifier))))
             (return_statement
               value: (integer_literal))
             alternative: (block_else
-              (directive_else)
+              (preproc_else)
               (continue_statement))
-            (directive_endif))))
+            (preproc_endif))))
       (label_statement
         label: (identifier))
       (block_conditional
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
         (return_statement
           value: (integer_literal))
         alternative: (block_else
-          (directive_else)
+          (preproc_else)
           (return_statement
             value: (integer_literal)))
-        (directive_endif)))))
+        (preproc_endif)))))
 
 ===================================================
 block wrappers in switch case arms
@@ -1244,30 +1244,30 @@ stock ProbeSwitch(value)
         (case_statement
           value: (integer_literal)
           (block_conditional
-            (directive_if
+            (preproc_if
               condition: (preproc_expression
                 (preproc_defined
                   name: (identifier))))
             (return_statement
               value: (integer_literal))
             alternative: (block_else
-              (directive_else)
+              (preproc_else)
               (return_statement
                 value: (integer_literal)))
-            (directive_endif)))
+            (preproc_endif)))
         (default_statement
           (block_conditional
-            (directive_if
+            (preproc_if
               condition: (preproc_expression
                 (preproc_defined
                   name: (identifier))))
             (return_statement
               value: (integer_literal))
             alternative: (block_else
-              (directive_else)
+              (preproc_else)
               (return_statement
                 value: (integer_literal)))
-            (directive_endif)))))))
+            (preproc_endif)))))))
 
 =====================================
 directive-wrapped switch case labels
@@ -1301,7 +1301,7 @@ stock ProbeSwitchCase(value)
           (return_statement
             value: (integer_literal)))
         (switch_item_conditional
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
@@ -1309,7 +1309,7 @@ stock ProbeSwitchCase(value)
             value: (integer_literal)
             (return_statement
               value: (integer_literal)))
-          (directive_endif))
+          (preproc_endif))
         (default_statement
           (return_statement
             value: (integer_literal)))))))
@@ -1342,17 +1342,17 @@ stock ProbeIf(value)
       (if_statement
         condition: (identifier)
         consequence: (block_conditional
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
           (return_statement
             value: (integer_literal))
           alternative: (block_else
-            (directive_else)
+            (preproc_else)
             (return_statement
               value: (integer_literal)))
-          (directive_endif))
+          (preproc_endif))
         alternative: (return_statement
           value: (integer_literal))))))
 
@@ -1413,50 +1413,50 @@ stock ProbeFlow(value)
       (while_statement
         condition: (identifier)
         body: (block_conditional
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
           (return_statement
             value: (integer_literal))
           alternative: (block_else
-            (directive_else)
+            (preproc_else)
             (return_statement
               value: (integer_literal)))
-          (directive_endif)))
+          (preproc_endif)))
       (for_statement
         condition: (identifier)
         body: (block_conditional
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
           (return_statement
             value: (integer_literal))
           alternative: (block_else
-            (directive_else)
+            (preproc_else)
             (return_statement
               value: (integer_literal)))
-          (directive_endif)))
+          (preproc_endif)))
       (foreach_statement
         iterator: (foreach_iterator
           name: (identifier)
           collection: (identifier))
         body: (block_conditional
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
           (return_statement
             value: (integer_literal))
           alternative: (block_else
-            (directive_else)
+            (preproc_else)
             (return_statement
               value: (integer_literal)))
-          (directive_endif)))
+          (preproc_endif)))
       (do_while_statement
         body: (block_conditional
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
@@ -1464,28 +1464,28 @@ stock ProbeFlow(value)
             expression: (update_expression
               argument: (identifier)))
           alternative: (block_else
-            (directive_else)
+            (preproc_else)
             (expression_statement
               expression: (update_expression
                 argument: (identifier))))
-          (directive_endif))
+          (preproc_endif))
         condition: (identifier))
       (if_statement
         condition: (identifier)
         consequence: (return_statement
           value: (integer_literal))
         alternative: (block_conditional
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
           (return_statement
             value: (integer_literal))
           alternative: (block_else
-            (directive_else)
+            (preproc_else)
             (return_statement
               value: (integer_literal)))
-          (directive_endif))))))
+          (preproc_endif))))))
 
 ===================================================
 top-level wrapper function bodies use block wrappers
@@ -1515,7 +1515,7 @@ stock ProbeWrapped(value, extra = 0)
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
@@ -1526,19 +1526,19 @@ stock ProbeWrapped(value, extra = 0)
           name: (identifier)))
       body: (block
         (block_conditional
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
           (return_statement
             value: (identifier))
           alternative: (block_else
-            (directive_else)
+            (preproc_else)
             (return_statement
               value: (integer_literal)))
-          (directive_endif))))
+          (preproc_endif))))
     alternative: (top_level_else
-      (directive_else)
+      (preproc_else)
       (function_definition
         name: (identifier)
         parameters: (parameter_list
@@ -1549,18 +1549,18 @@ stock ProbeWrapped(value, extra = 0)
             default_value: (integer_literal)))
         body: (block
           (block_conditional
-            (directive_if
+            (preproc_if
               condition: (preproc_expression
                 (preproc_defined
                   name: (identifier))))
             (return_statement
               value: (identifier))
             alternative: (block_else
-              (directive_else)
+              (preproc_else)
               (return_statement
                 value: (identifier)))
-            (directive_endif)))))
-    (directive_endif)))
+            (preproc_endif)))))
+    (preproc_endif)))
 
 ===================================================
 shared-tail function bare alternative variant
@@ -1581,7 +1581,7 @@ ProbeBare(modelid, extra = 0)
 
 (source_file
   (top_level_shared_tail_function_branch
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
@@ -1594,7 +1594,7 @@ ProbeBare(modelid, extra = 0)
         (return_statement
           value: (identifier))
         (top_level_shared_tail_function_alternative_statement
-          (directive_else)
+          (preproc_else)
           name: (identifier)
           parameters: (parameter_list
             (parameter_declaration
@@ -1604,7 +1604,7 @@ ProbeBare(modelid, extra = 0)
               default_value: (integer_literal)))
           (return_statement
             value: (identifier))
-          (directive_endif))))))
+          (preproc_endif))))))
 
 ===================================================
 shared-tail bare alternative nested wrappers
@@ -1635,7 +1635,7 @@ ProbeBareNested(modelid, extra = 0)
 
 (source_file
   (top_level_shared_tail_function_branch
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
@@ -1647,19 +1647,19 @@ ProbeBareNested(modelid, extra = 0)
       body: (block
         (block
           (block_conditional
-            (directive_if
+            (preproc_if
               condition: (preproc_expression
                 (preproc_defined
                   name: (identifier))))
             (return_statement
               value: (identifier))
             alternative: (block_else
-              (directive_else)
+              (preproc_else)
               (return_statement
                 value: (integer_literal)))
-            (directive_endif)))
+            (preproc_endif)))
         (top_level_shared_tail_function_alternative_statement
-          (directive_else)
+          (preproc_else)
           name: (identifier)
           parameters: (parameter_list
             (parameter_declaration
@@ -1668,18 +1668,18 @@ ProbeBareNested(modelid, extra = 0)
               name: (identifier)
               default_value: (integer_literal)))
           (block_conditional
-            (directive_if
+            (preproc_if
               condition: (preproc_expression
                 (preproc_defined
                   name: (identifier))))
             (return_statement
               value: (identifier))
             alternative: (block_else
-              (directive_else)
+              (preproc_else)
               (return_statement
                 value: (identifier)))
-            (directive_endif))
-          (directive_endif))))))
+            (preproc_endif))
+          (preproc_endif))))))
 
 ===================================================
 nested top-level shared-tail branch
@@ -1707,12 +1707,12 @@ stock Fallback()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (top_level_shared_tail_function_branch
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -1725,7 +1725,7 @@ stock Fallback()
           (return_statement
             value: (identifier))
           (top_level_shared_tail_function_alternative_statement
-            (directive_else)
+            (preproc_else)
             name: (identifier)
             parameters: (parameter_list
               (parameter_declaration
@@ -1735,16 +1735,16 @@ stock Fallback()
                 default_value: (integer_literal)))
             (return_statement
               value: (identifier))
-            (directive_endif)))))
+            (preproc_endif)))))
     alternative: (top_level_else
-      (directive_else)
+      (preproc_else)
       (function_definition
         name: (identifier)
         parameters: (parameter_list)
         body: (block
           (return_statement
             value: (integer_literal)))))
-    (directive_endif)))
+    (preproc_endif)))
 
 ===================================================
 top-level branch with three wrapped items
@@ -1797,17 +1797,17 @@ stock FallbackThree()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (top_level_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
       (conditional_function_definition
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -1815,7 +1815,7 @@ stock FallbackThree()
         parameters: (parameter_list
           (parameter_declaration
             name: (identifier)))
-        (directive_else)
+        (preproc_else)
         name: (identifier)
         parameters: (parameter_list
           (parameter_declaration
@@ -1823,21 +1823,21 @@ stock FallbackThree()
           (parameter_declaration
             name: (identifier)
             default_value: (integer_literal)))
-        (directive_endif)
+        (preproc_endif)
         body: (block
           (return_statement
             value: (identifier))))
       alternative: (top_level_else
-        (directive_else)
+        (preproc_else)
         (function_definition
           name: (identifier)
           parameters: (parameter_list)
           body: (block
             (return_statement
               value: (integer_literal)))))
-      (directive_endif))
+      (preproc_endif))
     (top_level_shared_tail_function_branch
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -1850,7 +1850,7 @@ stock FallbackThree()
           (return_statement
             value: (identifier))
           (top_level_shared_tail_function_alternative_statement
-            (directive_else)
+            (preproc_else)
             name: (identifier)
             parameters: (parameter_list
               (parameter_declaration
@@ -1860,14 +1860,14 @@ stock FallbackThree()
                 default_value: (integer_literal)))
             (return_statement
               value: (identifier))
-            (directive_endif)))))
+            (preproc_endif)))))
     (top_level_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
       (conditional_function_definition
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -1875,7 +1875,7 @@ stock FallbackThree()
         parameters: (parameter_list
           (parameter_declaration
             name: (identifier)))
-        (directive_else)
+        (preproc_else)
         name: (identifier)
         parameters: (parameter_list
           (parameter_declaration
@@ -1883,20 +1883,20 @@ stock FallbackThree()
           (parameter_declaration
             name: (identifier)
             default_value: (integer_literal)))
-        (directive_endif)
+        (preproc_endif)
         body: (block
           (return_statement
             value: (identifier))))
       alternative: (top_level_else
-        (directive_else)
+        (preproc_else)
         (function_definition
           name: (identifier)
           parameters: (parameter_list)
           body: (block
             (return_statement
               value: (integer_literal)))))
-      (directive_endif))
-    (directive_endif)))
+      (preproc_endif))
+    (preproc_endif)))
 
 ===================================================
 top-level branch with conditional then shared-tail
@@ -1934,17 +1934,17 @@ Two(value, extra = 0)
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (top_level_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
       (conditional_function_definition
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -1952,7 +1952,7 @@ Two(value, extra = 0)
         parameters: (parameter_list
           (parameter_declaration
             name: (identifier)))
-        (directive_else)
+        (preproc_else)
         name: (identifier)
         parameters: (parameter_list
           (parameter_declaration
@@ -1960,21 +1960,21 @@ Two(value, extra = 0)
           (parameter_declaration
             name: (identifier)
             default_value: (integer_literal)))
-        (directive_endif)
+        (preproc_endif)
         body: (block
           (return_statement
             value: (identifier))))
       alternative: (top_level_else
-        (directive_else)
+        (preproc_else)
         (function_definition
           name: (identifier)
           parameters: (parameter_list)
           body: (block
             (return_statement
               value: (integer_literal)))))
-      (directive_endif))
+      (preproc_endif))
     (top_level_shared_tail_function_branch
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -1987,7 +1987,7 @@ Two(value, extra = 0)
           (return_statement
             value: (identifier))
           (top_level_shared_tail_function_alternative_statement
-            (directive_else)
+            (preproc_else)
             name: (identifier)
             parameters: (parameter_list
               (parameter_declaration
@@ -1997,8 +1997,8 @@ Two(value, extra = 0)
                 default_value: (integer_literal)))
             (return_statement
               value: (identifier))
-            (directive_endif)))))
-    (directive_endif)))
+            (preproc_endif)))))
+    (preproc_endif)))
 
 ===================================================
 top-level branch with repeated conditionals
@@ -2041,17 +2041,17 @@ stock FallbackTwo()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (top_level_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
       (conditional_function_definition
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -2059,7 +2059,7 @@ stock FallbackTwo()
         parameters: (parameter_list
           (parameter_declaration
             name: (identifier)))
-        (directive_else)
+        (preproc_else)
         name: (identifier)
         parameters: (parameter_list
           (parameter_declaration
@@ -2067,26 +2067,26 @@ stock FallbackTwo()
           (parameter_declaration
             name: (identifier)
             default_value: (integer_literal)))
-        (directive_endif)
+        (preproc_endif)
         body: (block
           (return_statement
             value: (identifier))))
       alternative: (top_level_else
-        (directive_else)
+        (preproc_else)
         (function_definition
           name: (identifier)
           parameters: (parameter_list)
           body: (block
             (return_statement
               value: (integer_literal)))))
-      (directive_endif))
+      (preproc_endif))
     (top_level_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
       (conditional_function_definition
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -2094,7 +2094,7 @@ stock FallbackTwo()
         parameters: (parameter_list
           (parameter_declaration
             name: (identifier)))
-        (directive_else)
+        (preproc_else)
         name: (identifier)
         parameters: (parameter_list
           (parameter_declaration
@@ -2102,20 +2102,20 @@ stock FallbackTwo()
           (parameter_declaration
             name: (identifier)
             default_value: (integer_literal)))
-        (directive_endif)
+        (preproc_endif)
         body: (block
           (return_statement
             value: (identifier))))
       alternative: (top_level_else
-        (directive_else)
+        (preproc_else)
         (function_definition
           name: (identifier)
           parameters: (parameter_list)
           body: (block
             (return_statement
               value: (integer_literal)))))
-      (directive_endif))
-    (directive_endif)))
+      (preproc_endif))
+    (preproc_endif)))
 
 ===================================================
 top-level branch with shared-tail then conditional
@@ -2153,12 +2153,12 @@ stock Fallback()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (top_level_shared_tail_function_branch
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2171,7 +2171,7 @@ stock Fallback()
           (return_statement
             value: (identifier))
           (top_level_shared_tail_function_alternative_statement
-            (directive_else)
+            (preproc_else)
             name: (identifier)
             parameters: (parameter_list
               (parameter_declaration
@@ -2181,14 +2181,14 @@ stock Fallback()
                 default_value: (integer_literal)))
             (return_statement
               value: (identifier))
-            (directive_endif)))))
+            (preproc_endif)))))
     (top_level_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
       (conditional_function_definition
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -2196,7 +2196,7 @@ stock Fallback()
         parameters: (parameter_list
           (parameter_declaration
             name: (identifier)))
-        (directive_else)
+        (preproc_else)
         name: (identifier)
         parameters: (parameter_list
           (parameter_declaration
@@ -2204,20 +2204,20 @@ stock Fallback()
           (parameter_declaration
             name: (identifier)
             default_value: (integer_literal)))
-        (directive_endif)
+        (preproc_endif)
         body: (block
           (return_statement
             value: (identifier))))
       alternative: (top_level_else
-        (directive_else)
+        (preproc_else)
         (function_definition
           name: (identifier)
           parameters: (parameter_list)
           body: (block
             (return_statement
               value: (integer_literal)))))
-      (directive_endif))
-    (directive_endif)))
+      (preproc_endif))
+    (preproc_endif)))
 
 ===================================================
 top-level branch with repeated shared-tail items
@@ -2255,12 +2255,12 @@ stock Fallback()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (top_level_shared_tail_function_branch
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2273,7 +2273,7 @@ stock Fallback()
           (return_statement
             value: (identifier))
           (top_level_shared_tail_function_alternative_statement
-            (directive_else)
+            (preproc_else)
             name: (identifier)
             parameters: (parameter_list
               (parameter_declaration
@@ -2283,9 +2283,9 @@ stock Fallback()
                 default_value: (integer_literal)))
             (return_statement
               value: (identifier))
-            (directive_endif)))))
+            (preproc_endif)))))
     (top_level_shared_tail_function_branch
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2298,7 +2298,7 @@ stock Fallback()
           (return_statement
             value: (identifier))
           (top_level_shared_tail_function_alternative_statement
-            (directive_else)
+            (preproc_else)
             name: (identifier)
             parameters: (parameter_list
               (parameter_declaration
@@ -2308,16 +2308,16 @@ stock Fallback()
                 default_value: (integer_literal)))
             (return_statement
               value: (identifier))
-            (directive_endif)))))
+            (preproc_endif)))))
     alternative: (top_level_else
-      (directive_else)
+      (preproc_else)
       (function_definition
         name: (identifier)
         parameters: (parameter_list)
         body: (block
           (return_statement
             value: (integer_literal)))))
-    (directive_endif)))
+    (preproc_endif)))
 
 ===================================================
 top-level branch with repeated conditional functions
@@ -2351,12 +2351,12 @@ stock Fallback()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (conditional_function_definition
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2364,7 +2364,7 @@ stock Fallback()
       parameters: (parameter_list
         (parameter_declaration
           name: (identifier)))
-      (directive_else)
+      (preproc_else)
       name: (identifier)
       parameters: (parameter_list
         (parameter_declaration
@@ -2372,12 +2372,12 @@ stock Fallback()
         (parameter_declaration
           name: (identifier)
           default_value: (integer_literal)))
-      (directive_endif)
+      (preproc_endif)
       body: (block
         (return_statement
           value: (identifier))))
     (conditional_function_definition
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2385,7 +2385,7 @@ stock Fallback()
       parameters: (parameter_list
         (parameter_declaration
           name: (identifier)))
-      (directive_else)
+      (preproc_else)
       name: (identifier)
       parameters: (parameter_list
         (parameter_declaration
@@ -2393,19 +2393,19 @@ stock Fallback()
         (parameter_declaration
           name: (identifier)
           default_value: (integer_literal)))
-      (directive_endif)
+      (preproc_endif)
       body: (block
         (return_statement
           value: (identifier))))
     alternative: (top_level_else
-      (directive_else)
+      (preproc_else)
       (function_definition
         name: (identifier)
         parameters: (parameter_list)
         body: (block
           (return_statement
             value: (integer_literal)))))
-    (directive_endif)))
+    (preproc_endif)))
 
 ===================================================
 top-level branch with function and declaration items
@@ -2446,12 +2446,12 @@ stock Fallback()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (conditional_function_definition
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2459,7 +2459,7 @@ stock Fallback()
       parameters: (parameter_list
         (parameter_declaration
           name: (identifier)))
-      (directive_else)
+      (preproc_else)
       name: (identifier)
       parameters: (parameter_list
         (parameter_declaration
@@ -2467,12 +2467,12 @@ stock Fallback()
         (parameter_declaration
           name: (identifier)
           default_value: (integer_literal)))
-      (directive_endif)
+      (preproc_endif)
       body: (block
         (return_statement
           value: (identifier))))
     (top_level_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2481,14 +2481,14 @@ stock Fallback()
           name: (identifier)
           initializer: (integer_literal)))
       alternative: (top_level_else
-        (directive_else)
+        (preproc_else)
         (variable_declaration
           (variable_declarator
             name: (identifier)
             initializer: (integer_literal))))
-      (directive_endif))
+      (preproc_endif))
     (top_level_shared_tail_function_branch
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2501,7 +2501,7 @@ stock Fallback()
           (return_statement
             value: (identifier))
           (top_level_shared_tail_function_alternative_statement
-            (directive_else)
+            (preproc_else)
             name: (identifier)
             parameters: (parameter_list
               (parameter_declaration
@@ -2511,16 +2511,16 @@ stock Fallback()
                 default_value: (integer_literal)))
             (return_statement
               value: (identifier))
-            (directive_endif)))))
+            (preproc_endif)))))
     alternative: (top_level_else
-      (directive_else)
+      (preproc_else)
       (function_definition
         name: (identifier)
         parameters: (parameter_list)
         body: (block
           (return_statement
             value: (integer_literal)))))
-    (directive_endif)))
+    (preproc_endif)))
 
 ===================================================
 top-level branch with function enum function
@@ -2565,12 +2565,12 @@ stock Fallback()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (conditional_function_definition
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2578,7 +2578,7 @@ stock Fallback()
       parameters: (parameter_list
         (parameter_declaration
           name: (identifier)))
-      (directive_else)
+      (preproc_else)
       name: (identifier)
       parameters: (parameter_list
         (parameter_declaration
@@ -2586,12 +2586,12 @@ stock Fallback()
         (parameter_declaration
           name: (identifier)
           default_value: (integer_literal)))
-      (directive_endif)
+      (preproc_endif)
       body: (block
         (return_statement
           value: (identifier))))
     (top_level_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2602,14 +2602,14 @@ stock Fallback()
         (enum_entry
           name: (identifier)))
       alternative: (top_level_else
-        (directive_else)
+        (preproc_else)
         (variable_declaration
           (variable_declarator
             name: (identifier)
             initializer: (integer_literal))))
-      (directive_endif))
+      (preproc_endif))
     (top_level_shared_tail_function_branch
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2622,7 +2622,7 @@ stock Fallback()
           (return_statement
             value: (identifier))
           (top_level_shared_tail_function_alternative_statement
-            (directive_else)
+            (preproc_else)
             name: (identifier)
             parameters: (parameter_list
               (parameter_declaration
@@ -2632,16 +2632,16 @@ stock Fallback()
                 default_value: (integer_literal)))
             (return_statement
               value: (identifier))
-            (directive_endif)))))
+            (preproc_endif)))))
     alternative: (top_level_else
-      (directive_else)
+      (preproc_else)
       (function_definition
         name: (identifier)
         parameters: (parameter_list)
         body: (block
           (return_statement
             value: (integer_literal)))))
-    (directive_endif)))
+    (preproc_endif)))
 
 ===================================================
 top-level branch with function declaration item
@@ -2682,12 +2682,12 @@ stock Fallback()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (conditional_function_definition
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2695,7 +2695,7 @@ stock Fallback()
       parameters: (parameter_list
         (parameter_declaration
           name: (identifier)))
-      (directive_else)
+      (preproc_else)
       name: (identifier)
       parameters: (parameter_list
         (parameter_declaration
@@ -2703,12 +2703,12 @@ stock Fallback()
         (parameter_declaration
           name: (identifier)
           default_value: (integer_literal)))
-      (directive_endif)
+      (preproc_endif)
       body: (block
         (return_statement
           value: (identifier))))
     (top_level_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2718,7 +2718,7 @@ stock Fallback()
           (parameter_declaration
             name: (identifier))))
       alternative: (top_level_else
-        (directive_else)
+        (preproc_else)
         (function_declaration
           name: (identifier)
           parameters: (parameter_list
@@ -2727,9 +2727,9 @@ stock Fallback()
             (parameter_declaration
               name: (identifier)
               default_value: (integer_literal)))))
-      (directive_endif))
+      (preproc_endif))
     (top_level_shared_tail_function_branch
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2742,7 +2742,7 @@ stock Fallback()
           (return_statement
             value: (identifier))
           (top_level_shared_tail_function_alternative_statement
-            (directive_else)
+            (preproc_else)
             name: (identifier)
             parameters: (parameter_list
               (parameter_declaration
@@ -2752,16 +2752,16 @@ stock Fallback()
                 default_value: (integer_literal)))
             (return_statement
               value: (identifier))
-            (directive_endif)))))
+            (preproc_endif)))))
     alternative: (top_level_else
-      (directive_else)
+      (preproc_else)
       (function_definition
         name: (identifier)
         parameters: (parameter_list)
         body: (block
           (return_statement
             value: (integer_literal)))))
-    (directive_endif)))
+    (preproc_endif)))
 
 ===================================================
 top-level branch with hook forward item
@@ -2802,12 +2802,12 @@ stock Fallback()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (conditional_function_definition
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2815,7 +2815,7 @@ stock Fallback()
       parameters: (parameter_list
         (parameter_declaration
           name: (identifier)))
-      (directive_else)
+      (preproc_else)
       name: (identifier)
       parameters: (parameter_list
         (parameter_declaration
@@ -2823,12 +2823,12 @@ stock Fallback()
         (parameter_declaration
           name: (identifier)
           default_value: (integer_literal)))
-      (directive_endif)
+      (preproc_endif)
       body: (block
         (return_statement
           value: (identifier))))
     (top_level_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2839,16 +2839,16 @@ stock Fallback()
         parameters: (parameter_list)
         value: (integer_literal))
       alternative: (top_level_else
-        (directive_else)
+        (preproc_else)
         (hook_forward_statement
           return_type: (tagged_type
             tag: (identifier))
           name: (identifier)
           parameters: (parameter_list)
           value: (integer_literal)))
-      (directive_endif))
+      (preproc_endif))
     (top_level_shared_tail_function_branch
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2861,7 +2861,7 @@ stock Fallback()
           (return_statement
             value: (identifier))
           (top_level_shared_tail_function_alternative_statement
-            (directive_else)
+            (preproc_else)
             name: (identifier)
             parameters: (parameter_list
               (parameter_declaration
@@ -2871,16 +2871,16 @@ stock Fallback()
                 default_value: (integer_literal)))
             (return_statement
               value: (identifier))
-            (directive_endif)))))
+            (preproc_endif)))))
     alternative: (top_level_else
-      (directive_else)
+      (preproc_else)
       (function_definition
         name: (identifier)
         parameters: (parameter_list)
         body: (block
           (return_statement
             value: (integer_literal)))))
-    (directive_endif)))
+    (preproc_endif)))
 
 ===================================================
 top-level wrapper with conditional function branch
@@ -2910,12 +2910,12 @@ stock Fallback()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (conditional_function_definition
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -2923,7 +2923,7 @@ stock Fallback()
       parameters: (parameter_list
         (parameter_declaration
           name: (identifier)))
-      (directive_else)
+      (preproc_else)
       name: (identifier)
       parameters: (parameter_list
         (parameter_declaration
@@ -2931,29 +2931,29 @@ stock Fallback()
         (parameter_declaration
           name: (identifier)
           default_value: (integer_literal)))
-      (directive_endif)
+      (preproc_endif)
       body: (block
         (block_conditional
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
           (return_statement
             value: (identifier))
           alternative: (block_else
-            (directive_else)
+            (preproc_else)
             (return_statement
               value: (identifier)))
-          (directive_endif))))
+          (preproc_endif))))
     alternative: (top_level_else
-      (directive_else)
+      (preproc_else)
       (function_definition
         name: (identifier)
         parameters: (parameter_list)
         body: (block
           (return_statement
             value: (integer_literal)))))
-    (directive_endif)))
+    (preproc_endif)))
 
 ===================================================
 mixed outer wrapper branch variants
@@ -2990,12 +2990,12 @@ stock Fallback()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (conditional_function_definition
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -3003,7 +3003,7 @@ stock Fallback()
       parameters: (parameter_list
         (parameter_declaration
           name: (identifier)))
-      (directive_else)
+      (preproc_else)
       name: (identifier)
       parameters: (parameter_list
         (parameter_declaration
@@ -3011,17 +3011,17 @@ stock Fallback()
         (parameter_declaration
           name: (identifier)
           default_value: (integer_literal)))
-      (directive_endif)
+      (preproc_endif)
       body: (block
         (return_statement
           value: (identifier))))
     alternative: (top_level_elseif
-      (directive_elseif
+      (preproc_elseif
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
       (top_level_shared_tail_function_branch
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -3034,7 +3034,7 @@ stock Fallback()
             (return_statement
               value: (identifier))
             (top_level_shared_tail_function_alternative_statement
-              (directive_else)
+              (preproc_else)
               name: (identifier)
               parameters: (parameter_list
                 (parameter_declaration
@@ -3044,16 +3044,16 @@ stock Fallback()
                   default_value: (integer_literal)))
               (return_statement
                 value: (identifier))
-              (directive_endif)))))
+              (preproc_endif)))))
       alternative: (top_level_else
-        (directive_else)
+        (preproc_else)
         (function_definition
           name: (identifier)
           parameters: (parameter_list)
           body: (block
             (return_statement
               value: (integer_literal))))))
-    (directive_endif)))
+    (preproc_endif)))
 
 ===================================================
 top-level branch with multiple wrapped items
@@ -3089,12 +3089,12 @@ stock Fallback()
 
 (source_file
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (conditional_function_definition
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -3102,7 +3102,7 @@ stock Fallback()
       parameters: (parameter_list
         (parameter_declaration
           name: (identifier)))
-      (directive_else)
+      (preproc_else)
       name: (identifier)
       parameters: (parameter_list
         (parameter_declaration
@@ -3110,12 +3110,12 @@ stock Fallback()
         (parameter_declaration
           name: (identifier)
           default_value: (integer_literal)))
-      (directive_endif)
+      (preproc_endif)
       body: (block
         (return_statement
           value: (identifier))))
     (top_level_shared_tail_function_branch
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -3128,7 +3128,7 @@ stock Fallback()
           (return_statement
             value: (identifier))
           (top_level_shared_tail_function_alternative_statement
-            (directive_else)
+            (preproc_else)
             name: (identifier)
             parameters: (parameter_list
               (parameter_declaration
@@ -3138,13 +3138,13 @@ stock Fallback()
                 default_value: (integer_literal)))
             (return_statement
               value: (identifier))
-            (directive_endif)))))
+            (preproc_endif)))))
     alternative: (top_level_else
-      (directive_else)
+      (preproc_else)
       (function_definition
         name: (identifier)
         parameters: (parameter_list)
         body: (block
           (return_statement
             value: (integer_literal)))))
-    (directive_endif)))
+    (preproc_endif)))

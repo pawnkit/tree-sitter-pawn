@@ -21,19 +21,19 @@ stock Foo(
     name: (identifier)
     parameters: (parameter_list
       (parameter_conditional
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
         (parameter_declaration
           name: (identifier))
         alternative: (parameter_else
-          (directive_else)
+          (preproc_else)
           (parameter_declaration
             name: (identifier))
           (parameter_declaration
             name: (identifier)))
-        (directive_endif))
+        (preproc_endif))
       (parameter_declaration
         name: (identifier)))
     body: (block
@@ -59,17 +59,17 @@ enum Mode {
   (enum_declaration
     name: (identifier)
     (enum_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
       (enum_entry
         name: (identifier))
       alternative: (enum_else
-        (directive_else)
+        (preproc_else)
         (enum_entry
           name: (identifier)))
-      (directive_endif))
+      (preproc_endif))
     (enum_entry
       name: (identifier))))
 
@@ -95,15 +95,15 @@ new values[] = {
       (dimension)
       initializer: (array_literal
         (array_literal_conditional
-          (directive_if
+          (preproc_if
             condition: (preproc_expression
               (preproc_defined
                 name: (identifier))))
           (integer_literal)
           alternative: (array_literal_else
-            (directive_else)
+            (preproc_else)
             (integer_literal))
-          (directive_endif))
+          (preproc_endif))
         (integer_literal)))))
 
 ====================
@@ -136,15 +136,15 @@ stock ArgSplit(playerid)
           arguments: (argument_list
             (identifier)
             (argument_conditional
-              (directive_if
+              (preproc_if
                 condition: (preproc_expression
                   (preproc_defined
                     name: (identifier))))
               (hex_literal)
               alternative: (argument_else
-                (directive_else)
+                (preproc_else)
                 (hex_literal))
-              (directive_endif))
+              (preproc_endif))
             (string_literal)))))))
 
 ===============================
@@ -173,17 +173,17 @@ new values[] = {1},
     (variable_declarator
       name: (identifier))
     (variable_declarator_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
       (variable_declarator
         name: (identifier))
       alternative: (variable_declarator_else
-        (directive_else)
+        (preproc_else)
         (variable_declarator
           name: (identifier)))
-      (directive_endif))
+      (preproc_endif))
     (variable_declarator
       type: (tagged_type
         tag: (identifier))
@@ -196,7 +196,7 @@ new values[] = {1},
       initializer: (array_literal
         (integer_literal)))
     (variable_declarator_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
@@ -205,7 +205,7 @@ new values[] = {1},
         (dimension)
         initializer: (array_literal
           (integer_literal)))
-      (directive_endif))
+      (preproc_endif))
     (variable_declarator
       name: (identifier)
       (dimension)
@@ -234,12 +234,12 @@ static
     (variable_declarator
       name: (identifier))
     (variable_declarator_conditional
-      (directive_if
+      (preproc_if
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
       (variable_declarator_conditional
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -248,11 +248,11 @@ static
           (fixed_dimension
             size: (integer_literal)))
         alternative: (variable_declarator_else
-          (directive_else)
+          (preproc_else)
           (variable_declarator
             name: (identifier)))
-        (directive_endif))
-      (directive_endif))
+        (preproc_endif))
+      (preproc_endif))
     (variable_declarator
       type: (tagged_type
         tag: (identifier))

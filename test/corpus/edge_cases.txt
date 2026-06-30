@@ -45,7 +45,7 @@ stock Foo()
     parameters: (parameter_list)
     body: (block
       (block_conditional
-        (directive_if
+        (preproc_if
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
@@ -54,10 +54,10 @@ stock Foo()
             name: (identifier)
             initializer: (integer_literal)))
         alternative: (block_else
-          (directive_else)
+          (preproc_else)
           (return_statement
             value: (integer_literal)))
-        (directive_endif))
+        (preproc_endif))
       (return_statement
         value: (integer_literal)))))
 

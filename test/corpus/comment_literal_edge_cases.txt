@@ -90,7 +90,7 @@ macro comment before parameters
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     (comment)
     parameters: (macro_parameter_list

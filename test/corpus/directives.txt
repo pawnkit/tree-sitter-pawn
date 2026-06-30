@@ -23,16 +23,16 @@ directives
 ---
 
 (source_file
-  (directive_include
+  (preproc_include
     path: (system_lib_string))
-  (directive_tryinclude
+  (preproc_tryinclude
     path: (string_literal))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
         (integer_literal))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -49,31 +49,31 @@ directives
                 (preproc_parenthesized_expression
                   expression: (preproc_expression
                     (macro_parameter))))))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
         (string_literal))))
-  (directive_undef
+  (preproc_undef
     name: (identifier))
-  (directive_assert
+  (preproc_assert
     condition: (preproc_expression
       (preproc_binary_expression
         left: (preproc_expression
           (identifier))
         right: (preproc_expression
           (integer_literal)))))
-  (directive_error
+  (preproc_error
     message: (preproc_text))
-  (directive_warning
+  (preproc_warning
     message: (preproc_text))
-  (directive_line
+  (preproc_line
     number: (integer_literal))
-  (directive_file
+  (preproc_file
     path: (string_literal))
-  (directive_endinput)
+  (preproc_endinput)
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_binary_expression
           left: (preproc_expression
@@ -86,13 +86,13 @@ directives
               right: (preproc_expression
                 (integer_literal)))))))
     alternative: (top_level_elseif
-      (directive_elseif
+      (preproc_elseif
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
       alternative: (top_level_else
-        (directive_else)))
-    (directive_endif)))
+        (preproc_else)))
+    (preproc_endif)))
 
 =================================
 structured macro replacement forms
@@ -123,12 +123,12 @@ structured macro replacement forms
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
         (string_literal))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -143,7 +143,7 @@ structured macro replacement forms
             (hex_literal))
           (preproc_expression
             (macro_parameter))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -158,7 +158,7 @@ structured macro replacement forms
               (macro_parameter)))
           right: (preproc_expression
             (macro_parameter))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -167,7 +167,7 @@ structured macro replacement forms
         (preproc_sizeof_expression
           argument: (preproc_expression
             (macro_parameter))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -188,7 +188,7 @@ structured macro replacement forms
                 left: (macro_parameter)
                 right: (preproc_expression
                   (macro_parameter)))))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
@@ -200,7 +200,7 @@ structured macro replacement forms
               value: (preproc_unary_expression
                 argument: (preproc_expression
                   (integer_literal)))))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
@@ -212,7 +212,7 @@ structured macro replacement forms
               value: (preproc_unary_expression
                 argument: (preproc_expression
                   (integer_literal)))))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (complex_macro_parameter_list
       left: (complex_macro_parameter_header
@@ -227,29 +227,29 @@ structured macro replacement forms
           (macro_parameter)
           (macro_parameter))))
     value: (preproc_text))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (preproc_text))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (structured_macro_parameter_list
       (braced_macro_parameter
         (macro_parameter))
       (macro_parameter))
     value: (preproc_text))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
     value: (preproc_text))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
         (preproc_tag_set
           (identifier)
           (identifier)))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression_list
@@ -257,7 +257,7 @@ structured macro replacement forms
           (identifier))
         right: (preproc_expression
           (identifier)))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression_list
@@ -265,15 +265,15 @@ structured macro replacement forms
           (tag_wildcard))
         right: (preproc_expression
           (identifier)))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
     value: (preproc_text))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (preproc_text))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
@@ -284,7 +284,7 @@ structured macro replacement forms
                 tag: (tag_wildcard))
               value: (macro_at_identifier
                 (identifier))))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -306,7 +306,7 @@ structured macro replacement forms
                   value: (preproc_parenthesized_expression
                     expression: (preproc_expression
                       (macro_parameter)))))))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -327,7 +327,7 @@ structured macro replacement forms
                     object: (macro_parameter)
                     property: (preproc_dollar_expression
                       argument: (integer_literal)))))))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
@@ -341,7 +341,7 @@ structured macro replacement forms
                     object: (identifier)
                     property: (identifier))
                   property: (identifier)))))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
@@ -369,11 +369,11 @@ stock AfterUnsupportedDefine()
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     unsupported_header: (preproc_text)
     value: (preproc_text))
-  (directive_define
+  (preproc_define
     name: (identifier)
     unsupported_parameters: (preproc_text)
     value: (preproc_text))
@@ -393,7 +393,7 @@ macro pasted identifiers
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (macro_pasted_identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -420,7 +420,7 @@ declaration led macro replacement
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -510,7 +510,7 @@ spaced forward public macro replacement
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (macro_pasted_identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -539,7 +539,7 @@ at-prefixed macro function names
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -567,7 +567,7 @@ at-prefixed macro function names
             (parameter_declaration
               name: (identifier)
               (dimension)))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -599,7 +599,7 @@ macro operator function names
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -637,19 +637,19 @@ adjacent identifier string define replacements
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
         (string_literal))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
         (preproc_adjacent_string_expression
           left: (identifier)
           right: (string_literal)))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
@@ -667,7 +667,7 @@ macro stringify and comma grouping
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -695,7 +695,7 @@ macro stringify and comma grouping
             (macro_parameter))
           (preproc_expression
             (macro_parameter))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -742,7 +742,7 @@ statement-like macro replacements
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -754,7 +754,7 @@ statement-like macro replacements
           (macro_return_statement
             value: (preproc_expression
               (integer_literal)))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -770,7 +770,7 @@ statement-like macro replacements
           (macro_return_statement
             value: (preproc_expression
               (integer_literal)))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -785,7 +785,7 @@ statement-like macro replacements
               (macro_expression_statement
                 expression: (preproc_expression
                   (macro_parameter)))))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -793,7 +793,7 @@ statement-like macro replacements
       (macro_return_statement
         value: (preproc_expression
           (macro_parameter)))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -817,7 +817,7 @@ loop and control macro replacements
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -830,7 +830,7 @@ loop and control macro replacements
           (macro_expression_statement
             expression: (preproc_expression
               (macro_parameter)))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -844,7 +844,7 @@ loop and control macro replacements
                 (macro_parameter)))))
         condition: (preproc_expression
           (macro_parameter)))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -863,7 +863,7 @@ loop and control macro replacements
           (macro_expression_statement
             expression: (preproc_expression
               (macro_parameter)))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -885,7 +885,7 @@ loop and control macro replacements
           (macro_expression_statement
             expression: (preproc_expression
               (macro_parameter)))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -904,7 +904,7 @@ loop and control macro replacements
           (macro_open_if_statement
             condition: (preproc_expression
               (macro_parameter)))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_colon_parameter
@@ -930,11 +930,11 @@ loop and control macro replacements
             function: (identifier)
             (preproc_expression
               (macro_parameter)))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (macro_break_statement)))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (macro_continue_statement))))
@@ -950,7 +950,7 @@ switch macro replacements
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -971,7 +971,7 @@ switch macro replacements
             (macro_return_statement
               value: (preproc_expression
                 (integer_literal))))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -988,7 +988,7 @@ switch macro replacements
         (macro_default_statement
           (macro_statement
             (macro_continue_statement))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
@@ -1025,15 +1025,15 @@ weird supported defines
 ---
 
 (source_file
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (macro_return_statement)))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (macro_block)))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
@@ -1054,12 +1054,12 @@ weird supported defines
               (macro_return_statement
                 value: (preproc_expression
                   (integer_literal)))))))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     value: (macro_replacement
       (preproc_expression
         (preproc_parenthesized_expression))))
-  (directive_define
+  (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)

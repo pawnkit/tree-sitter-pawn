@@ -133,18 +133,18 @@ module.exports = grammar({
       $.function_declaration,
       $.enum_declaration,
       $.variable_declaration,
-      $.directive_include,
-      $.directive_tryinclude,
-      $.directive_define,
-      $.directive_emit,
-      $.directive_pragma,
-      $.directive_undef,
-      $.directive_assert,
-      $.directive_error,
-      $.directive_warning,
-      $.directive_line,
-      $.directive_file,
-      $.directive_endinput,
+      $.preproc_include,
+      $.preproc_tryinclude,
+      $.preproc_define,
+      $.preproc_emit,
+      $.preproc_pragma,
+      $.preproc_undef,
+      $.preproc_assert,
+      $.preproc_error,
+      $.preproc_warning,
+      $.preproc_line,
+      $.preproc_file,
+      $.preproc_endinput,
     ),
 
     ...directiveIfGroup({
@@ -184,7 +184,7 @@ module.exports = grammar({
     function_definition: ($) => functionDefinitionWithBody($, $._function_body),
 
     top_level_shared_tail_function_branch: ($) => seq(
-      $.directive_if,
+      $.preproc_if,
       alias($.top_level_shared_tail_function_definition, $.function_definition),
     ),
 
@@ -689,21 +689,21 @@ module.exports = grammar({
     }),
 
     conditional_else_statement: ($) => prec.right(1, seq(
-      $.directive_if,
+      $.preproc_if,
       "else",
       field("alternative", $._statement),
-      $.directive_endif,
+      $.preproc_endif,
     )),
 
     conditional_else_block_statement: ($) => prec.right(1, seq(
-      $.directive_if,
+      $.preproc_if,
       "else",
       "{",
-      $.directive_endif,
+      $.preproc_endif,
       repeat($._statement),
-      $.directive_if,
+      $.preproc_if,
       "}",
-      $.directive_endif,
+      $.preproc_endif,
     )),
 
     conditional_else_expression_statement: directiveBranchChain({
@@ -785,22 +785,22 @@ module.exports = grammar({
       $._conditional_if_else_closing,
       "else",
       field("alternative", $._statement),
-      $.directive_endif,
+      $.preproc_endif,
     ))),
 
     conditional_if_split_wrapped_else_statement: ($) => prec.dynamic(5, prec.right(2, seq(
-      $.directive_if,
+      $.preproc_if,
       repeat($._conditional_if_split_wrapped_else_setup_statement),
       field("consequence", seq($._if_header, "{")),
-      $.directive_else,
+      $.preproc_else,
       repeat1(field("alternative", $._conditional_if_split_wrapped_else_setup_statement)),
-      $.directive_endif,
+      $.preproc_endif,
       repeat($._statement),
-      $.directive_if,
+      $.preproc_if,
       "}",
       "else",
       field("shared_alternative", $._statement),
-      $.directive_endif,
+      $.preproc_endif,
     ))),
 
     _conditional_if_split_wrapped_else_setup_statement: ($) => choice(
@@ -1004,18 +1004,18 @@ module.exports = grammar({
       $.break_statement,
       $.continue_statement,
       $.expression_statement,
-      $.directive_include,
-      $.directive_tryinclude,
-      $.directive_define,
-      $.directive_emit,
-      $.directive_pragma,
-      $.directive_undef,
-      $.directive_assert,
-      $.directive_error,
-      $.directive_warning,
-      $.directive_line,
-      $.directive_file,
-      $.directive_endinput,
+      $.preproc_include,
+      $.preproc_tryinclude,
+      $.preproc_define,
+      $.preproc_emit,
+      $.preproc_pragma,
+      $.preproc_undef,
+      $.preproc_assert,
+      $.preproc_error,
+      $.preproc_warning,
+      $.preproc_line,
+      $.preproc_file,
+      $.preproc_endinput,
     ),
 
     return_statement: ($) => seq(
@@ -1516,11 +1516,11 @@ module.exports = grammar({
       conditionalNoComma: $.array_literal_conditional_no_comma,
     }),
 
-    directive_include: ($) => includeDirective($, "include"),
+    preproc_include: ($) => includeDirective($, "include"),
 
-    directive_tryinclude: ($) => includeDirective($, "tryinclude"),
+    preproc_tryinclude: ($) => includeDirective($, "tryinclude"),
 
-    directive_define: ($) => choice(
+    preproc_define: ($) => choice(
       defineDirective($,
         field("unsupported_header", alias($._unsupported_define_header, $.preproc_text)),
         optional(seq(
@@ -1716,40 +1716,40 @@ module.exports = grammar({
       field("tail", $.preproc_expression),
     ),
 
-    directive_emit: ($) => seq(
+    preproc_emit: ($) => seq(
       preprocessor("emit"),
       field("value", $.preproc_text),
     ),
 
-    directive_pragma: ($) => namedDirective($, "pragma",
+    preproc_pragma: ($) => namedDirective($, "pragma",
       optional(seq(
         token.immediate(/[ \t]+/),
         field("value", $.preproc_text),
       )),
     ),
 
-    directive_undef: ($) => namedDirective($, "undef"),
+    preproc_undef: ($) => namedDirective($, "undef"),
 
-    directive_assert: ($) => seq(
+    preproc_assert: ($) => seq(
       preprocessor("assert"),
       field("condition", $.preproc_expression),
     ),
 
-    directive_error: ($) => messageDirective($, "error"),
+    preproc_error: ($) => messageDirective($, "error"),
 
-    directive_warning: ($) => messageDirective($, "warning"),
+    preproc_warning: ($) => messageDirective($, "warning"),
 
-    directive_line: ($) => seq(
+    preproc_line: ($) => seq(
       preprocessor("line"),
       field("number", $.integer_literal),
     ),
 
-    directive_file: ($) => seq(
+    preproc_file: ($) => seq(
       preprocessor("file"),
       field("path", $.string_literal),
     ),
 
-    directive_endinput: ($) => preprocessor("endinput"),
+    preproc_endinput: ($) => preprocessor("endinput"),
 
     macro_parameter_list: ($) => seq(
       token.immediate("("),
@@ -1815,19 +1815,19 @@ module.exports = grammar({
       "}",
     ),
 
-    directive_if: ($) => seq(
+    preproc_if: ($) => seq(
       preprocessor("if"),
       field("condition", $.preproc_expression),
     ),
 
-    directive_elseif: ($) => seq(
+    preproc_elseif: ($) => seq(
       preprocessor("elseif"),
       field("condition", $.preproc_expression),
     ),
 
-    directive_else: ($) => preprocessor("else"),
+    preproc_else: ($) => preprocessor("else"),
 
-    directive_endif: ($) => preprocessor("endif"),
+    preproc_endif: ($) => preprocessor("endif"),
 
     preproc_expression: ($) => choice(
       $.preproc_assignment_expression,
@@ -2487,20 +2487,20 @@ function directiveIfGroup(names, content, precedence = 0) {
 
   return {
     [ifName]: ($) => wrapRight(seq(
-      $.directive_if,
+      $.preproc_if,
       repeat(content($)),
       field("alternative", optional(choice($[elseifName], $[elseName]))),
-      $.directive_endif,
+      $.preproc_endif,
     )),
 
     [elseifName]: ($) => wrapRight(seq(
-      $.directive_elseif,
+      $.preproc_elseif,
       repeat(content($)),
       field("alternative", optional(choice($[elseifName], $[elseName]))),
     )),
 
     [elseName]: ($) => seq(
-      $.directive_else,
+      $.preproc_else,
       repeat(content($)),
     ),
   };
@@ -2562,11 +2562,11 @@ function directiveBranchChain({
   return ($) => {
     const tail = tailBuilder ? tailBuilder($) : [];
     const sequence = seq(
-      $.directive_if,
+      $.preproc_if,
       ifBuilder($),
-      repeat(seq($.directive_elseif, elseifBuilder($))),
-      ...(elseBuilder ? [optional(seq($.directive_else, elseBuilder($)))] : []),
-      $.directive_endif,
+      repeat(seq($.preproc_elseif, elseifBuilder($))),
+      ...(elseBuilder ? [optional(seq($.preproc_else, elseBuilder($)))] : []),
+      $.preproc_endif,
       ...(Array.isArray(tail) ? tail : [tail]),
     );
     const rule = prec.right(precedence, sequence);
@@ -2576,10 +2576,10 @@ function directiveBranchChain({
 
 function directiveElseAlternative($, { signature, body, precedence = 1 }) {
   return prec.right(precedence, seq(
-    $.directive_else,
+    $.preproc_else,
     signature,
     ...(Array.isArray(body) ? body : [body]),
-    $.directive_endif,
+    $.preproc_endif,
   ));
 }
 
@@ -2590,11 +2590,11 @@ function directiveSignatureChain($, {
   tail = null,
 }) {
   return seq(
-    $.directive_if,
+    $.preproc_if,
     signature,
-    repeat(seq($.directive_elseif, elseifSignature)),
-    optional(seq($.directive_else, elseSignature)),
-    $.directive_endif,
+    repeat(seq($.preproc_elseif, elseifSignature)),
+    optional(seq($.preproc_else, elseSignature)),
+    $.preproc_endif,
     ...(tail === null ? [] : (Array.isArray(tail) ? tail : [tail])),
   );
 }
@@ -2605,18 +2605,18 @@ function directiveStatementChoices($, {
   includeConditionalClosings = false,
 } = {}) {
   return [
-    $.directive_include,
-    $.directive_tryinclude,
-    $.directive_define,
-    $.directive_emit,
-    $.directive_pragma,
-    $.directive_undef,
-    $.directive_assert,
-    $.directive_error,
-    $.directive_warning,
-    $.directive_line,
-    $.directive_file,
-    $.directive_endinput,
+    $.preproc_include,
+    $.preproc_tryinclude,
+    $.preproc_define,
+    $.preproc_emit,
+    $.preproc_pragma,
+    $.preproc_undef,
+    $.preproc_assert,
+    $.preproc_error,
+    $.preproc_warning,
+    $.preproc_line,
+    $.preproc_file,
+    $.preproc_endinput,
     ...conditionalDirectiveChoices($, {
       includeIf: includeConditionalIf,
       includeElseif: includeConditionalElseif,
@@ -2631,9 +2631,9 @@ function conditionalDirectiveChoices($, {
   includeClosings = false,
 } = {}) {
   return [
-    ...(includeIf ? [$.directive_if] : []),
-    ...(includeElseif ? [$.directive_elseif] : []),
-    ...(includeClosings ? [$.directive_else, $.directive_endif] : []),
+    ...(includeIf ? [$.preproc_if] : []),
+    ...(includeElseif ? [$.preproc_elseif] : []),
+    ...(includeClosings ? [$.preproc_else, $.preproc_endif] : []),
   ];
 }
 

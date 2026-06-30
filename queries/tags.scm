@@ -4,7 +4,7 @@
 (function_declaration
   name: (identifier) @name) @definition.function
 
-(directive_define
+(preproc_define
   name: (identifier) @name) @definition.macro
 
 (label_statement

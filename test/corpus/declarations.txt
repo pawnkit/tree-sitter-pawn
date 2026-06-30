@@ -173,24 +173,24 @@ enum PlayerState {
         (scoped_state_entry
           scope: (state_name)
           state: (state_name)))))
-  (directive_define
+  (preproc_define
     name: (identifier))
-  (directive_define
+  (preproc_define
     name: (define_at_identifier
       (identifier)))
-  (directive_define
+  (preproc_define
     name: (define_at_identifier
       (define_at_identifier
         (identifier))))
   (top_level_conditional
-    (directive_if
+    (preproc_if
       condition: (preproc_expression
         (preproc_defined
           name: (identifier))))
     (variable_declaration
       (variable_declarator
         name: (identifier)))
-    (directive_endif))
+    (preproc_endif))
   (function_declaration
     return_type: (tagged_type
       tag: (identifier))

@@ -3,7 +3,7 @@
   name: (identifier) @function)
 (function_declaration
   name: (identifier) @function)
-(directive_define
+(preproc_define
   name: (identifier) @function.macro)
 (macro_parameter) @parameter
 (variadic_parameter) @parameter
@@ -37,13 +37,13 @@
 
 ; Directives
 [
-  (directive_include)
-  (directive_tryinclude)
-  (directive_define)
-  (directive_if)
-  (directive_elseif)
-  (directive_else)
-  (directive_endif)
+  (preproc_include)
+  (preproc_tryinclude)
+  (preproc_define)
+  (preproc_if)
+  (preproc_elseif)
+  (preproc_else)
+  (preproc_endif)
 ] @preproc
 
 ; Literals
@@ -76,7 +76,7 @@
 ; Preprocessor expressions
 (preproc_defined
   name: (identifier) @constant)
-(directive_pragma
+(preproc_pragma
   name: (identifier) @attribute)
 (preproc_text) @string.special
 
