@@ -3580,17 +3580,8 @@
               "type": "FIELD",
               "name": "type",
               "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "tagged_type"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "tag_set_type"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "_type"
               }
             },
             {
@@ -12548,6 +12539,10 @@
       ]
     },
     "macro_replacement": {
+      "type": "SYMBOL",
+      "name": "_macro_item"
+    },
+    "_macro_item": {
       "type": "CHOICE",
       "members": [
         {
@@ -17275,6 +17270,19 @@
         }
       ]
     },
+    "_type": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "tagged_type"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "tag_set_type"
+        }
+      ]
+    },
     "integer_literal": {
       "type": "TOKEN",
       "content": {
@@ -17975,7 +17983,10 @@
   ],
   "supertypes": [
     "_expression",
-    "_statement"
+    "_statement",
+    "_type",
+    "_literal",
+    "_macro_item"
   ],
   "reserved": {}
 }

@@ -22,6 +22,12 @@
 (call_expression
   function: (identifier) @name) @reference.call
 
+(macro_invocation_statement
+  name: (identifier) @name) @reference.call
+
+(macro_invocation_block_statement
+  name: (identifier) @name) @reference.call
+
 (preproc_call_expression
   function: (identifier) @name
   (#not-match? @name "^(if|for|while|switch)$")) @reference.call

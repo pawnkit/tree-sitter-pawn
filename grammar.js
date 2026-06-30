@@ -110,6 +110,9 @@ module.exports = grammar({
   supertypes: ($) => [
     $._expression,
     $._statement,
+    $._type,
+    $._literal,
+    $._macro_item,
   ],
 
   rules: {
@@ -353,7 +356,7 @@ module.exports = grammar({
     parameter_declaration: ($) => seq(
       repeat(choice("const", "stock")),
       optional("&"),
-      optional(field("type", choice($.tagged_type, $.tag_set_type))),
+      optional(field("type", $._type)),
       optional("&"),
       $._callback_named_identifier,
       repeat(choice($.dimension, $.fixed_dimension, $.packed_dimension)),
@@ -1570,7 +1573,9 @@ module.exports = grammar({
       ),
     ),
 
-    macro_replacement: ($) => choice(
+    macro_replacement: ($) => $._macro_item,
+
+    _macro_item: ($) => choice(
       $.macro_declaration_sequence,
       $.macro_function_sequence,
       $.macro_expression_sequence,
@@ -2242,6 +2247,11 @@ module.exports = grammar({
       $.char_literal,
       $.boolean_literal,
       $.null_literal,
+    ),
+
+    _type: ($) => choice(
+      $.tagged_type,
+      $.tag_set_type,
     ),
 
     integer_literal: ($) => token(/[0-9][0-9_]*/),

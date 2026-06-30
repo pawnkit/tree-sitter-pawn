@@ -23,12 +23,13 @@
   "scripts": {
     "generate": "tree-sitter generate",
     "test": "tree-sitter test",
+    "test:queries": "bash test/queries/check.sh",
     "test:external:fetch": "bash test/external/fetch.sh",
     "test:external": "bash test/external/parse.sh",
     "test:external:list": "find .fixtures/pawn-projects -type f | sort",
     "check:external": "npm run test:external:fetch && npm run test:external",
     "parse": "tree-sitter parse",
-    "check": "npm run generate && npm test",
+    "check": "npm run generate && npm test && npm run test:queries",
     "pack:check": "npm pack --dry-run",
     "prepack": "npm run generate"
   },

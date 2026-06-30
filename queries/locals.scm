@@ -15,56 +15,8 @@
   initializer: (variable_declarator
     name: (identifier) @local.definition))
 
-(return_statement
-  value: (identifier) @local.reference)
-
-(expression_statement
-  expression: (identifier) @local.reference)
-
-(expression_list
-  left: (identifier) @local.reference)
-
-(expression_list
-  right: (identifier) @local.reference)
-
-(assignment_expression
-  left: (identifier) @local.reference)
-
-(assignment_expression
-  right: (identifier) @local.reference)
-
-(binary_expression
-  left: (identifier) @local.reference)
-
-(binary_expression
-  right: (identifier) @local.reference)
-
-(ternary_expression
-  condition: (identifier) @local.reference)
-
-(ternary_expression
-  consequence: (identifier) @local.reference)
-
-(ternary_expression
-  alternative: (identifier) @local.reference)
-
-(unary_expression
-  argument: (identifier) @local.reference)
-
-(update_expression
-  argument: (identifier) @local.reference)
-
-(parenthesized_expression
-  expression: (identifier) @local.reference)
-
-(subscript_expression
-  array: (identifier) @local.reference)
-
-(subscript_expression
-  index: (identifier) @local.reference)
-
-(tagged_expression
-  value: (identifier) @local.reference)
-
-(argument_list
-  (identifier) @local.reference)
+; Definitions may also match this broad reference pattern. Tree-sitter's locals
+; consumer uses the more specific definition capture to classify them, while this
+; pattern keeps references working in every expression position without an
+; ever-growing enumeration of expression node shapes.
+(identifier) @local.reference

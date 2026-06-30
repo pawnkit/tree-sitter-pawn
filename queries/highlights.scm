@@ -67,6 +67,10 @@
 ; Calls
 (call_expression
   function: (identifier) @function.call)
+(macro_invocation_statement
+  name: (identifier) @function.call)
+(macro_invocation_block_statement
+  name: (identifier) @function.call)
 (sizeof_expression) @function.builtin
 (preproc_call_expression
   function: (identifier) @function.call
