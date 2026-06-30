@@ -1,0 +1,38 @@
+==============================================
+generic declaration prefixes and iterator loops
+==============================================
+
+Decorator Float:OnValue(value);
+
+stock Test() {
+    CustomEach(new item : Items) {
+        Use(item);
+    }
+}
+
+---
+
+(source_file
+  (prefixed_function_declaration
+    prefix: (identifier)
+    return_type: (tagged_type
+      tag: (identifier))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter_declaration
+        name: (identifier))))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (macro_iterator_loop_statement
+        name: (identifier)
+        iterator: (macro_iterator
+          name: (identifier)
+          collection: (identifier))
+        body: (block
+          (expression_statement
+            expression: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))))))

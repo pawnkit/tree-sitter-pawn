@@ -662,7 +662,8 @@ stock SharedLoop()
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
-        iterator: (foreach_iterator
+        name: (identifier)
+        iterator: (macro_iterator
           name: (identifier)
           collection: (identifier))
         (preproc_else)
@@ -742,8 +743,9 @@ stock ToggleAll(enable)
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
-        consequence: (foreach_statement
-          iterator: (foreach_iterator
+        consequence: (macro_iterator_loop_statement
+          name: (identifier)
+          iterator: (macro_iterator
             name: (identifier)
             collection: (identifier))
           body: (expression_statement
@@ -910,7 +912,8 @@ stock RemoveBuilding(modelid, Float:fX, Float:fY, Float:fZ, Float:fRadius)
               condition: (preproc_expression
                 (preproc_defined
                   name: (identifier))))
-            iterator: (foreach_iterator
+            name: (identifier)
+            iterator: (macro_iterator
               name: (identifier)
               collection: (identifier))
             (preproc_else)
@@ -979,7 +982,8 @@ stock SharedLoopPreamble(value)
           condition: (preproc_expression
             (preproc_defined
               name: (identifier))))
-        iterator: (foreach_iterator
+        name: (identifier)
+        iterator: (macro_iterator
           name: (identifier)
           collection: (identifier))
         (preproc_else)
@@ -1438,8 +1442,9 @@ stock ProbeFlow(value)
             (return_statement
               value: (integer_literal)))
           (preproc_endif)))
-      (foreach_statement
-        iterator: (foreach_iterator
+      (macro_iterator_loop_statement
+        name: (identifier)
+        iterator: (macro_iterator
           name: (identifier)
           collection: (identifier))
         body: (block_conditional
@@ -2832,7 +2837,7 @@ stock Fallback()
         condition: (preproc_expression
           (preproc_defined
             name: (identifier))))
-      (hook_forward_statement
+      (prefixed_function_declaration
         return_type: (tagged_type
           tag: (identifier))
         name: (identifier)
@@ -2840,7 +2845,7 @@ stock Fallback()
         value: (integer_literal))
       alternative: (top_level_else
         (preproc_else)
-        (hook_forward_statement
+        (prefixed_function_declaration
           return_type: (tagged_type
             tag: (identifier))
           name: (identifier)

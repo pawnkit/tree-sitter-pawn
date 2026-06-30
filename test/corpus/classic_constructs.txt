@@ -301,8 +301,9 @@ forward OnScriptInit SSCANF_BRACKETS;
       (parameter_declaration
         name: (identifier)))
     body: (block
-      (foreach_statement
-        iterator: (foreach_iterator
+      (macro_iterator_loop_statement
+        name: (identifier)
+        iterator: (macro_iterator
           name: (identifier)
           collection: (identifier))
         body: (return_statement
@@ -485,13 +486,14 @@ forward callback.OnGameModeInit();
 ---
 
 (source_file
-  (hook_forward_statement
+  (prefixed_function_declaration
     return_type: (tagged_type
       tag: (identifier))
     name: (identifier)
     parameters: (parameter_list)
     value: (integer_literal))
-  (hook_forward_statement
+  (prefixed_function_declaration
+    prefix: (identifier)
     return_type: (tagged_type
       tag: (identifier))
     name: (identifier)
@@ -499,6 +501,7 @@ forward callback.OnGameModeInit();
       (parameter_declaration
         name: (identifier))))
   (function_definition
+    prefix: (identifier)
     return_type: (tagged_type
       tag: (identifier))
     name: (identifier)
@@ -943,6 +946,7 @@ CMD:goto(playerid, params[])         { return 1; }
       (return_statement
         value: (integer_literal))))
   (function_definition
+    prefix: (identifier)
     name: (identifier)
     parameters: (parameter_list
       (parameter_declaration

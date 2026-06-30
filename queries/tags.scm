@@ -4,6 +4,9 @@
 (function_declaration
   name: (identifier) @name) @definition.function
 
+(prefixed_function_declaration
+  name: (identifier) @name) @definition.function
+
 (preproc_define
   name: (identifier) @name) @definition.macro
 
@@ -26,6 +29,9 @@
   name: (identifier) @name) @reference.call
 
 (macro_invocation_block_statement
+  name: (identifier) @name) @reference.call
+
+(macro_iterator_loop_statement
   name: (identifier) @name) @reference.call
 
 (preproc_call_expression

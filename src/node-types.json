@@ -236,10 +236,6 @@
         "named": true
       },
       {
-        "type": "foreach_statement",
-        "named": true
-      },
-      {
         "type": "goto_statement",
         "named": true
       },
@@ -261,6 +257,10 @@
       },
       {
         "type": "macro_invocation_block_statement",
+        "named": true
+      },
+      {
+        "type": "macro_iterator_loop_statement",
         "named": true
       },
       {
@@ -922,10 +922,6 @@
           "named": true
         },
         {
-          "type": "foreach_statement",
-          "named": true
-        },
-        {
           "type": "function_initializer_alternative_statement",
           "named": true
         },
@@ -951,6 +947,10 @@
         },
         {
           "type": "macro_invocation_block_statement",
+          "named": true
+        },
+        {
+          "type": "macro_iterator_loop_statement",
           "named": true
         },
         {
@@ -1160,10 +1160,6 @@
           "named": true
         },
         {
-          "type": "foreach_statement",
-          "named": true
-        },
-        {
           "type": "goto_statement",
           "named": true
         },
@@ -1185,6 +1181,10 @@
         },
         {
           "type": "macro_invocation_block_statement",
+          "named": true
+        },
+        {
+          "type": "macro_iterator_loop_statement",
           "named": true
         },
         {
@@ -1383,10 +1383,6 @@
           "named": true
         },
         {
-          "type": "foreach_statement",
-          "named": true
-        },
-        {
           "type": "goto_statement",
           "named": true
         },
@@ -1408,6 +1404,10 @@
         },
         {
           "type": "macro_invocation_block_statement",
+          "named": true
+        },
+        {
+          "type": "macro_iterator_loop_statement",
           "named": true
         },
         {
@@ -1617,10 +1617,6 @@
           "named": true
         },
         {
-          "type": "foreach_statement",
-          "named": true
-        },
-        {
           "type": "goto_statement",
           "named": true
         },
@@ -1642,6 +1638,10 @@
         },
         {
           "type": "macro_invocation_block_statement",
+          "named": true
+        },
+        {
+          "type": "macro_iterator_loop_statement",
           "named": true
         },
         {
@@ -2619,10 +2619,6 @@
             "named": true
           },
           {
-            "type": "hook",
-            "named": false
-          },
-          {
             "type": "identifier",
             "named": true
           },
@@ -2705,10 +2701,6 @@
             "named": true
           },
           {
-            "type": "foreach_statement",
-            "named": true
-          },
-          {
             "type": "goto_statement",
             "named": true
           },
@@ -2718,6 +2710,10 @@
           },
           {
             "type": "macro_invocation_block_statement",
+            "named": true
+          },
+          {
+            "type": "macro_iterator_loop_statement",
             "named": true
           },
           {
@@ -2815,10 +2811,6 @@
           {
             "type": "fixed_dimension",
             "named": true
-          },
-          {
-            "type": "hook",
-            "named": false
           },
           {
             "type": "identifier",
@@ -2937,10 +2929,6 @@
           {
             "type": "fixed_dimension",
             "named": true
-          },
-          {
-            "type": "hook",
-            "named": false
           },
           {
             "type": "identifier",
@@ -3309,7 +3297,7 @@
             "named": true
           },
           {
-            "type": "foreach_statement",
+            "type": "macro_iterator_loop_statement",
             "named": true
           }
         ]
@@ -3323,7 +3311,7 @@
             "named": true
           },
           {
-            "type": "foreach_statement",
+            "type": "macro_iterator_loop_statement",
             "named": true
           }
         ]
@@ -3457,18 +3445,6 @@
             "named": true
           },
           {
-            "type": "foreach",
-            "named": false
-          },
-          {
-            "type": "foreach_iterator",
-            "named": true
-          },
-          {
-            "type": "foreach_statement",
-            "named": true
-          },
-          {
             "type": "goto_statement",
             "named": true
           },
@@ -3482,6 +3458,14 @@
           },
           {
             "type": "loop_body_conditional_if_statement",
+            "named": true
+          },
+          {
+            "type": "macro_iterator",
+            "named": true
+          },
+          {
+            "type": "macro_iterator_loop_statement",
             "named": true
           },
           {
@@ -3643,18 +3627,6 @@
             "named": true
           },
           {
-            "type": "foreach",
-            "named": false
-          },
-          {
-            "type": "foreach_iterator",
-            "named": true
-          },
-          {
-            "type": "foreach_statement",
-            "named": true
-          },
-          {
             "type": "goto_statement",
             "named": true
           },
@@ -3668,6 +3640,14 @@
           },
           {
             "type": "loop_body_conditional_if_statement",
+            "named": true
+          },
+          {
+            "type": "macro_iterator",
+            "named": true
+          },
+          {
+            "type": "macro_iterator_loop_statement",
             "named": true
           },
           {
@@ -3791,7 +3771,17 @@
         "required": false,
         "types": [
           {
-            "type": "foreach_iterator",
+            "type": "macro_iterator",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -3975,18 +3965,6 @@
             "named": true
           },
           {
-            "type": "foreach",
-            "named": false
-          },
-          {
-            "type": "foreach_iterator",
-            "named": true
-          },
-          {
-            "type": "foreach_statement",
-            "named": true
-          },
-          {
             "type": "function_initializer_alternative_statement",
             "named": true
           },
@@ -4012,6 +3990,14 @@
           },
           {
             "type": "macro_invocation_block_statement",
+            "named": true
+          },
+          {
+            "type": "macro_iterator",
+            "named": true
+          },
+          {
+            "type": "macro_iterator_loop_statement",
             "named": true
           },
           {
@@ -4201,10 +4187,6 @@
             "named": true
           },
           {
-            "type": "foreach_statement",
-            "named": true
-          },
-          {
             "type": "function_initializer_alternative_statement",
             "named": true
           },
@@ -4226,6 +4208,10 @@
           },
           {
             "type": "macro_invocation_block_statement",
+            "named": true
+          },
+          {
+            "type": "macro_iterator_loop_statement",
             "named": true
           },
           {
@@ -4449,18 +4435,6 @@
             "named": true
           },
           {
-            "type": "foreach",
-            "named": false
-          },
-          {
-            "type": "foreach_iterator",
-            "named": true
-          },
-          {
-            "type": "foreach_statement",
-            "named": true
-          },
-          {
             "type": "function_initializer_alternative_statement",
             "named": true
           },
@@ -4482,6 +4456,14 @@
           },
           {
             "type": "macro_invocation_block_statement",
+            "named": true
+          },
+          {
+            "type": "macro_iterator",
+            "named": true
+          },
+          {
+            "type": "macro_iterator_loop_statement",
             "named": true
           },
           {
@@ -4703,18 +4685,6 @@
             "named": true
           },
           {
-            "type": "foreach",
-            "named": false
-          },
-          {
-            "type": "foreach_iterator",
-            "named": true
-          },
-          {
-            "type": "foreach_statement",
-            "named": true
-          },
-          {
             "type": "function_initializer_alternative_statement",
             "named": true
           },
@@ -4736,6 +4706,14 @@
           },
           {
             "type": "macro_invocation_block_statement",
+            "named": true
+          },
+          {
+            "type": "macro_iterator",
+            "named": true
+          },
+          {
+            "type": "macro_iterator_loop_statement",
             "named": true
           },
           {
@@ -4863,7 +4841,17 @@
         "required": false,
         "types": [
           {
-            "type": "foreach_iterator",
+            "type": "macro_iterator",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -5460,68 +5448,6 @@
     }
   },
   {
-    "type": "foreach_iterator",
-    "named": true,
-    "fields": {
-      "collection": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "tagged_type",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "foreach_statement",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_statement",
-            "named": true
-          }
-        ]
-      },
-      "iterator": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "foreach_iterator",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "function_declaration",
     "named": true,
     "fields": {
@@ -5680,10 +5606,6 @@
             "named": true
           },
           {
-            "type": "foreach_statement",
-            "named": true
-          },
-          {
             "type": "goto_statement",
             "named": true
           },
@@ -5693,6 +5615,10 @@
           },
           {
             "type": "macro_invocation_block_statement",
+            "named": true
+          },
+          {
+            "type": "macro_iterator_loop_statement",
             "named": true
           },
           {
@@ -6048,98 +5974,6 @@
     }
   },
   {
-    "type": "hook_forward_statement",
-    "named": true,
-    "fields": {
-      "callback_signature": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "callback_signature",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "at_identifier",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "operator_name",
-            "named": true
-          }
-        ]
-      },
-      "parameters": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "parameter_list",
-            "named": true
-          },
-          {
-            "type": "parameter_list_reference",
-            "named": true
-          }
-        ]
-      },
-      "return_size": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "fixed_dimension",
-            "named": true
-          }
-        ]
-      },
-      "return_type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "tagged_type",
-            "named": true
-          }
-        ]
-      },
-      "state": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "state_classifier",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "_expression",
-            "named": true
-          },
-          {
-            "type": "expression_list",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "if_statement",
     "named": true,
     "fields": {
@@ -6298,10 +6132,6 @@
           "named": true
         },
         {
-          "type": "foreach_statement",
-          "named": true
-        },
-        {
           "type": "goto_statement",
           "named": true
         },
@@ -6311,6 +6141,10 @@
         },
         {
           "type": "inline_callback_definition",
+          "named": true
+        },
+        {
+          "type": "macro_iterator_loop_statement",
           "named": true
         },
         {
@@ -6583,11 +6417,7 @@
             "named": false
           },
           {
-            "type": "foreach",
-            "named": false
-          },
-          {
-            "type": "foreach_iterator",
+            "type": "macro_iterator",
             "named": true
           },
           {
@@ -6665,11 +6495,7 @@
             "named": false
           },
           {
-            "type": "foreach",
-            "named": false
-          },
-          {
-            "type": "foreach_iterator",
+            "type": "macro_iterator",
             "named": true
           },
           {
@@ -6725,7 +6551,17 @@
         "required": false,
         "types": [
           {
-            "type": "foreach_iterator",
+            "type": "macro_iterator",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -6767,11 +6603,7 @@
             "named": false
           },
           {
-            "type": "foreach",
-            "named": false
-          },
-          {
-            "type": "foreach_iterator",
+            "type": "macro_iterator",
             "named": true
           },
           {
@@ -6867,11 +6699,7 @@
             "named": false
           },
           {
-            "type": "foreach",
-            "named": false
-          },
-          {
-            "type": "foreach_iterator",
+            "type": "macro_iterator",
             "named": true
           },
           {
@@ -6939,11 +6767,7 @@
             "named": false
           },
           {
-            "type": "foreach",
-            "named": false
-          },
-          {
-            "type": "foreach_iterator",
+            "type": "macro_iterator",
             "named": true
           },
           {
@@ -6999,7 +6823,17 @@
         "required": false,
         "types": [
           {
-            "type": "foreach_iterator",
+            "type": "macro_iterator",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -7041,11 +6875,7 @@
             "named": false
           },
           {
-            "type": "foreach",
-            "named": false
-          },
-          {
-            "type": "foreach_iterator",
+            "type": "macro_iterator",
             "named": true
           },
           {
@@ -7122,10 +6952,6 @@
           "named": true
         },
         {
-          "type": "foreach_statement",
-          "named": true
-        },
-        {
           "type": "goto_statement",
           "named": true
         },
@@ -7139,6 +6965,10 @@
         },
         {
           "type": "loop_body_conditional_if_statement",
+          "named": true
+        },
+        {
+          "type": "macro_iterator_loop_statement",
           "named": true
         },
         {
@@ -7345,6 +7175,78 @@
           },
           {
             "type": "macro_pasted_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "macro_iterator",
+    "named": true,
+    "fields": {
+      "collection": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "tagged_type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "macro_iterator_loop_statement",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_statement",
+            "named": true
+          }
+        ]
+      },
+      "iterator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "macro_iterator",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -8413,6 +8315,108 @@
       "expression": {
         "multiple": false,
         "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          },
+          {
+            "type": "expression_list",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "prefixed_function_declaration",
+    "named": true,
+    "fields": {
+      "callback_signature": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "callback_signature",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "at_identifier",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "operator_name",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "parameter_list",
+            "named": true
+          },
+          {
+            "type": "parameter_list_reference",
+            "named": true
+          }
+        ]
+      },
+      "prefix": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "return_size": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "fixed_dimension",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "tagged_type",
+            "named": true
+          }
+        ]
+      },
+      "state": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "state_classifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
         "types": [
           {
             "type": "_expression",
@@ -10280,11 +10284,11 @@
           "named": true
         },
         {
-          "type": "hook_forward_statement",
+          "type": "macro_invocation_statement",
           "named": true
         },
         {
-          "type": "macro_invocation_statement",
+          "type": "prefixed_function_declaration",
           "named": true
         },
         {
@@ -11003,11 +11007,11 @@
           "named": true
         },
         {
-          "type": "hook_forward_statement",
+          "type": "macro_invocation_statement",
           "named": true
         },
         {
-          "type": "macro_invocation_statement",
+          "type": "prefixed_function_declaration",
           "named": true
         },
         {
@@ -11106,11 +11110,11 @@
           "named": true
         },
         {
-          "type": "hook_forward_statement",
+          "type": "macro_invocation_statement",
           "named": true
         },
         {
-          "type": "macro_invocation_statement",
+          "type": "prefixed_function_declaration",
           "named": true
         },
         {
@@ -11220,11 +11224,11 @@
           "named": true
         },
         {
-          "type": "hook_forward_statement",
+          "type": "macro_invocation_statement",
           "named": true
         },
         {
-          "type": "macro_invocation_statement",
+          "type": "prefixed_function_declaration",
           "named": true
         },
         {
@@ -11512,10 +11516,6 @@
           "named": true
         },
         {
-          "type": "foreach_statement",
-          "named": true
-        },
-        {
           "type": "goto_statement",
           "named": true
         },
@@ -11533,6 +11533,10 @@
         },
         {
           "type": "macro_invocation_block_statement",
+          "named": true
+        },
+        {
+          "type": "macro_iterator_loop_statement",
           "named": true
         },
         {
@@ -12188,10 +12192,6 @@
     "named": false
   },
   {
-    "type": "foreach",
-    "named": false
-  },
-  {
     "type": "forward",
     "named": false
   },
@@ -12202,10 +12202,6 @@
   {
     "type": "hex_literal",
     "named": true
-  },
-  {
-    "type": "hook",
-    "named": false
   },
   {
     "type": "identifier",

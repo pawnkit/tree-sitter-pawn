@@ -10,7 +10,9 @@ The grammar models Pawn source, not the APIs or expansion semantics of any Pawn
 library. YSI, sscanf, streamer, PawnPlus, fixes, and other projects are useful
 compatibility fixtures, but their macro names are never language keywords here.
 Macro-shaped declarations, statements, labels, and block openers are accepted by
-their syntax alone.
+their syntax alone. Declaration prefixes and iterator-style loops are represented
+by `prefixed_function_declaration` and `macro_iterator_loop_statement`; names such
+as `hook` and `foreach` have no privileged status in the grammar.
 
 The target is the Pawn 3 language described by the CompuPhase reference, plus
 widely implemented compiler syntax such as tags, states, packed arrays, callbacks,

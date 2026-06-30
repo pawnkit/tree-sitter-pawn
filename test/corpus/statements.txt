@@ -119,8 +119,9 @@ public OnPlayerConnect(playerid)
         body: (block
           (return_statement
             value: (integer_literal))))
-      (foreach_statement
-        iterator: (foreach_iterator
+      (macro_iterator_loop_statement
+        name: (identifier)
+        iterator: (macro_iterator
           collection: (identifier)
           name: (identifier))
         body: (block

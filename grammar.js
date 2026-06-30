@@ -91,7 +91,7 @@ module.exports = grammar({
     [$.if_statement, $._if_header],
     [$._statement, $._conditional_else_expression_branch],
     [$._statement, $._conditional_else_if_branch],
-    [$._loop_header, $.foreach_statement],
+    [$._loop_header, $.macro_iterator_loop_statement],
     [$._loop_header, $.for_statement],
     [$._direct_loop_statement_variant, $._loop_header],
     [$._sizeof_subscript_expression, $.subscript_expression],
@@ -104,7 +104,8 @@ module.exports = grammar({
     [$.parenthesized_expression, $._argument_list_item],
     [$._statement, $._nonblock_statement],
     [$._block_conditional_item, $._conditional_if_split_wrapped_else_setup_statement],
-    [$._prefixed_function_definition_signature, $.variable_declaration],
+    [$._prefixed_function_definition_signature, $.prefixed_function_declaration, $.variable_declaration],
+    [$.macro_iterator, $._expression],
   ],
 
   supertypes: ($) => [
@@ -130,7 +131,7 @@ module.exports = grammar({
     ),
 
     _top_level_nonfunction_item: ($) => choice(
-      $.hook_forward_statement,
+      $.prefixed_function_declaration,
       $.macro_invocation_statement,
       $.function_declaration,
       $.enum_declaration,
@@ -213,11 +214,6 @@ module.exports = grammar({
       prefixedFunctionSignatureTail($),
     ),
 
-    _hook_function_definition_signature: ($) => seq(
-      "hook",
-      functionSignatureTail($),
-    ),
-
     _plain_function_definition_signature: ($) => seq(
       repeat($._function_modifier),
       functionSignatureTail($),
@@ -232,7 +228,6 @@ module.exports = grammar({
     ),
 
     _function_definition_signature: ($) => choice(
-      $._hook_function_definition_signature,
       $._prefixed_function_definition_signature,
       $._plain_function_definition_signature,
     ),
@@ -272,9 +267,9 @@ module.exports = grammar({
       ";",
     ),
 
-    hook_forward_statement: ($) => choice(
+    prefixed_function_declaration: ($) => choice(
       seq(
-        "hook",
+        field("prefix", $.identifier),
         functionDeclarationSignatureTail($),
         ";",
       ),
@@ -819,8 +814,8 @@ module.exports = grammar({
     ))),
 
     conditional_loop_fallback_statement: directiveBranchChain({
-      ifBuilder: ($) => field("consequence", choice($.foreach_statement, $.for_statement)),
-      elseifBuilder: ($) => field("elseif", choice($.foreach_statement, $.for_statement)),
+      ifBuilder: ($) => field("consequence", choice($.macro_iterator_loop_statement, $.for_statement)),
+      elseifBuilder: ($) => field("elseif", choice($.macro_iterator_loop_statement, $.for_statement)),
       elseBuilder: ($) => repeat1(field("alternative", $._statement)),
     }),
 
@@ -841,7 +836,7 @@ module.exports = grammar({
 
     _direct_loop_statement_variant: ($) => choice(
       seq(
-        $._foreach_header,
+        $._macro_iterator_loop_header,
         field("body", $._nonblock_statement),
       ),
       seq(
@@ -897,7 +892,7 @@ module.exports = grammar({
     )),
 
     _loop_header: ($) => choice(
-      $._foreach_header,
+      $._macro_iterator_loop_header,
       $._for_header,
     ),
 
@@ -909,19 +904,19 @@ module.exports = grammar({
       field("body", $._statement),
     ),
 
-    _foreach_header: ($) => seq(
-      "foreach",
+    _macro_iterator_loop_header: ($) => seq(
+      field("name", $.identifier),
       "(",
-      field("iterator", $.foreach_iterator),
+      field("iterator", $.macro_iterator),
       ")",
     ),
 
-    foreach_statement: ($) => prec.right(seq(
-      $._foreach_header,
+    macro_iterator_loop_statement: ($) => prec.right(seq(
+      $._macro_iterator_loop_header,
       field("body", $._statement),
     )),
 
-    foreach_iterator: ($) => seq(
+    macro_iterator: ($) => seq(
       choice(
         seq(
           optional("new"),
@@ -998,7 +993,7 @@ module.exports = grammar({
       $.conditional_loop_variant_statement,
       $.conditional_loop_statement,
       $.while_statement,
-      $.foreach_statement,
+      $.macro_iterator_loop_statement,
       $.do_while_statement,
       $.for_statement,
       $.goto_statement,
@@ -2668,7 +2663,7 @@ function functionBodyChoice($, {
     $.if_statement,
     $.switch_statement,
     $.while_statement,
-    $.foreach_statement,
+    $.macro_iterator_loop_statement,
     $.do_while_statement,
     $.for_statement,
     $.goto_statement,
@@ -2729,7 +2724,7 @@ function statementChoice($, {
     $.conditional_loop_variant_statement,
     $.conditional_loop_statement,
     $.while_statement,
-    $.foreach_statement,
+    $.macro_iterator_loop_statement,
     $.do_while_statement,
     $.for_statement,
     $.goto_statement,
@@ -2772,7 +2767,7 @@ function loopBodyStatementChoice($) {
     $.conditional_loop_fallback_statement,
     $.conditional_loop_statement,
     $.while_statement,
-    $.foreach_statement,
+    $.macro_iterator_loop_statement,
     $.do_while_statement,
     $.for_statement,
     $.goto_statement,
