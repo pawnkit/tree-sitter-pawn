@@ -112,7 +112,6 @@ module.exports = grammar({
     $._statement,
     $._type,
     $._literal,
-    $._macro_item,
   ],
 
   rules: {
@@ -1576,26 +1575,26 @@ module.exports = grammar({
     macro_replacement: ($) => $._macro_item,
 
     _macro_item: ($) => choice(
-      $.macro_declaration_sequence,
-      $.macro_function_sequence,
-      $.macro_expression_sequence,
+      $._macro_declaration_sequence,
+      $._macro_function_sequence,
+      $._macro_expression_sequence,
       $.preproc_do_while_expression,
-      $.macro_if_statement,
-      $.macro_switch_statement,
-      $.macro_while_statement,
-      $.macro_for_statement,
-      $.macro_return_statement,
-      $.macro_goto_statement,
-      $.macro_break_statement,
-      $.macro_continue_statement,
-      $.macro_block,
+      $._macro_if_statement,
+      $._macro_switch_statement,
+      $._macro_while_statement,
+      $._macro_for_statement,
+      $._macro_return_statement,
+      $._macro_goto_statement,
+      $._macro_break_statement,
+      $._macro_continue_statement,
+      $._macro_block,
       $.preproc_expression_list,
       $.preproc_expression,
     ),
 
-    macro_declaration_sequence: ($) => seq(
-      $.macro_variable_declaration,
-      repeat($.macro_expression_statement),
+    _macro_declaration_sequence: ($) => seq(
+      $._macro_variable_declaration,
+      repeat($._macro_expression_statement),
       field("tail", $.preproc_expression),
     ),
 
@@ -1606,44 +1605,44 @@ module.exports = grammar({
       optional(seq("=", field("initializer", $.preproc_expression))),
     ),
 
-    macro_variable_declaration: ($) => seq(
+    _macro_variable_declaration: ($) => seq(
       $._macro_variable_declaration_body,
       ";",
     ),
 
-    macro_function_sequence: ($) => choice(
+    _macro_function_sequence: ($) => choice(
       prec.right(2, seq(
-        repeat1($.macro_terminated_function_statement),
+        repeat1($._macro_terminated_function_statement),
         field("tail", $._macro_unterminated_function_statement),
       )),
-      prec.left(-1, repeat1($.macro_terminated_function_statement)),
-      $.macro_function_statement,
+      prec.left(-1, repeat1($._macro_terminated_function_statement)),
+      $._macro_function_statement,
     ),
 
     _macro_unterminated_function_statement: ($) => choice(
-      alias($.macro_forward_parameter_declaration_statement, $.macro_function_statement),
-      alias($.macro_forward_macro_parameter_statement, $.macro_function_statement),
-      $.macro_function_definition_statement,
-      $.macro_function_statement,
-      $.macro_bare_function_statement,
+      alias($._macro_forward_parameter_declaration_statement, $._macro_function_statement),
+      alias($._macro_forward_macro_parameter_statement, $._macro_function_statement),
+      $._macro_function_definition_statement,
+      $._macro_function_statement,
+      $._macro_bare_function_statement,
     ),
 
-    macro_terminated_function_statement: ($) => choice(
+    _macro_terminated_function_statement: ($) => choice(
       prec(1, seq(
-        alias($.macro_forward_parameter_declaration_statement, $.macro_function_statement),
+        alias($._macro_forward_parameter_declaration_statement, $._macro_function_statement),
         token.immediate(";"),
       )),
       prec(1, seq(
-        alias($.macro_forward_macro_parameter_statement, $.macro_function_statement),
+        alias($._macro_forward_macro_parameter_statement, $._macro_function_statement),
         token.immediate(";"),
       )),
       seq(
-        $.macro_function_statement,
+        $._macro_function_statement,
         token.immediate(";"),
       ),
     ),
 
-    macro_forward_parameter_declaration_statement: ($) => prec.dynamic(1, seq(
+    _macro_forward_parameter_declaration_statement: ($) => prec.dynamic(1, seq(
       "forward",
       macroFunctionSignature($, {
         name: field("name", macroCallableIdentifier($)),
@@ -1651,7 +1650,7 @@ module.exports = grammar({
       }),
     )),
 
-    macro_forward_macro_parameter_statement: ($) => seq(
+    _macro_forward_macro_parameter_statement: ($) => seq(
       "forward",
       macroFunctionSignature($, {
         name: field("name", macroCallableIdentifier($, { allowAt: false })),
@@ -1659,7 +1658,7 @@ module.exports = grammar({
       }),
     ),
 
-    macro_function_statement: ($) => choice(
+    _macro_function_statement: ($) => choice(
       prec(1, macroFunctionSignature($, {
         kind: macroFunctionKind(),
         name: field("name", macroCallableIdentifier($)),
@@ -1672,14 +1671,14 @@ module.exports = grammar({
       }),
     ),
 
-    macro_function_definition_statement: ($) => choice(
+    _macro_function_definition_statement: ($) => choice(
       prec(2, seq(
         macroFunctionSignature($, {
           kind: macroFunctionKind(),
           name: field("name", macroCallableIdentifier($)),
           parameters: field("parameters", $.parameter_list),
         }),
-        field("body", $.macro_block),
+        field("body", $._macro_block),
       )),
       prec(2, seq(
         macroFunctionSignature($, {
@@ -1687,25 +1686,25 @@ module.exports = grammar({
           name: field("name", macroCallableIdentifier($, { allowAt: false })),
           parameters: field("parameters", alias($._macro_function_parameter_list, $.macro_parameter_list)),
         }),
-        field("body", $.macro_block),
+        field("body", $._macro_block),
       )),
       prec(2, seq(
         macroFunctionSignature($, {
           name: field("name", macroCallableIdentifier($)),
           parameters: field("parameters", $.parameter_list),
         }),
-        field("body", $.macro_block),
+        field("body", $._macro_block),
       )),
       prec(2, seq(
         macroFunctionSignature($, {
           name: field("name", macroCallableIdentifier($, { allowAt: false })),
           parameters: field("parameters", alias($._macro_function_parameter_list, $.macro_parameter_list)),
         }),
-        field("body", $.macro_block),
+        field("body", $._macro_block),
       )),
     ),
 
-    macro_bare_function_statement: ($) => choice(
+    _macro_bare_function_statement: ($) => choice(
       macroFunctionSignature($, {
         name: field("name", macroBareCallableIdentifier($)),
         parameters: field("parameters", $.parameter_list),
@@ -1716,8 +1715,8 @@ module.exports = grammar({
       }),
     ),
 
-    macro_expression_sequence: ($) => seq(
-      repeat1($.macro_expression_statement),
+    _macro_expression_sequence: ($) => seq(
+      repeat1($._macro_expression_statement),
       field("tail", $.preproc_expression),
     ),
 
@@ -2010,105 +2009,105 @@ module.exports = grammar({
 
     preproc_do_while_expression: ($) => seq(
       "do",
-      field("body", $.macro_block),
+      field("body", $._macro_block),
       "while",
       "(",
       field("condition", $.preproc_expression),
       ")",
     ),
 
-    macro_block: ($) => seq(
+    _macro_block: ($) => seq(
       "{",
-      repeat($.macro_statement),
+      repeat($._macro_statement),
       "}",
     ),
 
-    macro_statement: ($) => choice(
-      $.macro_if_statement,
-      $.macro_switch_statement,
-      $.macro_while_statement,
-      $.macro_for_statement,
-      $.macro_return_statement,
-      $.macro_goto_statement,
-      $.macro_break_statement,
-      $.macro_continue_statement,
-      $.macro_expression_statement,
-      $.macro_block,
+    _macro_statement: ($) => choice(
+      $._macro_if_statement,
+      $._macro_switch_statement,
+      $._macro_while_statement,
+      $._macro_for_statement,
+      $._macro_return_statement,
+      $._macro_goto_statement,
+      $._macro_break_statement,
+      $._macro_continue_statement,
+      $._macro_expression_statement,
+      $._macro_block,
     ),
 
-    macro_if_statement: ($) => prec.right(seq(
+    _macro_if_statement: ($) => prec.right(seq(
       "if",
       "(",
       field("condition", $.preproc_expression),
       ")",
-      field("consequence", $.macro_control_statement),
+      field("consequence", $._macro_control_statement),
       optional(seq(
         "else",
-        field("alternative", $.macro_control_statement),
+        field("alternative", $._macro_control_statement),
       )),
     )),
 
-    macro_open_if_statement: ($) => prec(-1, seq(
+    _macro_open_if_statement: ($) => prec(-1, seq(
       "if",
       "(",
       field("condition", $.preproc_expression),
       ")",
     )),
 
-    macro_switch_statement: ($) => seq(
+    _macro_switch_statement: ($) => seq(
       "switch",
       "(",
       field("condition", $.preproc_expression),
       ")",
       "{",
-      repeat(choice($.macro_case_statement, $.macro_default_statement)),
+      repeat(choice($._macro_case_statement, $._macro_default_statement)),
       "}",
     ),
 
-    macro_case_statement: ($) => seq(
+    _macro_case_statement: ($) => seq(
       "case",
-      field("value", choice($.macro_case_value_list, $.macro_case_value)),
+      field("value", choice($._macro_case_value_list, $._macro_case_value)),
       ":",
-      repeat($.macro_statement),
+      repeat($._macro_statement),
     ),
 
-    macro_case_value: ($) => choice(
-      $.macro_case_range,
+    _macro_case_value: ($) => choice(
+      $._macro_case_range,
       $.preproc_expression,
     ),
 
-    macro_case_range: ($) => seq(
+    _macro_case_range: ($) => seq(
       field("start", $.preproc_expression),
       "..",
       field("end", $.preproc_expression),
     ),
 
-    macro_case_value_list: ($) => seq(
-      field("left", $.macro_case_value),
-      repeat1(seq(",", field("right", $.macro_case_value))),
+    _macro_case_value_list: ($) => seq(
+      field("left", $._macro_case_value),
+      repeat1(seq(",", field("right", $._macro_case_value))),
     ),
 
-    macro_default_statement: ($) => seq(
+    _macro_default_statement: ($) => seq(
       "default",
       ":",
-      repeat($.macro_statement),
+      repeat($._macro_statement),
     ),
 
-    macro_control_statement: ($) => choice(
-      $.macro_block,
-      $.macro_if_statement,
-      $.macro_open_if_statement,
-      $.macro_switch_statement,
-      $.macro_while_statement,
-      $.macro_for_statement,
-      $.macro_return_statement,
-      $.macro_goto_statement,
-      $.macro_break_statement,
-      $.macro_continue_statement,
-      $.macro_expression_statement,
+    _macro_control_statement: ($) => choice(
+      $._macro_block,
+      $._macro_if_statement,
+      $._macro_open_if_statement,
+      $._macro_switch_statement,
+      $._macro_while_statement,
+      $._macro_for_statement,
+      $._macro_return_statement,
+      $._macro_goto_statement,
+      $._macro_break_statement,
+      $._macro_continue_statement,
+      $._macro_expression_statement,
     ),
 
-    macro_return_statement: ($) => choice(
+    _macro_return_statement: ($) => choice(
       seq(
         "return",
         field("value", $.preproc_expression),
@@ -2117,15 +2116,15 @@ module.exports = grammar({
       seq("return", ";"),
     ),
 
-    macro_while_statement: ($) => seq(
+    _macro_while_statement: ($) => seq(
       "while",
       "(",
       field("condition", $.preproc_expression),
       ")",
-      field("body", $.macro_control_statement),
+      field("body", $._macro_control_statement),
     ),
 
-    macro_for_statement: ($) => choice(
+    _macro_for_statement: ($) => choice(
       prec.right(1, seq(
         "for",
         "(",
@@ -2135,7 +2134,7 @@ module.exports = grammar({
         ";",
         field("update", optional($.preproc_expression)),
         ")",
-        field("body", $.macro_control_statement),
+        field("body", $._macro_control_statement),
       )),
       seq(
         "for",
@@ -2149,17 +2148,17 @@ module.exports = grammar({
       ),
     ),
 
-    macro_goto_statement: ($) => seq(
+    _macro_goto_statement: ($) => seq(
       "goto",
       field("label", choice($.identifier, $.macro_parameter)),
       optional(";"),
     ),
 
-    macro_break_statement: ($) => seq("break", optional(";")),
+    _macro_break_statement: ($) => seq("break", optional(";")),
 
-    macro_continue_statement: ($) => seq("continue", optional(";")),
+    _macro_continue_statement: ($) => seq("continue", optional(";")),
 
-    macro_expression_statement: ($) => seq(
+    _macro_expression_statement: ($) => seq(
       field("expression", $.preproc_expression),
       ";",
     ),

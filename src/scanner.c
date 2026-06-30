@@ -764,6 +764,9 @@ static bool scan_opaque_define_value(TSLexer *lexer) {
   int bracket_depth = 0;
   int brace_depth = 0;
   unsigned top_level_colons = 0;
+  unsigned consecutive_questions = 0;
+  int32_t previous = 0;
+  bool saw_unsupported = false;
 
   lexer->mark_end(lexer);
 
@@ -816,7 +819,8 @@ static bool scan_opaque_define_value(TSLexer *lexer) {
       if (!ends_with_multiline_comment) {
         lexer->mark_end(lexer);
       }
-      return top_level_colons >= 2;
+      return saw_unsupported || top_level_colons >= 2 || paren_depth != 0 ||
+             bracket_depth != 0 || brace_depth != 0 || in_string || in_char;
     }
 
     int32_t c = lexer->lookahead;
@@ -834,16 +838,31 @@ static bool scan_opaque_define_value(TSLexer *lexer) {
         paren_depth++;
       } else if (c == ')' && paren_depth > 0) {
         paren_depth--;
+      } else if (c == ')') {
+        saw_unsupported = true;
       } else if (c == '[') {
         bracket_depth++;
       } else if (c == ']' && bracket_depth > 0) {
         bracket_depth--;
+      } else if (c == ']') {
+        saw_unsupported = true;
       } else if (c == '{') {
         brace_depth++;
       } else if (c == '}' && brace_depth > 0) {
         brace_depth--;
+      } else if (c == '}') {
+        saw_unsupported = true;
       } else if (c == ':' && paren_depth == 0 && bracket_depth == 0 && brace_depth == 0) {
         top_level_colons++;
+      }
+
+      if (previous == '=' && c == '>') saw_unsupported = true;
+
+      if (c == '?') {
+        consecutive_questions++;
+        if (consecutive_questions > 1) saw_unsupported = true;
+      } else {
+        consecutive_questions = 0;
       }
     }
 
@@ -851,6 +870,7 @@ static bool scan_opaque_define_value(TSLexer *lexer) {
       is_escaped = lexer->lookahead == '\\';
     }
 
+    previous = c;
     advance(lexer);
   }
 }

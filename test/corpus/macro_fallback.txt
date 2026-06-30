@@ -1,0 +1,63 @@
+=============================================
+unsupported replacements stay inside defines
+=============================================
+
+#define DECORATE(%0) weird tokens => [%0] ???
+#define OPEN(%0) SomeMacro(%0) {
+#define TOKENS(%0) <:%0:> @@@
+
+---
+
+(source_file
+  (preproc_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (preproc_text))
+  (preproc_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (preproc_text))
+  (preproc_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (preproc_text)))
+
+========================================
+safe replacements retain structured form
+========================================
+
+#define DOUBLE(%0) ((%0) * 2)
+#define ASSIGN(%0,%1) %0 = %1
+
+---
+
+(source_file
+  (preproc_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_parenthesized_expression
+          expression: (preproc_expression
+            (preproc_binary_expression
+              left: (preproc_expression
+                (preproc_parenthesized_expression
+                  expression: (preproc_expression
+                    (macro_parameter))))
+              right: (preproc_expression
+                (integer_literal))))))))
+  (preproc_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    value: (macro_replacement
+      (preproc_expression
+        (preproc_assignment_expression
+          left: (macro_parameter)
+          right: (preproc_expression
+            (macro_parameter)))))))

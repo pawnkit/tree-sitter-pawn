@@ -25,6 +25,9 @@ identify definitions. A `#define` has a name, optional parameters, and a replace
 value. The replacement is parsed structurally only when doing so is unambiguous;
 otherwise it is preserved as `preproc_text`. This fallback is intentional. The
 grammar does not expand macros and must not infer a library API from a macro name.
+Statement-like replacement parsing uses hidden implementation rules: consumers see
+the stable `macro_replacement` node and ordinary `preproc_*` expressions rather than
+a parallel public taxonomy of macro-only loops, switches, declarations, and blocks.
 
 Conditionals are supported at the top level, in blocks, and inside common lists
 (arguments, parameters, enum entries, array literals, and variable declarators).
@@ -41,8 +44,8 @@ corpus coverage and release notes; renames are versioned breaking changes. Hidde
 rules beginning with `_` and scanner tokens are implementation details and may
 change while preserving the public tree.
 
-The grammar favors reusable categories (`_expression`, `_statement`, `_type`,
-`_literal`, and `_macro_item`) over library-shaped nodes. New public nodes should
+The grammar favors reusable categories (`_expression`, `_statement`, `_type`, and
+`_literal`) over library-shaped nodes. New public nodes should
 represent Pawn syntax or durable source structure, not one include's expansion
 convention. Declaration and directive categories will only become supertypes when
 they can preserve the established conditional-wrapper trees without precedence

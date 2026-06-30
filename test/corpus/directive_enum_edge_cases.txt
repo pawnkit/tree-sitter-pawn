@@ -152,16 +152,13 @@ multi-line replacement body
       (macro_parameter))
     value: (macro_replacement
       (preproc_do_while_expression
-        body: (macro_block
-          (macro_statement
-            (macro_expression_statement
-              expression: (preproc_expression
-                (preproc_assignment_expression
-                  left: (macro_parameter)
-                  right: (preproc_expression
-                    (preproc_parenthesized_expression
-                      expression: (preproc_expression
-                        (macro_parameter)))))))))
+        expression: (preproc_expression
+          (preproc_assignment_expression
+            left: (macro_parameter)
+            right: (preproc_expression
+              (preproc_parenthesized_expression
+                expression: (preproc_expression
+                  (macro_parameter))))))
         condition: (preproc_expression
           (integer_literal))))))
 
