@@ -12,10 +12,19 @@ check_query() {
   local output
   output=$(tree-sitter query --captures --config-path "$CONFIG" "$query" "$fixture")
 
-  local capture
-  for capture in "$@"; do
-    if ! grep -Fq -- "- $capture," <<<"$output"; then
-      printf 'Missing @%s capture from %s on %s\n' "$capture" "$query" "$fixture" >&2
+  local expectation capture source matches
+  for expectation in "$@"; do
+    capture=${expectation%%=*}
+    if [[ "$expectation" == *=* ]]; then
+      source=${expectation#*=}
+    else
+      source=""
+    fi
+    matches=$(grep -F -- "- $capture," <<<"$output" || true)
+    if [[ -z "$matches" ]] || \
+      { [[ -n "$source" ]] && ! grep -Fq -- "text: \`$source\`" <<<"$matches"; }; then
+      printf 'Missing @%s capture for %q from %s on %s\n' \
+        "$capture" "$source" "$query" "$fixture" >&2
       exit 1
     fi
   done
@@ -23,9 +32,12 @@ check_query() {
 
 cd "$ROOT"
 check_query queries/highlights.scm test/queries/highlights.pwn \
-  preproc function.macro parameter type function variable.parameter variable function.call
+  'preproc=#define DOUBLE(%0) ((%0) * 2)' function.macro=DOUBLE 'parameter=%0' \
+  type=Float function=scale variable.parameter=value variable=result function.call=DOUBLE
 check_query queries/locals.scm test/queries/locals.pwn \
-  local.scope local.definition local.reference
+  local.scope local.definition=input local.definition=total \
+  local.reference=total
 check_query queries/tags.scm test/queries/tags.pwn \
   definition.macro definition.function definition.type definition.constant \
-  definition.variable reference.call
+  definition.variable reference.call name=DOUBLE name=OnReady name=Status \
+  name=Status_Ready name=global_value

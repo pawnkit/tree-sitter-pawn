@@ -5,6 +5,12 @@
   name: (identifier) @function)
 (prefixed_function_declaration
   name: (identifier) @function)
+[
+  (function_definition
+    prefix: (identifier) @function.macro)
+  (prefixed_function_declaration
+    prefix: (identifier) @function.macro)
+]
 (preproc_define
   name: (identifier) @function.macro)
 (macro_parameter) @parameter

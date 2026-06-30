@@ -4,3 +4,5 @@ public Float:scale(Float:value) {
     new result = DOUBLE(value);
     return result;
 }
+
+Decorator Float:OnValue(value);

@@ -2,6 +2,8 @@
 
 forward OnReady(value);
 
+Decorator Float:OnValue(value);
+
 enum Status {
     Status_Ready
 }
