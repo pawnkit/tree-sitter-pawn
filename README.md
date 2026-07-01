@@ -32,7 +32,7 @@ grammar does not expand macros and must not infer a library API from a macro nam
 Statement-like replacement parsing uses hidden implementation rules: consumers see
 the stable `macro_replacement` node and ordinary `preproc_*` expressions rather than
 a parallel public taxonomy of macro-only loops, switches, declarations, and blocks.
-The public shape is therefore:
+The common well-formed public shape is:
 
 ```text
 preproc_define
@@ -41,12 +41,19 @@ preproc_define
   value: macro_replacement | preproc_text
 ```
 
+Recovery may additionally use the `unsupported_header` and
+`unsupported_parameters` fields. `preproc_text` is an opaque leaf;
+`macro_replacement` exposes fields appropriate to the replacement form. The
+generated `src/node-types.json` is authoritative for every replacement variant.
+
 Conditionals are supported at the top level, in blocks, and inside common lists
 (arguments, parameters, enum entries, array literals, and variable declarators).
 Stable directive leaves use the `preproc_*` naming convention. Some statement and
 function layouts currently expose legacy `conditional_*` wrapper nodes. Those
 nodes are public for this release because removing them would change established
 corpus trees; new consumers should prefer their `preproc_*` leaves and named fields.
+The complete audit and migration plan is in
+[`docs/conditional-wrappers.md`](docs/conditional-wrappers.md).
 
 Malformed or incomplete macro-heavy code should produce a useful partial tree. A
 raw replacement node is preferable to a brittle, falsely precise expansion tree.
@@ -72,6 +79,8 @@ without precedence tricks.
 an identifier-shaped prefix before its optional return tag and function name. It
 does not assign semantics to that prefix. Ordinary `forward` and `native` forms,
 including aliases, remain `function_declaration` nodes.
+Its stable fields are `name` and `parameters`, with optional `prefix`,
+`return_type`, `return_size`, `state`, `callback_signature`, and `value` fields.
 
 ## Development
 
@@ -109,6 +118,12 @@ fast normal test run.
 The package ships `queries/highlights.scm`, `queries/locals.scm`, and
 `queries/tags.scm`. Editors can associate the `pawn` scope with `.pwn`, and `.inc`
 files; see `tree-sitter.json` for the authoritative metadata.
+
+Stable capture families include `function`, `function.call`, `function.macro`,
+`variable`, `variable.parameter`, `type`, `constant`, `preproc`, `attribute`, and
+the standard literal, keyword, punctuation, operator, comment, locals, and tags
+captures in the shipped query files. Golden files under `test/queries` record the
+exact capture names and source ranges, including intentional overlaps.
 
 For example, this source:
 
