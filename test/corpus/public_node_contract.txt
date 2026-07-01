@@ -11,18 +11,18 @@ Configure(.value = mask);
 (source_file
   (variable_declaration
     (variable_declarator
-      (identifier)
-      (binary_literal)))
+      name: (identifier)
+      initializer: (binary_literal)))
   (variable_declaration
     (variable_declarator
-      (identifier)
-      (null_literal)))
+      name: (identifier)
+      initializer: (null_literal)))
   (macro_invocation_statement
-    (identifier)
-    (argument_list
+    name: (identifier)
+    arguments: (argument_list
       (named_argument
-        (identifier)
-        (identifier)))))
+        name: (identifier)
+        value: (identifier)))))
 
 ====================================
 statement and preprocessor expressions
@@ -38,29 +38,29 @@ stock Update() {
 
 (source_file
   (function_definition
-    (identifier)
-    (parameter_list)
-    (block
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
       (expression_statement
-        (statement_expression_list
-          (assignment_expression
-            (identifier)
-            (integer_literal))
-          (assignment_expression
-            (identifier)
-            (integer_literal))))))
+        expression: (statement_expression_list
+          left: (assignment_expression
+            left: (identifier)
+            right: (integer_literal))
+          right: (assignment_expression
+            left: (identifier)
+            right: (integer_literal))))))
   (preproc_define
-    (identifier)
-    (macro_parameter_list
+    name: (identifier)
+    parameters: (macro_parameter_list
       (macro_parameter))
-    (macro_replacement
+    value: (macro_replacement
       (preproc_expression
         (preproc_ternary_expression
-          (preproc_expression
+          condition: (preproc_expression
             (macro_parameter))
-          (preproc_expression
+          consequence: (preproc_expression
             (integer_literal))
-          (preproc_expression
+          alternative: (preproc_expression
             (integer_literal)))))))
 
 =================================
@@ -83,34 +83,34 @@ stock Select(value) {
 
 (source_file
   (function_definition
-    (identifier)
-    (parameter_list
+    name: (identifier)
+    parameters: (parameter_list
       (parameter_declaration
-        (identifier)))
-    (block
+        name: (identifier)))
+    body: (block
       (switch_statement
-        (identifier)
+        condition: (identifier)
         (switch_item_conditional
           (preproc_if
-            (preproc_expression
+            condition: (preproc_expression
               (preproc_defined
-                (identifier))))
+                name: (identifier))))
           (case_statement
-            (integer_literal)
+            value: (integer_literal)
             (return_statement
-              (integer_literal)))
-          (switch_item_elseif
+              value: (integer_literal)))
+          alternative: (switch_item_elseif
             (preproc_elseif
-              (preproc_expression
+              condition: (preproc_expression
                 (preproc_defined
-                  (identifier))))
+                  name: (identifier))))
             (case_statement
-              (integer_literal)
+              value: (integer_literal)
               (return_statement
-                (integer_literal)))
-            (switch_item_else
+                value: (integer_literal)))
+            alternative: (switch_item_else
               (preproc_else)
               (default_statement
                 (return_statement
-                  (integer_literal)))))
+                  value: (integer_literal)))))
           (preproc_endif))))))
