@@ -51,12 +51,12 @@ corpus coverage and release notes; renames are versioned breaking changes. Hidde
 rules beginning with `_` and scanner tokens are implementation details and may
 change while preserving the public tree.
 
-The grammar favors reusable categories (`_expression`, `_statement`, `_type`, and
-`_literal`) over library-shaped nodes. New public nodes should
-represent Pawn syntax or durable source structure, not one include's expansion
-convention. Declaration and directive categories will only become supertypes when
-they can preserve the established conditional-wrapper trees without precedence
-tricks.
+The grammar favors reusable categories (`_expression`, `_statement`, `_type`,
+`_literal`, and `_preproc_expression`) over library-shaped nodes. New public nodes
+should represent Pawn syntax or durable source structure, not one include's
+expansion convention. Declaration and directive categories will only become
+supertypes when they can preserve the established conditional-wrapper trees
+without precedence tricks.
 
 ## Development
 

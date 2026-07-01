@@ -14744,6 +14744,10 @@
       }
     },
     "preproc_expression": {
+      "type": "SYMBOL",
+      "name": "_preproc_expression"
+    },
+    "_preproc_expression": {
       "type": "CHOICE",
       "members": [
         {
@@ -18211,7 +18215,8 @@
     "_expression",
     "_statement",
     "_type",
-    "_literal"
+    "_literal",
+    "_preproc_expression"
   ],
   "reserved": {}
 }

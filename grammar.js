@@ -117,6 +117,7 @@ module.exports = grammar({
     $._statement,
     $._type,
     $._literal,
+    $._preproc_expression,
   ],
 
   rules: {
@@ -1859,7 +1860,9 @@ module.exports = grammar({
 
     preproc_endif: ($) => preprocessor("endif"),
 
-    preproc_expression: ($) => choice(
+    preproc_expression: ($) => $._preproc_expression,
+
+    _preproc_expression: ($) => choice(
       $.preproc_assignment_expression,
       $.preproc_ternary_expression,
       $.preproc_adjacent_string_expression,

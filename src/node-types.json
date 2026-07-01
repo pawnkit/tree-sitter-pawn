@@ -128,6 +128,124 @@
     ]
   },
   {
+    "type": "_preproc_expression",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "boolean_literal",
+        "named": true
+      },
+      {
+        "type": "char_literal",
+        "named": true
+      },
+      {
+        "type": "float_literal",
+        "named": true
+      },
+      {
+        "type": "hex_literal",
+        "named": true
+      },
+      {
+        "type": "identifier",
+        "named": true
+      },
+      {
+        "type": "integer_literal",
+        "named": true
+      },
+      {
+        "type": "macro_at_identifier",
+        "named": true
+      },
+      {
+        "type": "macro_parameter",
+        "named": true
+      },
+      {
+        "type": "macro_pasted_identifier",
+        "named": true
+      },
+      {
+        "type": "null_literal",
+        "named": true
+      },
+      {
+        "type": "operator_symbol",
+        "named": true
+      },
+      {
+        "type": "preproc_adjacent_string_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_assignment_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_binary_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_call_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_defined",
+        "named": true
+      },
+      {
+        "type": "preproc_dollar_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_member_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_parenthesized_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_sizeof_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_stringify_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_subscript_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_tag_set",
+        "named": true
+      },
+      {
+        "type": "preproc_tagged_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_ternary_expression",
+        "named": true
+      },
+      {
+        "type": "preproc_unary_expression",
+        "named": true
+      },
+      {
+        "type": "string_literal",
+        "named": true
+      },
+      {
+        "type": "tag_wildcard",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "_statement",
     "named": true,
     "subtypes": [
@@ -9469,115 +9587,7 @@
       "required": true,
       "types": [
         {
-          "type": "boolean_literal",
-          "named": true
-        },
-        {
-          "type": "char_literal",
-          "named": true
-        },
-        {
-          "type": "float_literal",
-          "named": true
-        },
-        {
-          "type": "hex_literal",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer_literal",
-          "named": true
-        },
-        {
-          "type": "macro_at_identifier",
-          "named": true
-        },
-        {
-          "type": "macro_parameter",
-          "named": true
-        },
-        {
-          "type": "macro_pasted_identifier",
-          "named": true
-        },
-        {
-          "type": "null_literal",
-          "named": true
-        },
-        {
-          "type": "operator_symbol",
-          "named": true
-        },
-        {
-          "type": "preproc_adjacent_string_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_assignment_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_binary_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_call_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_defined",
-          "named": true
-        },
-        {
-          "type": "preproc_dollar_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_member_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_parenthesized_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_sizeof_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_stringify_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_subscript_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_tag_set",
-          "named": true
-        },
-        {
-          "type": "preproc_tagged_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_ternary_expression",
-          "named": true
-        },
-        {
-          "type": "preproc_unary_expression",
-          "named": true
-        },
-        {
-          "type": "string_literal",
-          "named": true
-        },
-        {
-          "type": "tag_wildcard",
+          "type": "_preproc_expression",
           "named": true
         }
       ]
