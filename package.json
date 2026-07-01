@@ -27,6 +27,7 @@
     "format:check": "prettier --check grammar.js",
     "test": "tree-sitter test",
     "test:alignment": "node test/check-node-alignment.js",
+    "test:formatter": "bash test/fixtures/formatter/check.sh",
     "test:queries": "bash test/queries/check.sh",
     "diagnose:parser": "du -h src/parser.c && wc -l src/parser.c && grep -E '^#define (STATE_COUNT|SYMBOL_COUNT|ALIAS_COUNT|TOKEN_COUNT)' src/parser.c",
     "test:external:fetch": "bash test/external/fetch.sh",
@@ -34,7 +35,7 @@
     "test:external:list": "find .fixtures/pawn-projects -type f | sort",
     "check:external": "npm run test:external:fetch && npm run test:external",
     "parse": "tree-sitter parse",
-    "check": "npm run format:check && npm run generate && npm run diagnose:parser && npm run test:alignment && npm test && npm run test:queries",
+    "check": "npm run format:check && npm run generate && npm run diagnose:parser && npm run test:alignment && npm test && npm run test:queries && npm run test:formatter",
     "pack:check": "npm pack --dry-run",
     "prepack": "npm run generate"
   },
