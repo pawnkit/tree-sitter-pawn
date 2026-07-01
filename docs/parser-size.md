@@ -96,3 +96,42 @@ conditional support from a context.
 The size report is diagnostic rather than a hard limit. A future limit should be
 based on a deliberate grammar reduction so routine Tree-sitter generator changes
 do not fail CI spuriously.
+
+### Loop family: share `_loop_header` instead of re-expanding it (July 2026)
+
+Investigated the loop-related conditional family (`conditional_loop_statement`,
+`conditional_loop_variant_statement`, `conditional_loop_fallback_statement`,
+`loop_body_conditional_if_statement`) for a `directiveBranchChain`-level merge.
+These four already share that JS helper, `_direct_loop_preamble`, `_if_header`,
+and `_preproc_branch_if_statement` as actual referenced grammar symbols. Their
+remaining differences (wrapped vs. bare loop nodes, the non-loop fallback
+branch, the split block boundary, the shared `if`-header chain) are
+semantically load-bearing: `conditional_loop_variant_statement` is explicitly
+documented as precedence-sensitive against `conditional_loop_fallback_statement`
+(see `conditional-wrappers.md`), which is exactly the kind of GLR
+conflict-resolution machinery earlier experiments were burned by. Forcing a
+merge across those four top-level rules would mean changing which alternative
+wins for real-world fallback-sensitive sources, so no such merge was attempted.
+
+One smaller, genuinely safe find survived: `_direct_loop_statement_variant`
+manually re-expanded the `_macro_iterator_loop_header` / `_for_header` choice
+inline instead of referencing the existing `_loop_header` symbol that
+`_direct_loop_preamble` and `loop_header_selection_statement` already use. A
+declared grammar conflict, `[$._direct_loop_statement_variant, $._loop_header]`,
+existed specifically to cover that duplication. Replacing the manual choice
+with `seq($._loop_header, field("body", $._nonblock_statement))` made that
+conflict (and a second one, `[$._statement, $._nonblock_statement]`) reported
+as "unnecessary" by the generator, so both were removed from `conflicts`.
+
+Before: 31,263 states, 1,774,968 lines, 57 MiB, 504 symbols.
+After: 31,259 states, 1,778,916 lines, 57 MiB, 504 symbols.
+
+The state count dropped by 4 and line count rose slightly (generated table
+layout shifted; this is not a meaningful size win by itself), but the change
+removes real duplicated grammar text and two stale conflict declarations, and
+every check in the required verification list passed, including all 45
+external fixtures (`nex-ac` and `ultimate-creator` included). Kept as a small
+correctness/clarity cleanup. No further safe reduction was found in this
+family without either a breaking tree migration or touching the documented
+precedence-sensitive loop-variant/fallback pair, so this category is closed
+for now without a larger win.

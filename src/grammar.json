@@ -8433,41 +8433,19 @@
       ]
     },
     "_direct_loop_statement_variant": {
-      "type": "CHOICE",
+      "type": "SEQ",
       "members": [
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_macro_iterator_loop_header"
-            },
-            {
-              "type": "FIELD",
-              "name": "body",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_nonblock_statement"
-              }
-            }
-          ]
+          "type": "SYMBOL",
+          "name": "_loop_header"
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_for_header"
-            },
-            {
-              "type": "FIELD",
-              "name": "body",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_nonblock_statement"
-              }
-            }
-          ]
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_nonblock_statement"
+          }
         }
       ]
     },
@@ -18623,10 +18601,6 @@
       "for_statement"
     ],
     [
-      "_direct_loop_statement_variant",
-      "_loop_header"
-    ],
-    [
       "_sizeof_subscript_expression",
       "subscript_expression"
     ],
@@ -18649,10 +18623,6 @@
     [
       "parenthesized_expression",
       "_argument_list_item"
-    ],
-    [
-      "_statement",
-      "_nonblock_statement"
     ],
     [
       "_block_conditional_item",

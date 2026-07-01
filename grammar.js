@@ -102,7 +102,6 @@ module.exports = grammar({
     [$._statement, $._conditional_else_if_branch],
     [$._loop_header, $.macro_iterator_loop_statement],
     [$._loop_header, $.for_statement],
-    [$._direct_loop_statement_variant, $._loop_header],
     [$._sizeof_subscript_expression, $.subscript_expression],
     // Semicolonless braceless return bodies expose the existing `sizeof value[...]`
     // ambiguity between a complete sizeof-expression and a longer sizeof-subscript tail.
@@ -111,7 +110,6 @@ module.exports = grammar({
     [$.preproc_parenthesized_expression, $.preproc_sizeof_expression],
     [$.expression_list, $._argument_list_item],
     [$.parenthesized_expression, $._argument_list_item],
-    [$._statement, $._nonblock_statement],
     [
       $._block_conditional_item,
       $._conditional_if_split_wrapped_else_setup_statement,
@@ -1071,13 +1069,7 @@ module.exports = grammar({
     _loop_body_statement: ($) => loopBodyStatementChoice($),
 
     _direct_loop_statement_variant: ($) =>
-      choice(
-        seq(
-          $._macro_iterator_loop_header,
-          field("body", $._nonblock_statement),
-        ),
-        seq($._for_header, field("body", $._nonblock_statement)),
-      ),
+      seq($._loop_header, field("body", $._nonblock_statement)),
 
     _loop_statement_variant: ($) =>
       choice(
