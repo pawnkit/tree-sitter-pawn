@@ -56,6 +56,15 @@
           "name": "macro_invocation_statement"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_incomplete_macro_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
+        },
+        {
           "type": "SYMBOL",
           "name": "function_declaration"
         },
@@ -1702,6 +1711,15 @@
           "name": "macro_invocation_block_statement"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_incomplete_macro_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
+        },
+        {
           "type": "SYMBOL",
           "name": "conditional_else_block_statement"
         },
@@ -2823,6 +2841,99 @@
             "type": "SYMBOL",
             "name": "block"
           }
+        }
+      ]
+    },
+    "_incomplete_macro_invocation_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "macro_pasted_identifier"
+              }
+            ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "arguments",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_incomplete_argument_list"
+            },
+            "named": true,
+            "value": "argument_list"
+          }
+        }
+      ]
+    },
+    "_incomplete_argument_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_argument_list_item"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_argument_list_item"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": ","
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_incomplete_call_line_terminator"
         }
       ]
     },
@@ -4940,6 +5051,15 @@
           "name": "macro_invocation_block_statement"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_incomplete_macro_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
+        },
+        {
           "type": "SYMBOL",
           "name": "conditional_else_block_statement"
         },
@@ -5156,6 +5276,15 @@
           "name": "macro_invocation_block_statement"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_incomplete_macro_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
+        },
+        {
           "type": "SYMBOL",
           "name": "conditional_else_block_statement"
         },
@@ -5368,6 +5497,15 @@
         {
           "type": "SYMBOL",
           "name": "macro_invocation_block_statement"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_incomplete_macro_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
         },
         {
           "type": "SYMBOL",
@@ -5588,6 +5726,15 @@
           "name": "macro_invocation_block_statement"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_incomplete_macro_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
+        },
+        {
           "type": "SYMBOL",
           "name": "conditional_else_block_statement"
         },
@@ -5800,6 +5947,15 @@
         {
           "type": "SYMBOL",
           "name": "macro_invocation_block_statement"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_incomplete_macro_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
         },
         {
           "type": "SYMBOL",
@@ -12299,6 +12455,78 @@
               },
               {
                 "type": "FIELD",
+                "name": "unsupported_parameters",
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_unsupported_macro_parameter_list"
+                  },
+                  "named": true,
+                  "value": "preproc_text"
+                }
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_directive_line_terminator"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 1,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "#"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "[ \\t]*"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "define"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "name",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "identifier"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "macro_pasted_identifier"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "define_at_identifier"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "FIELD",
                 "name": "parameters",
                 "content": {
                   "type": "SYMBOL",
@@ -17802,7 +18030,12 @@
     ],
     [
       "macro_invocation_statement",
+      "_incomplete_macro_invocation_statement",
       "_function_name"
+    ],
+    [
+      "_incomplete_argument_list",
+      "_argument_list_items"
     ],
     [
       "_function_name",
@@ -17911,6 +18144,14 @@
     {
       "type": "SYMBOL",
       "name": "_statement_line_terminator"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_incomplete_call_line_terminator"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_directive_line_terminator"
     },
     {
       "type": "SYMBOL",

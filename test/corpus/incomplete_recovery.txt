@@ -1,0 +1,30 @@
+===================================
+incomplete macro headers and calls
+===================================
+
+#define UNCLOSED(%0,%1
+#define HALF(%0) (
+
+stock Test() {
+    SomeMacro(value,
+}
+
+---
+
+(source_file
+  (preproc_define
+    name: (identifier)
+    unsupported_parameters: (preproc_text))
+  (preproc_define
+    name: (identifier)
+    parameters: (macro_parameter_list
+      (macro_parameter))
+    value: (preproc_text))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (macro_invocation_statement
+        name: (identifier)
+        arguments: (argument_list
+          (identifier))))))

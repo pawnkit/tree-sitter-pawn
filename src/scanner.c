@@ -14,6 +14,8 @@
 enum TokenType {
   CALLBACK_SIGNATURE_START,
   STATEMENT_LINE_TERMINATOR,
+  INCOMPLETE_CALL_LINE_TERMINATOR,
+  DIRECTIVE_LINE_TERMINATOR,
   CONDITIONAL_IF_ELSE_PREAMBLE,
   CONDITIONAL_IF_ELSE_IF_PREAMBLE,
   CONDITIONAL_IF_BLOCK_PREAMBLE,
@@ -49,6 +51,8 @@ static bool scan_block_tail_after_open_brace(TSLexer *lexer, IfBranchKind *kind)
 static bool scan_nested_shared_if_header(TSLexer *lexer, IfBranchKind *kind);
 static bool scan_callback_signature_start(TSLexer *lexer);
 static bool scan_statement_line_terminator(TSLexer *lexer);
+static bool scan_incomplete_call_line_terminator(TSLexer *lexer);
+static bool scan_directive_line_terminator(TSLexer *lexer);
 static bool scan_line_comment_after_slash(TSLexer *lexer);
 static bool scan_block_comment_after_slash(TSLexer *lexer);
 static bool scan_unsupported_define_header(TSLexer *lexer);
@@ -368,6 +372,45 @@ static bool scan_statement_line_terminator(TSLexer *lexer) {
   return !is_statement_continuation_char(lexer->lookahead);
 }
 
+static bool scan_incomplete_call_line_terminator(TSLexer *lexer) {
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\r') {
+    skip(lexer);
+  }
+
+  if (lexer->lookahead == 0) {
+    lexer->mark_end(lexer);
+    return true;
+  }
+
+  if (lexer->lookahead != '\n') return false;
+
+  skip(lexer);
+  lexer->mark_end(lexer);
+
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\t' ||
+         lexer->lookahead == '\r' || lexer->lookahead == '\n') {
+    skip(lexer);
+  }
+
+  return lexer->lookahead == '}' || lexer->lookahead == 0;
+}
+
+static bool scan_directive_line_terminator(TSLexer *lexer) {
+  while (lexer->lookahead == ' ' || lexer->lookahead == '\t' || lexer->lookahead == '\r') {
+    skip(lexer);
+  }
+
+  if (lexer->lookahead == 0) {
+    lexer->mark_end(lexer);
+    return true;
+  }
+
+  if (lexer->lookahead != '\n') return false;
+  skip(lexer);
+  lexer->mark_end(lexer);
+  return true;
+}
+
 static DirectiveType scan_directive_type(TSLexer *lexer) {
   skip_ws_and_comments(lexer);
   if (lexer->lookahead != '#') return DIRECTIVE_NONE;
@@ -661,9 +704,19 @@ static bool scan_unsupported_macro_parameter_list(TSLexer *lexer) {
 
   unsigned depth = 0;
   bool saw_unsupported = false;
+  bool just_opened_outer = false;
 
   while (lexer->lookahead) {
-    if (lexer->lookahead == '\n' || lexer->lookahead == '\r') return false;
+    if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+      if (depth == 0) return false;
+      lexer->mark_end(lexer);
+      return true;
+    }
+
+    if (just_opened_outer) {
+      if (lexer->lookahead == ' ' || lexer->lookahead == '\t') return false;
+      just_opened_outer = false;
+    }
 
     if (lexer->lookahead == '"' || lexer->lookahead == '\'') {
       int32_t quote = lexer->lookahead;
@@ -676,7 +729,10 @@ static bool scan_unsupported_macro_parameter_list(TSLexer *lexer) {
           if (!lexer->lookahead) return false;
         }
 
-        if (lexer->lookahead == '\n' || lexer->lookahead == '\r') return false;
+        if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+          lexer->mark_end(lexer);
+          return depth > 0;
+        }
         advance(lexer);
       }
 
@@ -687,6 +743,7 @@ static bool scan_unsupported_macro_parameter_list(TSLexer *lexer) {
 
     if (lexer->lookahead == '(') {
       depth++;
+      if (depth == 1) just_opened_outer = true;
       advance(lexer);
       continue;
     }
@@ -709,7 +766,9 @@ static bool scan_unsupported_macro_parameter_list(TSLexer *lexer) {
     advance(lexer);
   }
 
-  return false;
+  if (depth == 0) return false;
+  lexer->mark_end(lexer);
+  return true;
 }
 
 static bool scan_keyword_define_value(TSLexer *lexer) {
@@ -1320,6 +1379,16 @@ bool tree_sitter_pawn_external_scanner_scan(void *payload, TSLexer *lexer, const
 
   if (valid_symbols[STATEMENT_LINE_TERMINATOR] && scan_statement_line_terminator(lexer)) {
     lexer->result_symbol = STATEMENT_LINE_TERMINATOR;
+    return true;
+  }
+
+  if (valid_symbols[INCOMPLETE_CALL_LINE_TERMINATOR] && scan_incomplete_call_line_terminator(lexer)) {
+    lexer->result_symbol = INCOMPLETE_CALL_LINE_TERMINATOR;
+    return true;
+  }
+
+  if (valid_symbols[DIRECTIVE_LINE_TERMINATOR] && scan_directive_line_terminator(lexer)) {
+    lexer->result_symbol = DIRECTIVE_LINE_TERMINATOR;
     return true;
   }
 

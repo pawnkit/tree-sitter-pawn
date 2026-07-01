@@ -256,6 +256,10 @@
         "named": true
       },
       {
+        "type": "macro_invocation_statement",
+        "named": true
+      },
+      {
         "type": "macro_iterator_loop_statement",
         "named": true
       },
@@ -946,6 +950,10 @@
           "named": true
         },
         {
+          "type": "macro_invocation_statement",
+          "named": true
+        },
+        {
           "type": "macro_iterator_loop_statement",
           "named": true
         },
@@ -1180,6 +1188,10 @@
           "named": true
         },
         {
+          "type": "macro_invocation_statement",
+          "named": true
+        },
+        {
           "type": "macro_iterator_loop_statement",
           "named": true
         },
@@ -1400,6 +1412,10 @@
         },
         {
           "type": "macro_invocation_block_statement",
+          "named": true
+        },
+        {
+          "type": "macro_invocation_statement",
           "named": true
         },
         {
@@ -1634,6 +1650,10 @@
         },
         {
           "type": "macro_invocation_block_statement",
+          "named": true
+        },
+        {
+          "type": "macro_invocation_statement",
           "named": true
         },
         {
@@ -3989,6 +4009,10 @@
             "named": true
           },
           {
+            "type": "macro_invocation_statement",
+            "named": true
+          },
+          {
             "type": "macro_iterator",
             "named": true
           },
@@ -4204,6 +4228,10 @@
           },
           {
             "type": "macro_invocation_block_statement",
+            "named": true
+          },
+          {
+            "type": "macro_invocation_statement",
             "named": true
           },
           {
@@ -4455,6 +4483,10 @@
             "named": true
           },
           {
+            "type": "macro_invocation_statement",
+            "named": true
+          },
+          {
             "type": "macro_iterator",
             "named": true
           },
@@ -4702,6 +4734,10 @@
           },
           {
             "type": "macro_invocation_block_statement",
+            "named": true
+          },
+          {
+            "type": "macro_invocation_statement",
             "named": true
           },
           {
@@ -11575,6 +11611,10 @@
         },
         {
           "type": "macro_invocation_block_statement",
+          "named": true
+        },
+        {
+          "type": "macro_invocation_statement",
           "named": true
         },
         {

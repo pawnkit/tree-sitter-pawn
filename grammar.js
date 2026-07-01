@@ -48,6 +48,8 @@ module.exports = grammar({
   externals: ($) => [
     $._callback_signature_start,
     $._statement_line_terminator,
+    $._incomplete_call_line_terminator,
+    $._directive_line_terminator,
     $._conditional_if_else_preamble,
     $._conditional_if_else_if_preamble,
     $._conditional_if_block_preamble,
@@ -78,7 +80,8 @@ module.exports = grammar({
     [$._callback_named_identifier, $.variable_declarator, $._state_variable_declarator],
     [$.variable_declarator, $._state_variable_declarator],
     // A generic top-level macro invocation and a bare function signature both start with `identifier(`.
-    [$.macro_invocation_statement, $._function_name],
+    [$.macro_invocation_statement, $._incomplete_macro_invocation_statement, $._function_name],
+    [$._incomplete_argument_list, $._argument_list_items],
     [$._function_name, $.tagged_type],
     ...directiveListElseConflicts($, [
       "_argument",
@@ -134,6 +137,7 @@ module.exports = grammar({
     _top_level_nonfunction_item: ($) => choice(
       $.prefixed_function_declaration,
       $.macro_invocation_statement,
+      alias($._incomplete_macro_invocation_statement, $.macro_invocation_statement),
       $.function_declaration,
       $.enum_declaration,
       $.variable_declaration,
@@ -260,6 +264,21 @@ module.exports = grammar({
       field("name", macroNamedIdentifier($)),
       field("arguments", $.argument_list),
       field("body", $.block),
+    ),
+
+    _incomplete_macro_invocation_statement: ($) => seq(
+      field("name", macroNamedIdentifier($)),
+      field("arguments", alias($._incomplete_argument_list, $.argument_list)),
+    ),
+
+    _incomplete_argument_list: ($) => seq(
+      "(",
+      optional(seq(
+        $._argument_list_item,
+        repeat(seq(",", $._argument_list_item)),
+        optional(","),
+      )),
+      $._incomplete_call_line_terminator,
     ),
 
     function_declaration: ($) => seq(
@@ -1557,6 +1576,10 @@ module.exports = grammar({
         field("value", $.preproc_text),
       )),
       prec.right(1, defineDirective($,
+        field("unsupported_parameters", alias($._unsupported_macro_parameter_list, $.preproc_text)),
+        $._directive_line_terminator,
+      )),
+      prec.right(1, defineDirective($,
         field("parameters", $.macro_parameter_list),
         field("value", $.preproc_text),
       )),
@@ -2715,6 +2738,7 @@ function statementChoice($, {
     ...(includeLoopHeaderSelection ? [$.loop_header_selection_statement] : []),
     ...(includeConditionalElseExpression ? [$.conditional_else_expression_statement] : []),
     $.macro_invocation_block_statement,
+    alias($._incomplete_macro_invocation_statement, $.macro_invocation_statement),
     $.conditional_else_block_statement,
     $.conditional_else_statement,
     ...(includeConditionalElseIfBranch ? [$.conditional_else_if_branch_statement] : []),

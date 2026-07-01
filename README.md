@@ -40,6 +40,9 @@ use the `preproc_*` naming convention.
 
 Malformed or incomplete macro-heavy code should produce a useful partial tree. A
 raw replacement node is preferable to a brittle, falsely precise expansion tree.
+Unclosed define parameter lists are retained as `unsupported_parameters`, and a
+line-incomplete invocation immediately before a closing block keeps the ordinary
+`macro_invocation_statement`/`argument_list` shape for editor tooling.
 
 ## Public tree stability
 
