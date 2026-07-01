@@ -465,3 +465,33 @@ main() {
             (state_name)
             (state_name)
             (state_name)))))))
+
+================
+empty statements
+================
+
+stock EmptyBodies(value) {
+    ;
+    if (value);
+    while (value);
+    for (;;);
+}
+
+---
+
+(source_file
+  (function_definition
+    (identifier)
+    (parameter_list
+      (parameter_declaration
+        (identifier)))
+    (block
+      (empty_statement)
+      (if_statement
+        (identifier)
+        (empty_statement))
+      (while_statement
+        (identifier)
+        (empty_statement))
+      (for_statement
+        (empty_statement)))))

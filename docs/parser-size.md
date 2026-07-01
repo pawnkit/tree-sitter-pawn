@@ -1,12 +1,12 @@
 # Generated parser size
 
 Run `npm run diagnose:parser` after generation to print the size and line count
-of `src/parser.c`. As of July 2026, Tree-sitter CLI 0.25.10 generates a 56 MiB
-file with 1,750,123 lines. Its generated constants are:
+of `src/parser.c`. As of July 2026, Tree-sitter CLI 0.25.10 generates a 57 MiB
+file with 1,774,968 lines. Its generated constants are:
 
 ```text
-STATE_COUNT 30932
-SYMBOL_COUNT 501
+STATE_COUNT 31263
+SYMBOL_COUNT 504
 ALIAS_COUNT 0
 TOKEN_COUNT 140
 ```
@@ -66,6 +66,12 @@ That parser passed the local corpus at 30,126 states, but `ultimate-creator` bec
 one file-wide `ERROR`. The alternatives were restored. Future conditional cleanup
 must compare full parse behavior, not just count which node types appear in a
 successful tree.
+
+Adding `empty_statement` required deterministic ownership for optional semicolons
+and a non-empty body category for iterator-shaped loops. This increased the parser
+from 30,932 to 31,263 states and from 1,750,123 to 1,774,968 lines. The increase is
+retained because it adds real Pawn syntax without allowing ordinary calls followed
+by `;` to become iterator loops.
 
 History provides a second useful isolation point. Commit `13e350e` introduced the
 context-specific conditional families and moved the parser from 6,061 to 26,144

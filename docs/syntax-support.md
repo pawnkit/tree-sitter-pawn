@@ -5,9 +5,8 @@ Legend: **parsed**, **recovery**, **opaque**, **unsupported**, or **non-goal**.
 ## Statements
 
 - **Parsed:** `assert`, `break`, `continue`, `do`, `exit`, `for`, `goto`, `if`,
-  `return`, `sleep`, `state`, `switch`, `while`, blocks, and expression statements.
-- **Unsupported:** standalone empty statements. Optional semicolons in recovery
-  rules must be made deterministic before an `empty_statement` node can be added.
+  `return`, `sleep`, `state`, `switch`, `while`, blocks, expression statements,
+  and empty statements.
 - **Parsed:** explicit-semicolon and supported newline-terminated forms.
 - **Recovery:** incomplete statements and deeply split conditional layouts may
   contain recovery nodes.

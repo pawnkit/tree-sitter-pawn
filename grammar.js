@@ -325,10 +325,12 @@ module.exports = grammar({
       }),
 
     macro_invocation_statement: ($) =>
-      seq(
-        field("name", macroNamedIdentifier($)),
-        field("arguments", $.argument_list),
-        optional(";"),
+      prec.right(
+        seq(
+          field("name", macroNamedIdentifier($)),
+          field("arguments", $.argument_list),
+          optional(";"),
+        ),
       ),
 
     _macro_iterator_invocation_statement: ($) =>
@@ -584,20 +586,22 @@ module.exports = grammar({
       ),
 
     enum_declaration: ($) =>
-      seq(
-        "enum",
-        optional(field("name", $.identifier)),
-        optional(
-          seq(
-            ":",
-            optional(field("type", choice($.identifier, $.tag_wildcard))),
+      prec.right(
+        seq(
+          "enum",
+          optional(field("name", $.identifier)),
+          optional(
+            seq(
+              ":",
+              optional(field("type", choice($.identifier, $.tag_wildcard))),
+            ),
           ),
+          optional(field("increment", $.enum_increment_clause)),
+          "{",
+          optional($._enum_entries),
+          "}",
+          optional(";"),
         ),
-        optional(field("increment", $.enum_increment_clause)),
-        "{",
-        optional($._enum_entries),
-        "}",
-        optional(";"),
       ),
 
     enum_increment_clause: ($) =>
@@ -735,6 +739,12 @@ module.exports = grammar({
 
     _statement_base: ($) => blockStatementBaseChoice($),
 
+    _nonempty_statement: ($) =>
+      prec(1, blockConditionalChoice($, $._nonempty_statement_base)),
+
+    _nonempty_statement_base: ($) =>
+      prec(1, blockStatementBaseChoice($, { includeEmpty: false })),
+
     _nonblock_statement: ($) =>
       blockConditionalChoice($, $._nonblock_statement_base),
 
@@ -825,12 +835,14 @@ module.exports = grammar({
       prec.right(1, seq("default", ":", repeat($._statement))),
 
     state_statement: ($) =>
-      seq(
-        "state",
-        optional(field("condition", $.parenthesized_expression)),
-        field("scope", $.state_name),
-        optional(seq(":", commaSep1($.state_name))),
-        optional(";"),
+      prec.right(
+        seq(
+          "state",
+          optional(field("condition", $.parenthesized_expression)),
+          field("scope", $.state_name),
+          optional(seq(":", commaSep1($.state_name))),
+          optional(";"),
+        ),
       ),
 
     function_initializer_alternative_statement: ($) =>
@@ -1135,7 +1147,10 @@ module.exports = grammar({
 
     macro_iterator_loop_statement: ($) =>
       prec.right(
-        seq($._macro_iterator_loop_header, field("body", $._statement)),
+        seq(
+          $._macro_iterator_loop_header,
+          field("body", $._nonempty_statement),
+        ),
       ),
 
     _new_macro_iterator: ($) =>
@@ -1302,6 +1317,8 @@ module.exports = grammar({
         optional(field("value", choice($.expression_list, $._expression))),
         statementTerminator($),
       ),
+
+    empty_statement: ($) => ";",
 
     call_statement: ($) =>
       prec.dynamic(
@@ -2612,7 +2629,9 @@ module.exports = grammar({
 
     _macro_return_statement: ($) =>
       choice(
-        seq("return", field("value", $.preproc_expression), optional(";")),
+        prec.right(
+          seq("return", field("value", $.preproc_expression), optional(";")),
+        ),
         seq("return", ";"),
       ),
 
@@ -2667,18 +2686,21 @@ module.exports = grammar({
       ),
 
     _macro_goto_statement: ($) =>
-      seq(
-        "goto",
-        field("label", choice($.identifier, $.macro_parameter)),
-        optional(";"),
+      prec.right(
+        seq(
+          "goto",
+          field("label", choice($.identifier, $.macro_parameter)),
+          optional(";"),
+        ),
       ),
 
-    _macro_break_statement: ($) => seq("break", optional(";")),
+    _macro_break_statement: ($) => prec.right(seq("break", optional(";"))),
 
-    _macro_continue_statement: ($) => seq("continue", optional(";")),
+    _macro_continue_statement: ($) =>
+      prec.right(seq("continue", optional(";"))),
 
     _macro_expression_statement: ($) =>
-      seq(field("expression", $.preproc_expression), ";"),
+      prec(1, seq(field("expression", $.preproc_expression), ";")),
 
     preproc_subscript_expression: ($) =>
       prec.left(
@@ -3237,6 +3259,7 @@ function statementChoice(
     includeConditionalElseIfBranch = false,
     includeConditionalElseIfStatement = false,
     includeConditionalIfElseIf = false,
+    includeEmpty = true,
     includeConditionalIf = true,
     includeConditionalElseif = true,
     includeConditionalClosings = false,
@@ -3293,6 +3316,7 @@ function statementChoice(
     $.assert_statement,
     $.exit_statement,
     $.sleep_statement,
+    ...(includeEmpty ? [$.empty_statement] : []),
     $.label_statement,
     $.return_statement,
     $.break_statement,
@@ -3307,10 +3331,11 @@ function statementChoice(
   );
 }
 
-function blockStatementBaseChoice($) {
+function blockStatementBaseChoice($, { includeEmpty = true } = {}) {
   return statementChoice($, {
     includeBlock: true,
     includeLoopHeaderSelection: true,
+    includeEmpty,
     ...wrapperFirstConditionalElseStatementOptions(),
     includeConditionalIfElseIf: true,
   });
@@ -3336,6 +3361,7 @@ function loopBodyStatementChoice($) {
     $.return_statement,
     $.break_statement,
     $.continue_statement,
+    $.empty_statement,
     $.expression_statement,
     ...nonBranchDirectiveStatementChoices($),
   );

@@ -38,23 +38,24 @@ ac_fpublic ac_EnableStuntBonusForAll(enable)
           (unary_expression
             (unary_expression
               (identifier)))))
-      (conditional_loop_variant_statement
+      (conditional_loop_fallback_statement
         (preproc_if
           (preproc_expression
             (preproc_defined
               (identifier))))
-        (identifier)
-        (macro_iterator
+        (macro_iterator_loop_statement
           (identifier)
-          (identifier))
-        (expression_statement
-          (assignment_expression
-            (subscript_expression
+          (macro_iterator
+            (identifier)
+            (identifier))
+          (expression_statement
+            (assignment_expression
               (subscript_expression
-                (identifier)
+                (subscript_expression
+                  (identifier)
+                  (identifier))
                 (identifier))
-              (identifier))
-            (identifier)))
+              (identifier))))
         (preproc_else)
         (loop_header_selection_statement
           (preproc_if

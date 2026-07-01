@@ -64,6 +64,8 @@ semicolons. It must reparse the result and confirm that statement and function-b
 structure did not change. In particular, preserve deliberate braceless function
 bodies, line-terminated calls, state statements, macro continuations, and incomplete
 editor input unless the selected style explicitly and safely normalizes them.
+Standalone semicolons are represented as `empty_statement`; they must not be
+silently attached to a preceding semicolonless statement.
 
 ## Validation loop
 
