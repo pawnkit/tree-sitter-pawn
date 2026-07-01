@@ -8,6 +8,12 @@
 (prefixed_function_declaration
   name: (identifier) @name) @definition.function
 
+(prefixed_function_declaration
+  name: (operator_name) @name) @definition.function
+
+(prefixed_function_declaration
+  name: (at_identifier) @name) @definition.function
+
 (function_definition
   name: (operator_name) @name) @definition.function
 

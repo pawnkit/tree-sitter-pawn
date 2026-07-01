@@ -14,6 +14,10 @@
     name: (at_identifier) @function)
   (function_declaration
     name: (at_identifier) @function)
+  (prefixed_function_declaration
+    name: (operator_name) @function)
+  (prefixed_function_declaration
+    name: (at_identifier) @function)
 ]
 (function_declaration
   name: (member_expression
@@ -57,15 +61,7 @@
     tag: (identifier) @type.cast))
 
 ; Directives
-[
-  (preproc_include)
-  (preproc_tryinclude)
-  (preproc_define)
-  (preproc_if)
-  (preproc_elseif)
-  (preproc_else)
-  (preproc_endif)
-] @preproc
+(_directive) @preproc
 
 ; Literals
 (integer_literal) @number

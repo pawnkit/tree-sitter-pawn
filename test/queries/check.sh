@@ -14,5 +14,9 @@ for name in highlights locals tags; do
     "queries/$name.scm" "test/queries/$name.pwn" |
     sed -n 's/^.* - \([^,]*\), start: \(([^)]*)\), end: \(([^)]*)\),.*/\1|\2|\3/p' \
       >"$tmp_output"
-  diff -u "test/queries/$name.expected" "$tmp_output"
+  if [[ ${UPDATE_QUERY_SNAPSHOTS:-0} == 1 ]]; then
+    cp "$tmp_output" "test/queries/$name.expected"
+  else
+    diff -u "test/queries/$name.expected" "$tmp_output"
+  fi
 done

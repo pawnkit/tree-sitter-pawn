@@ -3,6 +3,8 @@
 forward OnReady(value);
 
 Decorator Float:OnValue(value);
+Decorator operator+(left, right);
+Decorator @Decorated();
 
 forward operator+(left, right);
 forward @Callback();
