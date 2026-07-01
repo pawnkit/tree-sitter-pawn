@@ -5,8 +5,7 @@ It supports `.pwn` and `.inc` files, including common Pawn syntax such as tags,
 states, callbacks, operator overloads, preprocessor directives, and macro-shaped
 constructs.
 
-The grammar describes Pawn syntax only. It does not expand macros or assign
-special meaning to names from particular libraries.
+The grammar describes Pawn syntax only.
 
 ## Install
 
@@ -19,19 +18,6 @@ npm install tree-sitter-pawn
 The package includes the grammar, generated parser sources, node types, and
 highlight, locals, and tags queries. Editor integrations should use the `pawn`
 language scope for `.pwn` and `.inc` files.
-
-## Syntax trees
-
-Preprocessor nodes use the `preproc_*` naming convention. For example, a define
-is represented by `preproc_define`, with `name`, optional `parameters`, and a
-`value`. Replacement text is either parsed as `macro_replacement` or retained as
-`preproc_text` when a more specific tree would be unreliable.
-
-Macro-like declarations and iterator-shaped loops are parsed generically as
-`prefixed_function_declaration` and `macro_iterator_loop_statement`. No library
-or framework names are built into the grammar.
-
-`src/node-types.json` is the authoritative reference for public nodes and fields.
 
 ## Development
 
