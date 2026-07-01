@@ -824,6 +824,7 @@ static bool scan_opaque_define_value(TSLexer *lexer) {
   int brace_depth = 0;
   unsigned top_level_colons = 0;
   unsigned consecutive_questions = 0;
+  int32_t before_previous = 0;
   int32_t previous = 0;
   bool saw_unsupported = false;
 
@@ -916,6 +917,9 @@ static bool scan_opaque_define_value(TSLexer *lexer) {
       }
 
       if (previous == '=' && c == '>') saw_unsupported = true;
+      if (before_previous == '%' && previous >= '0' && previous <= '9' && c == '%') {
+        saw_unsupported = true;
+      }
 
       if (c == '?') {
         consecutive_questions++;
@@ -929,6 +933,7 @@ static bool scan_opaque_define_value(TSLexer *lexer) {
       is_escaped = lexer->lookahead == '\\';
     }
 
+    before_previous = previous;
     previous = c;
     advance(lexer);
   }

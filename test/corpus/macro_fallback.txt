@@ -61,3 +61,60 @@ safe replacements retain structured form
           left: (macro_parameter)
           right: (preproc_expression
             (macro_parameter)))))))
+
+========================================
+formatter macro boundaries
+========================================
+
+#define MAX_PLAYERS 1000
+#define ADD(%0,%1) ((%0) + (%1))
+#define COMPLEX_HDR(_:(%0,%1),%2(%3,%9)) CALL(_:(%0),%2(%3))
+#define TOKEN_PASTE(%0,%1) %0%1
+
+---
+
+(source_file
+  (preproc_define
+    (identifier)
+    (macro_replacement
+      (preproc_expression
+        (integer_literal))))
+  (preproc_define
+    (identifier)
+    (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    (macro_replacement
+      (preproc_expression
+        (preproc_parenthesized_expression
+          (preproc_expression
+            (preproc_binary_expression
+              (preproc_expression
+                (preproc_parenthesized_expression
+                  (preproc_expression
+                    (macro_parameter))))
+              (preproc_expression
+                (preproc_parenthesized_expression
+                  (preproc_expression
+                    (macro_parameter))))))))))
+  (preproc_define
+    (identifier)
+    (complex_macro_parameter_list
+      (complex_macro_parameter_header
+        (tagged_type
+          (tag_wildcard))
+        (macro_parameter_list
+          (macro_parameter)
+          (macro_parameter)))
+      (complex_macro_parameter_header
+        (macro_parameter)
+        (macro_parameter_list
+          (macro_parameter)
+          (macro_parameter))))
+    (preproc_text))
+  (preproc_define
+    (identifier)
+    (macro_parameter_list
+      (macro_parameter)
+      (macro_parameter))
+    (preproc_text)))
