@@ -7,6 +7,19 @@
   name: (identifier) @function)
 [
   (function_definition
+    name: (operator_name) @function)
+  (function_declaration
+    name: (operator_name) @function)
+  (function_definition
+    name: (at_identifier) @function)
+  (function_declaration
+    name: (at_identifier) @function)
+]
+(function_declaration
+  name: (member_expression
+    property: (identifier) @function))
+[
+  (function_definition
     prefix: (identifier) @function.macro)
   (prefixed_function_declaration
     prefix: (identifier) @function.macro)
@@ -75,6 +88,15 @@
 ; Calls
 (call_expression
   function: (identifier) @function.call)
+(call_expression
+  function: (member_expression
+    property: (identifier) @function.call))
+(call_expression
+  function: (callback_member_expression
+    name: (identifier) @function.call))
+(call_expression
+  function: (subscript_expression
+    array: (identifier) @function.call))
 (macro_invocation_statement
   name: (identifier) @function.call)
 (macro_invocation_block_statement

@@ -33,11 +33,14 @@ check_query() {
 cd "$ROOT"
 check_query queries/highlights.scm test/queries/highlights.pwn \
   'preproc=#define DOUBLE(%0) ((%0) * 2)' function.macro=DOUBLE 'parameter=%0' \
-  type=Float function=scale variable.parameter=value variable=result function.call=DOUBLE
+  type=Float function=scale function=operator+ function=@Callback function=Func \
+  variable.parameter=value variable=result function.call=DOUBLE function.call=Callback \
+  function.call=handlers
 check_query queries/locals.scm test/queries/locals.pwn \
   local.scope local.definition=input local.definition=total \
   local.reference=total
 check_query queries/tags.scm test/queries/tags.pwn \
   definition.macro definition.function definition.type definition.constant \
   definition.variable reference.call name=DOUBLE name=OnReady name=Status \
-  name=Status_Ready name=global_value
+  name=Status_Ready name=global_value name=operator+ name=@Callback name=Func \
+  name=Callback name=handlers

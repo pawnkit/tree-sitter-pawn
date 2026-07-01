@@ -7,6 +7,22 @@
 (prefixed_function_declaration
   name: (identifier) @name) @definition.function
 
+(function_definition
+  name: (operator_name) @name) @definition.function
+
+(function_declaration
+  name: (operator_name) @name) @definition.function
+
+(function_definition
+  name: (at_identifier) @name) @definition.function
+
+(function_declaration
+  name: (at_identifier) @name) @definition.function
+
+(function_declaration
+  name: (member_expression
+    property: (identifier) @name)) @definition.function
+
 (preproc_define
   name: (identifier) @name) @definition.macro
 
@@ -24,6 +40,18 @@
 
 (call_expression
   function: (identifier) @name) @reference.call
+
+(call_expression
+  function: (member_expression
+    property: (identifier) @name)) @reference.call
+
+(call_expression
+  function: (callback_member_expression
+    name: (identifier) @name)) @reference.call
+
+(call_expression
+  function: (subscript_expression
+    array: (identifier) @name)) @reference.call
 
 (macro_invocation_statement
   name: (identifier) @name) @reference.call
