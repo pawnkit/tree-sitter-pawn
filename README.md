@@ -32,11 +32,21 @@ grammar does not expand macros and must not infer a library API from a macro nam
 Statement-like replacement parsing uses hidden implementation rules: consumers see
 the stable `macro_replacement` node and ordinary `preproc_*` expressions rather than
 a parallel public taxonomy of macro-only loops, switches, declarations, and blocks.
+The public shape is therefore:
+
+```text
+preproc_define
+  name: identifier
+  parameters: macro_parameter_list?
+  value: macro_replacement | preproc_text
+```
 
 Conditionals are supported at the top level, in blocks, and inside common lists
 (arguments, parameters, enum entries, array literals, and variable declarators).
-Context-specific wrapper rules are implementation details. Stable directive leaves
-use the `preproc_*` naming convention.
+Stable directive leaves use the `preproc_*` naming convention. Some statement and
+function layouts currently expose legacy `conditional_*` wrapper nodes. Those
+nodes are public for this release because removing them would change established
+corpus trees; new consumers should prefer their `preproc_*` leaves and named fields.
 
 Malformed or incomplete macro-heavy code should produce a useful partial tree. A
 raw replacement node is preferable to a brittle, falsely precise expansion tree.
@@ -57,6 +67,11 @@ should represent Pawn syntax or durable source structure, not one include's
 expansion convention. Declaration and directive categories will only become
 supertypes when they can preserve the established conditional-wrapper trees
 without precedence tricks.
+
+`prefixed_function_declaration` is the generic syntax node for a declaration with
+an identifier-shaped prefix before its optional return tag and function name. It
+does not assign semantics to that prefix. Ordinary `forward` and `native` forms,
+including aliases, remain `function_declaration` nodes.
 
 ## Development
 
