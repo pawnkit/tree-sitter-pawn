@@ -6,6 +6,22 @@ const nodeTypes = JSON.parse(
   fs.readFileSync(path.join(root, "src/node-types.json"), "utf8"),
 );
 const publicNodes = new Set(nodeTypes.filter((node) => node.named).map((node) => node.type));
+const corpus = fs
+  .readdirSync(path.join(root, "test/corpus"))
+  .filter((file) => file.endsWith(".txt"))
+  .map((file) => fs.readFileSync(path.join(root, "test/corpus", file), "utf8"))
+  .join("\n");
+const assertedNodes = new Set(
+  [...corpus.matchAll(/\(([A-Za-z_][A-Za-z0-9_]*)/g)].map((match) => match[1]),
+);
+const externalOnlyNodes = new Set([
+  "conditional_else_block_statement",
+  "conditional_else_if_statement",
+  "conditional_else_statement",
+  "conditional_if_else_statement",
+  "conditional_loop_variant_statement",
+  "loop_body_conditional_if_statement",
+]);
 
 const requiredPublicNodes = [
   "prefixed_function_declaration",
@@ -39,13 +55,16 @@ for (const name of requiredPublicNodes) {
     throw new Error(`documented public node is not generated: ${name}`);
   }
 
-  const corpus = fs
-    .readdirSync(path.join(root, "test/corpus"))
-    .filter((file) => file.endsWith(".txt"))
-    .map((file) => fs.readFileSync(path.join(root, "test/corpus", file), "utf8"))
-    .join("\n");
   if (!corpus.includes(`(${name}`)) {
     throw new Error(`documented public node has no corpus assertion: ${name}`);
+  }
+}
+
+for (const node of nodeTypes.filter(
+  (node) => node.named && !node.subtypes && !node.type.startsWith("_"),
+)) {
+  if (!assertedNodes.has(node.type) && !externalOnlyNodes.has(node.type)) {
+    throw new Error(`public named node has no corpus assertion: ${node.type}`);
   }
 }
 

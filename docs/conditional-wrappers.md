@@ -1,107 +1,51 @@
-# Conditional wrapper audit
+# Conditional wrapper nodes
 
-These public nodes model layouts in which preprocessor branches split ordinary
-Pawn constructs; they are not Pawn keywords. The `preproc_if`, `preproc_elseif`,
-`preproc_else`, `preproc_endif`, and `preproc_condition` nodes represent the
-directive syntax itself.
+Preprocessor directives can split an ordinary Pawn construct across branches. The
+grammar keeps the directive leaves (`preproc_if`, `preproc_elseif`, `preproc_else`,
+and `preproc_endif`) while using public wrapper nodes for the combined layout.
 
-## Current nodes
+These wrappers are part of the current public tree:
 
-| Node | Why it exists | Direction |
+| Node | Source shape | Tool normalization |
 | --- | --- | --- |
-| `conditional_function_definition` | Selects function signatures before one shared body. | Retain until signatures have a branch container. |
-| `conditional_else_statement` | Enables an `else` statement through a directive branch. | Merge candidate. |
-| `conditional_else_block_statement` | Splits an `else` block's braces across directives. | Merge candidate after scanner-layout tests exist. |
-| `conditional_else_expression_statement` | Selects alternate `else` expressions. | Merge into a branch-list container. |
-| `conditional_else_if_branch_statement` | Selects complete `else if` branches and an optional shared `else`. | Merge into a branch-list container. |
-| `conditional_else_if_statement` | Selects `else if` headers before one shared body. | Retain until shared tails have a common representation. |
-| `conditional_if_else_if_statement` | Joins a selected `if` header to an ordinary `else if`. | Merge candidate. |
-| `conditional_if_block_statement` | Joins a selected `if` header to a shared block. | Merge candidate after scanner token replacement. |
-| `conditional_if_else_block_statement` | Handles a shared `if`/`else` block with a scanner-detected close. | Retain while scanner layout remains specialized. |
-| `conditional_if_else_statement` | Joins a selected `if` header and block to an ordinary `else`. | Merge candidate. |
-| `conditional_if_split_wrapped_else_statement` | Handles setup statements and braces split across two directive groups. | Retain; it is structurally distinct recovery syntax. |
-| `conditional_if_statement` | Handles an `if` header and close split by directives. | Merge candidate after scanner token replacement. |
-| `conditional_if_wrapped_else_statement` | Splits an `if` close and ordinary `else` across directives. | Merge candidate after scanner token replacement. |
-| `conditional_loop_fallback_statement` | Selects iterator/`for` loops with a non-loop fallback. | Merge into a branch-list container. |
-| `conditional_loop_statement` | Selects loop preambles before a shared braced body. | Retain until shared tails have a common representation. |
-| `conditional_loop_variant_statement` | Selects complete loop variants. | Merge into a branch-list container. |
-| `loop_body_conditional_if_statement` | Selects `if` statements in a shared loop body. | Hide candidate once statement choices are unified. |
+| `conditional_function_definition` | Alternative function signatures followed by one shared body. | Conditional function/signature branch. |
+| `conditional_else_statement` | A directive enables an attached `else` statement. | Conditional statement branch. |
+| `conditional_else_block_statement` | Directives split the braces of an attached `else` block. | Conditional block boundary. |
+| `conditional_else_expression_statement` | Directives choose an `else` expression statement. | Conditional statement branch. |
+| `conditional_else_if_branch_statement` | Directives choose complete `else if` branches, optionally followed by a shared `else`. | Conditional statement branch. |
+| `conditional_else_if_statement` | Directives choose `else if` headers before one shared body. | Conditional statement branch. |
+| `conditional_if_block_statement` | Directives choose an `if` header before one shared block. | Conditional block branch. |
+| `conditional_if_else_block_statement` | Directives split a shared `if`/`else` block close. | Conditional block boundary. |
+| `conditional_if_else_if_statement` | A selected `if` header is followed by an ordinary `else if`. | Conditional statement branch. |
+| `conditional_if_else_statement` | A selected `if` block is followed by an ordinary `else`. | Conditional statement branch. |
+| `conditional_if_split_wrapped_else_statement` | Setup statements and braces are split across two directive groups. | Conditional block boundary. |
+| `conditional_if_statement` | An `if` header and closing delimiter are split by directives. | Conditional statement branch. |
+| `conditional_if_wrapped_else_statement` | An `if` close and attached `else` are divided by directives. | Conditional block boundary. |
+| `conditional_loop_fallback_statement` | Directives select iterator/`for` loops with a non-loop fallback. | Conditional loop branch. |
+| `conditional_loop_statement` | Directives select loop preambles before one shared body. | Conditional loop branch. |
+| `conditional_loop_variant_statement` | Directives select complete loop variants. | Conditional loop branch. |
+| `loop_body_conditional_if_statement` | Directives select `if` statements inside a shared loop body. | Conditional loop branch. |
 
-Some nodes lack a dedicated one-node fixture even though their layouts participate
-in broader wrapper rules. Before migration, add reduced fixtures for every node
-and record its fields. Existing concentrated coverage lives in
-`test/corpus/preprocessor_wrapping_cases.txt`; conditional function coverage also
-appears in `test/corpus/classic_constructs.txt`.
+Eleven wrappers have direct reduced corpus assertions. The six additional wrappers
+listed above are exercised by the external compatibility suite; removing them
+causes a full-file recovery failure in `nex-ac`. They remain explicit exceptions in
+the node-alignment test until their real-world trigger is reduced into the corpus.
 
-### Fixture status
+## Guidance for tools
 
-The following nodes have direct assertions in the existing corpus:
+- Preserve every directive leaf and its source order.
+- Format each named branch independently.
+- Prefer fields such as `condition`, `consequence`, `elseif`, `alternative`,
+  `signature`, and `body` over child indexes.
+- Do not move comments, commas, braces, or statements across branch boundaries.
+- Shared bodies belong to the wrapper, not to an arbitrary branch.
+- Reparse formatted output and compare its significant tree shape.
 
-- `conditional_function_definition`
-- `conditional_else_expression_statement`
-- `conditional_else_if_branch_statement`
-- `conditional_if_block_statement`
-- `conditional_if_else_block_statement`
-- `conditional_if_else_if_statement`
-- `conditional_if_split_wrapped_else_statement`
-- `conditional_if_statement`
-- `conditional_if_wrapped_else_statement`
-- `conditional_loop_fallback_statement`
-- `conditional_loop_statement`
+## Future simplification
 
-Six generated alternatives do not yet have a stable reduced input that selects
-them over a higher-precedence neighboring wrapper:
-
-| Node | Why no dedicated fixture is committed |
-| --- | --- |
-| `conditional_else_statement` | Reduced forms select the more specific expression or `else if` wrapper. |
-| `conditional_else_block_statement` | Its split-brace form depends on scanner context and reduced forms select another block wrapper. |
-| `conditional_else_if_statement` | Reduced shared-body forms select `conditional_else_if_branch_statement`. |
-| `conditional_if_else_statement` | Reduced forms select one of the scanner-backed block wrappers. |
-| `conditional_loop_variant_statement` | Known reduced loop branches select the fallback or shared-tail loop wrapper. |
-| `loop_body_conditional_if_statement` | Known reduced inputs select the general conditional statement wrapper. |
-
-Manufacturing malformed input just to force these alternatives would freeze error
-recovery rather than valid syntax. Before the breaking migration, either find a
-real source shape for each node and add it to the corpus, or remove the unreachable
-alternative with parser-size and external-fixture measurements.
-
-## Normalization for downstream tools
-
-These nodes remain stable public API for the current release. A formatter or
-refactoring tool can normalize them into the following internal categories without
-discarding their concrete node names:
-
-| Tool category | Public nodes | Source pattern and handling |
-| --- | --- | --- |
-| Conditional statement | `conditional_else_statement`, `conditional_else_expression_statement`, `conditional_else_if_branch_statement`, `conditional_else_if_statement`, `conditional_if_else_if_statement`, `conditional_if_else_statement`, `conditional_if_statement` | Directives select ordinary statement, expression-statement, or `if`/`else` branches. Format each named branch independently. |
-| Conditional block | `conditional_else_block_statement`, `conditional_if_block_statement`, `conditional_if_else_block_statement`, `conditional_if_split_wrapped_else_statement`, `conditional_if_wrapped_else_statement` | Directives divide a block header, brace, close, or attached `else`. Preserve brace ownership and directive order exactly. |
-| Conditional loop | `conditional_loop_fallback_statement`, `conditional_loop_statement`, `conditional_loop_variant_statement`, `loop_body_conditional_if_statement` | Directives select loop headers, complete loop variants, fallbacks, or statements inside a shared body. Never hoist the shared body into one branch. |
-| Conditional function | `conditional_function_definition` | Directives select function signatures before a shared body. Format signatures as branches and the body once. |
-| Conditional list | Generated context-specific list wrappers for arguments, parameters, enum entries, array literals, and declarators | Commas may sit inside or outside directive branches. Preserve the existing separator side until a formatter can prove a normalized form reparses to the same list. |
-
-For every category, retain `preproc_if`/`preproc_elseif`/`preproc_else`/
-`preproc_endif` as hard formatting boundaries. Named fields such as `consequence`,
-`elseif`, `alternative`, `signature`, and `body` are preferable to child indexes.
-
-## Migration strategy
-
-This should be a versioned, breaking-tree project rather than an ordinary fix.
-
-1. Add reduced fixtures for every wrapper and snapshot query behavior. Record
-   generated state count and parser size.
-2. Introduce one hidden branch representation per context: statement, function
-   signature, list item, and loop preamble.
-3. Replace wrapper-specific scanner tokens with neutral boundary tokens where
-   possible, measuring each replacement independently.
-4. Expose a small branch container with directive leaves and named `consequence`,
-   `elseif`, and `alternative` fields. Keep aliases only when fields are preserved
-   and they do not retain the state product.
-5. Update corpus trees, queries, and documentation together in a major release and
-   publish an old-to-new node and field mapping.
-6. Regenerate artifacts, validate external fixtures, and compare state count with
-   the baseline in `parser-size.md`.
-
-Merely hiding or renaming current rules would break consumer trees while leaving
-their parse-table states intact. This release therefore documents candidates but
-does not perform a cosmetic collapse.
+A future breaking tree may replace these nodes with one branch container per
+context: statement, function signature, list, and loop preamble. That work should
+also replace wrapper-specific scanner tokens with neutral boundary tokens and must
+be measured against corpus, formatter, and external fixtures. Renaming wrappers
+without changing the underlying conditional machinery would not reduce parser
+complexity.

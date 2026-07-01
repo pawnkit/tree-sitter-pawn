@@ -1,0 +1,116 @@
+=============================
+literal and argument node types
+=============================
+
+new mask = 0b1010;
+new missing = null;
+Configure(.value = mask);
+
+---
+
+(source_file
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (binary_literal)))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (null_literal)))
+  (macro_invocation_statement
+    (identifier)
+    (argument_list
+      (named_argument
+        (identifier)
+        (identifier)))))
+
+====================================
+statement and preprocessor expressions
+====================================
+
+stock Update() {
+    left = 1, right = 2;
+}
+
+#define SELECT(%0) %0 ? 1 : 2
+
+---
+
+(source_file
+  (function_definition
+    (identifier)
+    (parameter_list)
+    (block
+      (expression_statement
+        (statement_expression_list
+          (assignment_expression
+            (identifier)
+            (integer_literal))
+          (assignment_expression
+            (identifier)
+            (integer_literal))))))
+  (preproc_define
+    (identifier)
+    (macro_parameter_list
+      (macro_parameter))
+    (macro_replacement
+      (preproc_expression
+        (preproc_ternary_expression
+          (preproc_expression
+            (macro_parameter))
+          (preproc_expression
+            (integer_literal))
+          (preproc_expression
+            (integer_literal)))))))
+
+=================================
+conditional switch item branches
+=================================
+
+stock Select(value) {
+    switch (value) {
+#if defined FIRST
+        case 1: return 1;
+#elseif defined SECOND
+        case 2: return 2;
+#else
+        default: return 0;
+#endif
+    }
+}
+
+---
+
+(source_file
+  (function_definition
+    (identifier)
+    (parameter_list
+      (parameter_declaration
+        (identifier)))
+    (block
+      (switch_statement
+        (identifier)
+        (switch_item_conditional
+          (preproc_if
+            (preproc_expression
+              (preproc_defined
+                (identifier))))
+          (case_statement
+            (integer_literal)
+            (return_statement
+              (integer_literal)))
+          (switch_item_elseif
+            (preproc_elseif
+              (preproc_expression
+                (preproc_defined
+                  (identifier))))
+            (case_statement
+              (integer_literal)
+              (return_statement
+                (integer_literal)))
+            (switch_item_else
+              (preproc_else)
+              (default_statement
+                (return_statement
+                  (integer_literal)))))
+          (preproc_endif))))))
