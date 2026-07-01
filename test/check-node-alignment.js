@@ -12,6 +12,21 @@ const requiredPublicNodes = [
   "preproc_text",
   "macro_replacement",
 ];
+const conditionalAudit = fs.readFileSync(
+  path.join(root, "docs/conditional-wrappers.md"),
+  "utf8",
+);
+
+for (const node of nodeTypes.filter(
+  (node) =>
+    node.named &&
+    (node.type.startsWith("conditional_") ||
+      node.type === "loop_body_conditional_if_statement"),
+)) {
+  if (!conditionalAudit.includes(`\`${node.type}\``)) {
+    throw new Error(`public conditional node is missing from audit: ${node.type}`);
+  }
+}
 
 for (const name of requiredPublicNodes) {
   if (!publicNodes.has(name)) {

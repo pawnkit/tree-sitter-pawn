@@ -33,6 +33,39 @@ and record its fields. Existing concentrated coverage lives in
 `test/corpus/preprocessor_wrapping_cases.txt`; conditional function coverage also
 appears in `test/corpus/classic_constructs.txt`.
 
+### Fixture status
+
+The following nodes have direct assertions in the existing corpus:
+
+- `conditional_function_definition`
+- `conditional_else_expression_statement`
+- `conditional_else_if_branch_statement`
+- `conditional_if_block_statement`
+- `conditional_if_else_block_statement`
+- `conditional_if_else_if_statement`
+- `conditional_if_split_wrapped_else_statement`
+- `conditional_if_statement`
+- `conditional_if_wrapped_else_statement`
+- `conditional_loop_fallback_statement`
+- `conditional_loop_statement`
+
+Six generated alternatives do not yet have a stable reduced input that selects
+them over a higher-precedence neighboring wrapper:
+
+| Node | Why no dedicated fixture is committed |
+| --- | --- |
+| `conditional_else_statement` | Reduced forms select the more specific expression or `else if` wrapper. |
+| `conditional_else_block_statement` | Its split-brace form depends on scanner context and reduced forms select another block wrapper. |
+| `conditional_else_if_statement` | Reduced shared-body forms select `conditional_else_if_branch_statement`. |
+| `conditional_if_else_statement` | Reduced forms select one of the scanner-backed block wrappers. |
+| `conditional_loop_variant_statement` | Known reduced loop branches select the fallback or shared-tail loop wrapper. |
+| `loop_body_conditional_if_statement` | Known reduced inputs select the general conditional statement wrapper. |
+
+Manufacturing malformed input just to force these alternatives would freeze error
+recovery rather than valid syntax. Before the breaking migration, either find a
+real source shape for each node and add it to the corpus, or remove the unreachable
+alternative with parser-size and external-fixture measurements.
+
 ## Migration strategy
 
 This should be a versioned, breaking-tree project rather than an ordinary fix.
