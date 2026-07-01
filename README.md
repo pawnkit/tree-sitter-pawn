@@ -19,19 +19,6 @@ The package includes the grammar, generated parser sources, node types, and
 highlight, locals, and tags queries. Editor integrations should use the `pawn`
 language scope for `.pwn` and `.inc` files.
 
-## Downstream tools
-
-Use `_declaration` and `_directive` when walking common syntax groups. Comments
-are extras and need range-based attachment; `preproc_text` is opaque; and
-`macro_replacement` is structured only when parsing is safe. Public
-`conditional_*` wrappers and semicolonless forms must be preserved by source-aware
-tools. No library-specific macro semantics are provided.
-
-See the [formatter contract](docs/formatter-contract.md),
-[syntax support checklist](docs/syntax-support.md),
-[conditional wrapper guide](docs/conditional-wrappers.md), and
-[parser-size notes](docs/parser-size.md).
-
 ## Development
 
 Requires Node.js 18 or newer and a C toolchain.
