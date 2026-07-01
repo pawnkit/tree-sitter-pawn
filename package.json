@@ -23,6 +23,8 @@
   ],
   "scripts": {
     "generate": "tree-sitter generate",
+    "format": "prettier --write grammar.js",
+    "format:check": "prettier --check grammar.js",
     "test": "tree-sitter test",
     "test:queries": "bash test/queries/check.sh",
     "diagnose:parser": "du -h src/parser.c && wc -l src/parser.c",
@@ -31,11 +33,12 @@
     "test:external:list": "find .fixtures/pawn-projects -type f | sort",
     "check:external": "npm run test:external:fetch && npm run test:external",
     "parse": "tree-sitter parse",
-    "check": "npm run generate && npm run diagnose:parser && npm test && npm run test:queries",
+    "check": "npm run format:check && npm run generate && npm run diagnose:parser && npm test && npm run test:queries",
     "pack:check": "npm pack --dry-run",
     "prepack": "npm run generate"
   },
   "devDependencies": {
+    "prettier": "^3.9.4",
     "tree-sitter-cli": "0.25.10"
   }
 }
