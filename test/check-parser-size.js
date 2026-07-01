@@ -20,6 +20,12 @@ const limits = {
   states: 32_000,
 };
 
+if (/aux_sym_source_file_repeat\d+/.test(parser)) {
+  throw new Error(
+    "source_file must not use a generated repeat symbol; it truncates in some downstream runtimes",
+  );
+}
+
 for (const [name, actual] of Object.entries(measurements)) {
   if (actual > limits[name]) {
     throw new Error(`parser ${name} ${actual} exceeds budget ${limits[name]}`);

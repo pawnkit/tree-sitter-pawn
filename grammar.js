@@ -134,7 +134,10 @@ module.exports = grammar({
 
   rules: {
     // Root and top-level forms
-    source_file: ($) => repeat($._top_level_item),
+    source_file: ($) => optional($._source_file_items),
+
+    _source_file_items: ($) =>
+      choice($._top_level_item, seq($._top_level_item, $._source_file_items)),
 
     _declaration: ($) =>
       choice(
