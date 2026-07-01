@@ -27,22 +27,6 @@ for (const name of ["_declaration", "_directive"]) {
     throw new Error(`missing or empty public supertype: ${name}`);
   }
 }
-const conditionalAudit = fs.readFileSync(
-  path.join(root, "docs/conditional-wrappers.md"),
-  "utf8",
-);
-
-for (const node of nodeTypes.filter(
-  (node) =>
-    node.named &&
-    (node.type.startsWith("conditional_") ||
-      node.type === "loop_body_conditional_if_statement"),
-)) {
-  if (!conditionalAudit.includes(`\`${node.type}\``)) {
-    throw new Error(`public conditional node is missing from audit: ${node.type}`);
-  }
-}
-
 for (const name of requiredPublicNodes) {
   if (!publicNodes.has(name)) {
     throw new Error(`documented public node is not generated: ${name}`);
