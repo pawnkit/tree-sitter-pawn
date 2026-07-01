@@ -16,6 +16,7 @@
   "files": [
     "grammar.js",
     "tree-sitter.json",
+    "docs/**",
     "queries/**",
     "src/**",
     "LICENSE"
@@ -24,12 +25,13 @@
     "generate": "tree-sitter generate",
     "test": "tree-sitter test",
     "test:queries": "bash test/queries/check.sh",
+    "diagnose:parser": "du -h src/parser.c && wc -l src/parser.c",
     "test:external:fetch": "bash test/external/fetch.sh",
     "test:external": "bash test/external/parse.sh",
     "test:external:list": "find .fixtures/pawn-projects -type f | sort",
     "check:external": "npm run test:external:fetch && npm run test:external",
     "parse": "tree-sitter parse",
-    "check": "npm run generate && npm test && npm run test:queries",
+    "check": "npm run generate && npm run diagnose:parser && npm test && npm run test:queries",
     "pack:check": "npm pack --dry-run",
     "prepack": "npm run generate"
   },

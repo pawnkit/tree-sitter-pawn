@@ -370,3 +370,46 @@ native bool:operator<=(Float:oper1, Float:oper2) = float_le;
           tag: (identifier))
         name: (identifier)))
     alias: (identifier)))
+
+========================================
+identifier prefix before function syntax
+========================================
+
+foo bar();
+
+---
+
+(source_file
+  (prefixed_function_declaration
+    prefix: (identifier)
+    name: (identifier)
+    parameters: (parameter_list)))
+
+========================================
+identifiers and addition are not declarations
+========================================
+
+foo bar + baz;
+
+---
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)))
+
+========================================
+identifiers and subscripts are not declarations
+========================================
+
+foo bar[baz];
+
+---
+
+(source_file
+  (ERROR
+    (identifier)
+    name: (identifier)
+    (fixed_dimension
+      size: (identifier))))

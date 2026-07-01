@@ -21,17 +21,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Regenerate parser
-        run: npm run generate
+      - name: Generate and test grammar and queries
+        run: npm run check
 
       - name: Verify generated artifacts are committed
         run: git diff --exit-code
-
-      - name: Run corpus tests
-        run: npm test
-
-      - name: Run query tests
-        run: npm run test:queries
 
       - name: Verify publish tarball
         run: npm run pack:check

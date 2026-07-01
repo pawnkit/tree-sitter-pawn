@@ -67,11 +67,14 @@ npm install
 npm run generate       # regenerate src/parser.c, grammar.json, and node-types.json
 npm test               # corpus tests
 npm run test:queries   # highlights, locals, and tags query assertions
-npm run check          # generation, corpus, and query tests
+npm run diagnose:parser # report generated parser size and line count
+npm run check          # generation, size report, corpus, and query tests
 ```
 
 Every public tree shape belongs in `test/corpus`. Real-world failures should first
 be reduced to a small regression case. Query fixtures live in `test/queries`.
+The current generated-parser size investigation and historical measurements are
+recorded in [`docs/parser-size.md`](docs/parser-size.md).
 
 Broader compatibility checks clone the projects listed in
 `test/external/sources.tsv` and parse their Pawn files:
