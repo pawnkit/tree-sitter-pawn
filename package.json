@@ -28,7 +28,7 @@
     "test": "tree-sitter test",
     "test:alignment": "node test/check-node-alignment.js",
     "test:queries": "bash test/queries/check.sh",
-    "diagnose:parser": "du -h src/parser.c && wc -l src/parser.c",
+    "diagnose:parser": "du -h src/parser.c && wc -l src/parser.c && grep -E '^#define (STATE_COUNT|SYMBOL_COUNT|ALIAS_COUNT|TOKEN_COUNT)' src/parser.c",
     "test:external:fetch": "bash test/external/fetch.sh",
     "test:external": "bash test/external/parse.sh",
     "test:external:list": "find .fixtures/pawn-projects -type f | sort",
