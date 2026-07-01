@@ -67,3 +67,79 @@ Decorator public OnSomething() {
               prefix: (identifier)
               modifier: (identifier)
               name: (identifier))))))))
+
+=============================================
+iterator-shaped macros require a loop body
+=============================================
+
+stock Test() {
+    AnyMacro(new item : collection) {
+        item++;
+    }
+
+    AnyMacro(new item : collection)
+    {
+        item++;
+    }
+
+    AnyMacro(a, b);
+    AnyMacro(a + b);
+    AnyMacro(new item);
+    AnyMacro(item : collection);
+    AnyMacro(new item : collection);
+}
+
+---
+
+(source_file
+  (function_definition
+    (identifier)
+    (parameter_list)
+    (block
+      (macro_iterator_loop_statement
+        (identifier)
+        (macro_iterator
+          (identifier)
+          (identifier))
+        (block
+          (expression_statement
+            (update_expression
+              (identifier)))))
+      (macro_iterator_loop_statement
+        (identifier)
+        (macro_iterator
+          (identifier)
+          (identifier))
+        (block
+          (expression_statement
+            (update_expression
+              (identifier)))))
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (identifier)
+            (identifier))))
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (binary_expression
+              (identifier)
+              (identifier)))))
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (ERROR
+              (identifier)))))
+      (expression_statement
+        (identifier)
+        (ERROR
+          (identifier)
+          (preproc_text)))
+      (macro_invocation_statement
+        (identifier)
+        (argument_list
+          (identifier)
+          (identifier))))))

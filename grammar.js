@@ -122,6 +122,7 @@ module.exports = grammar({
     ],
     [$._prefixed_function_definition_signature, $.variable_declaration],
     [$.macro_iterator, $._expression],
+    [$._macro_iterator_argument_list, $.macro_iterator],
   ],
 
   supertypes: ($) => [
@@ -296,6 +297,21 @@ module.exports = grammar({
         field("arguments", $.argument_list),
         optional(";"),
       ),
+
+    _macro_iterator_invocation_statement: ($) =>
+      prec.dynamic(
+        2,
+        seq(
+          field("name", macroNamedIdentifier($)),
+          field(
+            "arguments",
+            alias($._macro_iterator_argument_list, $.argument_list),
+          ),
+          ";",
+        ),
+      ),
+
+    _macro_iterator_argument_list: ($) => seq("(", $._new_macro_iterator, ")"),
 
     macro_invocation_block_statement: ($) =>
       seq(
@@ -1087,21 +1103,22 @@ module.exports = grammar({
         seq($._macro_iterator_loop_header, field("body", $._statement)),
       ),
 
-    macro_iterator: ($) =>
+    _new_macro_iterator: ($) =>
       seq(
-        choice(
-          seq(
-            optional("new"),
-            optional(field("type", $.tagged_type)),
-            field("name", $.identifier),
-            ":",
-            field("collection", $.identifier),
-          ),
-          seq(
-            field("collection", $.identifier),
-            ",",
-            field("name", $.identifier),
-          ),
+        "new",
+        optional(field("type", $.tagged_type)),
+        field("name", $.identifier),
+        ":",
+        field("collection", $.identifier),
+      ),
+
+    macro_iterator: ($) =>
+      choice(
+        $._new_macro_iterator,
+        seq(
+          field("collection", $.identifier),
+          ",",
+          field("name", $.identifier),
         ),
       ),
 
@@ -3203,6 +3220,7 @@ function statementChoice(
       ? [$.conditional_else_expression_statement]
       : []),
     $.macro_invocation_block_statement,
+    alias($._macro_iterator_invocation_statement, $.macro_invocation_statement),
     alias(
       $._incomplete_macro_invocation_statement,
       $.macro_invocation_statement,

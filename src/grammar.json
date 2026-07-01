@@ -1714,6 +1714,15 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
+            "name": "_macro_iterator_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
             "name": "_incomplete_macro_invocation_statement"
           },
           "named": true,
@@ -2803,6 +2812,66 @@
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "_macro_iterator_invocation_statement": {
+      "type": "PREC_DYNAMIC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "macro_pasted_identifier"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "arguments",
+            "content": {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_macro_iterator_argument_list"
+              },
+              "named": true,
+              "value": "argument_list"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": ";"
+          }
+        ]
+      }
+    },
+    "_macro_iterator_argument_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_new_macro_iterator"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
         }
       ]
     },
@@ -5054,6 +5123,15 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
+            "name": "_macro_iterator_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
             "name": "_incomplete_macro_invocation_statement"
           },
           "named": true,
@@ -5279,6 +5357,15 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
+            "name": "_macro_iterator_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
             "name": "_incomplete_macro_invocation_statement"
           },
           "named": true,
@@ -5497,6 +5584,15 @@
         {
           "type": "SYMBOL",
           "name": "macro_invocation_block_statement"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_macro_iterator_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
         },
         {
           "type": "ALIAS",
@@ -5729,6 +5825,15 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
+            "name": "_macro_iterator_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
             "name": "_incomplete_macro_invocation_statement"
           },
           "named": true,
@@ -5947,6 +6052,15 @@
         {
           "type": "SYMBOL",
           "name": "macro_invocation_block_statement"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_macro_iterator_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
         },
         {
           "type": "ALIAS",
@@ -8380,89 +8494,80 @@
         ]
       }
     },
-    "macro_iterator": {
+    "_new_macro_iterator": {
       "type": "SEQ",
       "members": [
+        {
+          "type": "STRING",
+          "value": "new"
+        },
         {
           "type": "CHOICE",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": "new"
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "FIELD",
-                      "name": "type",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "tagged_type"
-                      }
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                },
-                {
-                  "type": "FIELD",
-                  "name": "name",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "identifier"
-                  }
-                },
-                {
-                  "type": "STRING",
-                  "value": ":"
-                },
-                {
-                  "type": "FIELD",
-                  "name": "collection",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "identifier"
-                  }
-                }
-              ]
+              "type": "FIELD",
+              "name": "type",
+              "content": {
+                "type": "SYMBOL",
+                "name": "tagged_type"
+              }
             },
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "FIELD",
-                  "name": "collection",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "identifier"
-                  }
-                },
-                {
-                  "type": "STRING",
-                  "value": ","
-                },
-                {
-                  "type": "FIELD",
-                  "name": "name",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "identifier"
-                  }
-                }
-              ]
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "collection",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        }
+      ]
+    },
+    "macro_iterator": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_new_macro_iterator"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "collection",
+              "content": {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ","
+            },
+            {
+              "type": "FIELD",
+              "name": "name",
+              "content": {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
             }
           ]
         }
@@ -18137,6 +18242,10 @@
     [
       "macro_iterator",
       "_expression"
+    ],
+    [
+      "_macro_iterator_argument_list",
+      "macro_iterator"
     ]
   ],
   "precedences": [],

@@ -413,3 +413,18 @@ foo bar[baz];
     name: (identifier)
     (fixed_dimension
       size: (identifier))))
+
+========================================
+identifiers and assignments are not declarations
+========================================
+
+foo bar = baz();
+
+---
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)
+    (preproc_text)))
