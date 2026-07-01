@@ -92,8 +92,8 @@ fast normal test run.
 ## Queries and editor integration
 
 The package ships `queries/highlights.scm`, `queries/locals.scm`, and
-`queries/tags.scm`. Editors can associate the `pawn` scope with `.pwn`, `.inc`, and
-`.pawn` files; see `tree-sitter.json` for the authoritative metadata.
+`queries/tags.scm`. Editors can associate the `pawn` scope with `.pwn`, and `.inc`
+files; see `tree-sitter.json` for the authoritative metadata.
 
 For example, this source:
 
