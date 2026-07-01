@@ -55,6 +55,20 @@ states. Later changes to macro shapes account for a much smaller fraction. This 
 why list-condition sharing and neutral scanner boundaries are the next worthwhile
 experiments; removing macro recovery rules at random is not.
 
+### Array-literal conditional family
+
+A detached-worktree experiment removed only the array-literal conditional family
+and parsed array items as a normal comma-separated list. The generated parser fell
+from 31,260 to 30,935 states, from 1,772,780 to 1,751,571 lines, and from 498 to
+491 symbols. This confirms that even one duplicated list context has a measurable
+cost.
+
+The experiment was rejected because the dedicated `split array literals` corpus
+case failed: directive leaves and branch values no longer formed the expected
+conditional list structure. A safe reduction must therefore share conditional
+machinery across list contexts while preserving that tree, rather than dropping
+conditional support from a context.
+
 The size report is diagnostic rather than a hard limit. A future limit should be
 based on a deliberate grammar reduction so routine Tree-sitter generator changes
 do not fail CI spuriously.
