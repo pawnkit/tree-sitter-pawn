@@ -1,8 +1,10 @@
+; Scopes
 [
   (function_definition)
   (block)
 ] @local.scope
 
+; Definitions
 (parameter_declaration
   name: (identifier) @local.definition)
 
@@ -15,6 +17,7 @@
   initializer: (variable_declarator
     name: (identifier) @local.definition))
 
+; References
 ; Definitions may also match this broad reference pattern. Tree-sitter's locals
 ; consumer uses the more specific definition capture to classify them, while this
 ; pattern keeps references working in every expression position without an
