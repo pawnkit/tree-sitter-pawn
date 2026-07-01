@@ -12,6 +12,12 @@ const requiredPublicNodes = [
   "preproc_text",
   "macro_replacement",
 ];
+for (const name of ["_declaration", "_directive"]) {
+  const node = nodeTypes.find((candidate) => candidate.type === name);
+  if (!node?.subtypes?.length) {
+    throw new Error(`missing or empty public supertype: ${name}`);
+  }
+}
 const conditionalAudit = fs.readFileSync(
   path.join(root, "docs/conditional-wrappers.md"),
   "utf8",

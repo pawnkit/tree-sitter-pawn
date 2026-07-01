@@ -66,6 +66,24 @@ recovery rather than valid syntax. Before the breaking migration, either find a
 real source shape for each node and add it to the corpus, or remove the unreachable
 alternative with parser-size and external-fixture measurements.
 
+## Normalization for downstream tools
+
+These nodes remain stable public API for the current release. A formatter or
+refactoring tool can normalize them into the following internal categories without
+discarding their concrete node names:
+
+| Tool category | Public nodes | Source pattern and handling |
+| --- | --- | --- |
+| Conditional statement | `conditional_else_statement`, `conditional_else_expression_statement`, `conditional_else_if_branch_statement`, `conditional_else_if_statement`, `conditional_if_else_if_statement`, `conditional_if_else_statement`, `conditional_if_statement` | Directives select ordinary statement, expression-statement, or `if`/`else` branches. Format each named branch independently. |
+| Conditional block | `conditional_else_block_statement`, `conditional_if_block_statement`, `conditional_if_else_block_statement`, `conditional_if_split_wrapped_else_statement`, `conditional_if_wrapped_else_statement` | Directives divide a block header, brace, close, or attached `else`. Preserve brace ownership and directive order exactly. |
+| Conditional loop | `conditional_loop_fallback_statement`, `conditional_loop_statement`, `conditional_loop_variant_statement`, `loop_body_conditional_if_statement` | Directives select loop headers, complete loop variants, fallbacks, or statements inside a shared body. Never hoist the shared body into one branch. |
+| Conditional function | `conditional_function_definition` | Directives select function signatures before a shared body. Format signatures as branches and the body once. |
+| Conditional list | Generated context-specific list wrappers for arguments, parameters, enum entries, array literals, and declarators | Commas may sit inside or outside directive branches. Preserve the existing separator side until a formatter can prove a normalized form reparses to the same list. |
+
+For every category, retain `preproc_if`/`preproc_elseif`/`preproc_else`/
+`preproc_endif` as hard formatting boundaries. Named fields such as `consequence`,
+`elseif`, `alternative`, `signature`, and `body` are preferable to child indexes.
+
 ## Migration strategy
 
 This should be a versioned, breaking-tree project rather than an ordinary fix.

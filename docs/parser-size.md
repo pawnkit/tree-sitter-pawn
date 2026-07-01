@@ -1,12 +1,12 @@
 # Generated parser size
 
 Run `npm run diagnose:parser` after generation to print the size and line count
-of `src/parser.c`. As of July 2026, Tree-sitter CLI 0.25.10 generates a 57 MiB
-file with 1,772,780 lines. Its generated constants are:
+of `src/parser.c`. As of July 2026, Tree-sitter CLI 0.25.10 generates a 56 MiB
+file with 1,750,123 lines. Its generated constants are:
 
 ```text
-STATE_COUNT 31260
-SYMBOL_COUNT 498
+STATE_COUNT 30932
+SYMBOL_COUNT 501
 ALIAS_COUNT 0
 TOKEN_COUNT 140
 ```
@@ -48,6 +48,12 @@ call received a generic invocation recovery path. Corpus and query tests passed,
 as did all 45 external fixtures. The result was an increase of 148 states and
 7,918 generated lines, so the change was retained for correctness but not as a
 size optimization.
+
+Adding `_declaration` and `_directive` allowed top-level alternatives to share
+categories. With all corpus and query tests passing, the parser fell from 31,260
+to 30,932 states and from 1,772,780 to 1,750,123 lines. The three additional
+symbols are the two supertypes and supporting generated metadata. This reduction
+is retained because it improves both tooling and parser size.
 
 History provides a second useful isolation point. Commit `13e350e` introduced the
 context-specific conditional families and moved the parser from 6,061 to 26,144
