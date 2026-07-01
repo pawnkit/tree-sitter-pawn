@@ -18,9 +18,6 @@ const externalOnlyNodes = new Set([
   "conditional_else_block_statement",
   "conditional_else_if_statement",
   "conditional_else_statement",
-  "conditional_if_else_statement",
-  "conditional_loop_variant_statement",
-  "loop_body_conditional_if_statement",
 ]);
 
 const requiredPublicNodes = [

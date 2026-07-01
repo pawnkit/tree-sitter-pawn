@@ -26,10 +26,14 @@ These wrappers are part of the current public tree:
 | `conditional_loop_variant_statement` | Directives select complete loop variants. | Conditional loop branch. |
 | `loop_body_conditional_if_statement` | Directives select `if` statements inside a shared loop body. | Conditional loop branch. |
 
-Eleven wrappers have direct reduced corpus assertions. The six additional wrappers
-listed above are exercised by the external compatibility suite; removing them
-causes a full-file recovery failure in `nex-ac`. They remain explicit exceptions in
-the node-alignment test until their real-world trigger is reduced into the corpus.
+Fourteen wrappers have direct reduced corpus assertions. Three alternatives remain
+explicit exceptions in the node-alignment test because no stable valid-source
+trigger has yet been isolated. They are nevertheless structurally required:
+removing only those three causes a file-wide recovery failure in
+`ultimate-creator`. Removing all six formerly unproven wrappers similarly broke
+`nex-ac`, which led to the three reductions in
+`test/corpus/external_reductions.txt`. An alternative can therefore affect parse
+selection even when its node does not appear in the successful final tree.
 
 ## Guidance for tools
 

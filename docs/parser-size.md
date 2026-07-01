@@ -61,6 +61,12 @@ An experiment removing six conditional wrapper alternatives reduced the parser t
 is unused. Reducing that real-world trigger is a prerequisite to simplifying these
 wrappers safely.
 
+A follow-up removed only the three alternatives with no observed final-tree node.
+That parser passed the local corpus at 30,126 states, but `ultimate-creator` became
+one file-wide `ERROR`. The alternatives were restored. Future conditional cleanup
+must compare full parse behavior, not just count which node types appear in a
+successful tree.
+
 History provides a second useful isolation point. Commit `13e350e` introduced the
 context-specific conditional families and moved the parser from 6,061 to 26,144
 states. Later changes to macro shapes account for a much smaller fraction. This is
