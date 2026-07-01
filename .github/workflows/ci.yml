@@ -29,3 +29,6 @@ jobs:
 
       - name: Verify publish tarball
         run: npm run pack:check
+
+      - name: Verify packaging did not change generated artifacts
+        run: git diff --exit-code
