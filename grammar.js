@@ -134,6 +134,7 @@ module.exports = grammar({
   ],
 
   rules: {
+    // Root and top-level forms
     source_file: ($) => repeat($._top_level_item),
 
     _top_level_item: ($) =>
@@ -218,6 +219,7 @@ module.exports = grammar({
 
     _block_conditional_item_base: ($) => blockStatementBaseChoice($),
 
+    // Function and declaration forms
     function_definition: ($) => functionDefinitionWithBody($, $._function_body),
 
     top_level_shared_tail_function_branch: ($) =>
@@ -605,6 +607,7 @@ module.exports = grammar({
         optional(seq("=", field("value", $._expression))),
       ),
 
+    // Types and tags
     tagged_type: ($) =>
       seq(
         field("tag", choice($.identifier, $.tag_wildcard)),
@@ -637,6 +640,7 @@ module.exports = grammar({
 
     packed_storage: ($) => "char",
 
+    // Statements and conditional statement layouts
     block: ($) => seq("{", repeat($._block_statement), "}"),
 
     _top_level_conditional_block: ($) =>
@@ -1302,6 +1306,7 @@ module.exports = grammar({
         ),
       ),
 
+    // Expressions and literals
     _expression: ($) => choice($._expression_not_binary, $.binary_expression),
 
     _statement_expression: ($) =>
@@ -1796,6 +1801,7 @@ module.exports = grammar({
         conditionalNoComma: $._array_literal_conditional_no_comma,
       }),
 
+    // Preprocessor directives
     preproc_include: ($) => includeDirective($, "include"),
 
     preproc_tryinclude: ($) => includeDirective($, "tryinclude"),
@@ -1877,6 +1883,7 @@ module.exports = grammar({
         ),
       ),
 
+    // Macro replacement and recovery shapes
     macro_replacement: ($) => $._macro_item,
 
     _macro_item: ($) =>
@@ -2824,6 +2831,7 @@ module.exports = grammar({
 
     operator_symbol: () => operatorSymbol(),
 
+    // Lexical tokens
     identifier: ($) => /[A-Za-z_][A-Za-z0-9_]*(?:@+[A-Za-z0-9_]*)*/,
 
     comment: ($) =>
