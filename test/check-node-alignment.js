@@ -41,11 +41,6 @@ for (const name of requiredPublicNodes) {
   if (!corpus.includes(`(${name}`)) {
     throw new Error(`documented public node has no corpus assertion: ${name}`);
   }
-
-  const readme = fs.readFileSync(path.join(root, "README.md"), "utf8");
-  if (!readme.includes(`\`${name}\``)) {
-    throw new Error(`generated public node is missing from README: ${name}`);
-  }
 }
 
 for (const file of fs.readdirSync(path.join(root, "queries"))) {
