@@ -15,4 +15,6 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: npm run generate
+      - run: git diff --exit-code
       - run: npm run check:external
