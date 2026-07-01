@@ -1846,14 +1846,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "conditional_else_block_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_else_statement"
-        },
-        {
-          "type": "SYMBOL",
           "name": "conditional_else_if_branch_statement"
         },
         {
@@ -1899,10 +1891,6 @@
         {
           "type": "SYMBOL",
           "name": "conditional_loop_fallback_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_loop_variant_statement"
         },
         {
           "type": "SYMBOL",
@@ -5267,14 +5255,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "conditional_else_block_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_else_statement"
-        },
-        {
-          "type": "SYMBOL",
           "name": "conditional_if_block_statement"
         },
         {
@@ -5308,10 +5288,6 @@
         {
           "type": "SYMBOL",
           "name": "conditional_loop_fallback_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_loop_variant_statement"
         },
         {
           "type": "SYMBOL",
@@ -5505,14 +5481,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "conditional_else_block_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_else_statement"
-        },
-        {
-          "type": "SYMBOL",
           "name": "conditional_else_if_branch_statement"
         },
         {
@@ -5554,10 +5522,6 @@
         {
           "type": "SYMBOL",
           "name": "conditional_loop_fallback_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_loop_variant_statement"
         },
         {
           "type": "SYMBOL",
@@ -5741,14 +5705,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "conditional_else_block_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_else_statement"
-        },
-        {
-          "type": "SYMBOL",
           "name": "conditional_else_if_branch_statement"
         },
         {
@@ -5794,10 +5750,6 @@
         {
           "type": "SYMBOL",
           "name": "conditional_loop_fallback_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_loop_variant_statement"
         },
         {
           "type": "SYMBOL",
@@ -5981,14 +5933,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "conditional_else_block_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_else_statement"
-        },
-        {
-          "type": "SYMBOL",
           "name": "conditional_else_if_branch_statement"
         },
         {
@@ -6034,10 +5978,6 @@
         {
           "type": "SYMBOL",
           "name": "conditional_loop_fallback_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_loop_variant_statement"
         },
         {
           "type": "SYMBOL",
@@ -6228,14 +6168,6 @@
           },
           {
             "type": "SYMBOL",
-            "name": "conditional_else_block_statement"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "conditional_else_statement"
-          },
-          {
-            "type": "SYMBOL",
             "name": "conditional_else_if_branch_statement"
           },
           {
@@ -6281,10 +6213,6 @@
           {
             "type": "SYMBOL",
             "name": "conditional_loop_fallback_statement"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "conditional_loop_variant_statement"
           },
           {
             "type": "SYMBOL",
@@ -6461,14 +6389,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "conditional_else_block_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_else_statement"
-        },
-        {
-          "type": "SYMBOL",
           "name": "conditional_else_if_branch_statement"
         },
         {
@@ -6510,10 +6430,6 @@
         {
           "type": "SYMBOL",
           "name": "conditional_loop_fallback_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_loop_variant_statement"
         },
         {
           "type": "SYMBOL",
@@ -7215,79 +7131,6 @@
                 }
               ]
             }
-          },
-          {
-            "type": "SYMBOL",
-            "name": "preproc_endif"
-          }
-        ]
-      }
-    },
-    "conditional_else_statement": {
-      "type": "PREC_RIGHT",
-      "value": 1,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "preproc_if"
-          },
-          {
-            "type": "STRING",
-            "value": "else"
-          },
-          {
-            "type": "FIELD",
-            "name": "alternative",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_statement"
-            }
-          },
-          {
-            "type": "SYMBOL",
-            "name": "preproc_endif"
-          }
-        ]
-      }
-    },
-    "conditional_else_block_statement": {
-      "type": "PREC_RIGHT",
-      "value": 1,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "preproc_if"
-          },
-          {
-            "type": "STRING",
-            "value": "else"
-          },
-          {
-            "type": "STRING",
-            "value": "{"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "preproc_endif"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_statement"
-            }
-          },
-          {
-            "type": "SYMBOL",
-            "name": "preproc_if"
-          },
-          {
-            "type": "STRING",
-            "value": "}"
           },
           {
             "type": "SYMBOL",
@@ -8148,76 +7991,6 @@
         ]
       }
     },
-    "conditional_loop_variant_statement": {
-      "type": "PREC_RIGHT",
-      "value": 1,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "preproc_if"
-          },
-          {
-            "type": "FIELD",
-            "name": "consequence",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_direct_loop_statement_variant"
-            }
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "preproc_elseif"
-                },
-                {
-                  "type": "FIELD",
-                  "name": "elseif",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_direct_loop_statement_variant"
-                  }
-                }
-              ]
-            }
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "preproc_else"
-                  },
-                  {
-                    "type": "FIELD",
-                    "name": "alternative",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_loop_statement_variant"
-                    }
-                  }
-                ]
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "SYMBOL",
-            "name": "preproc_endif"
-          }
-        ]
-      }
-    },
     "conditional_loop_statement": {
       "type": "PREC_RIGHT",
       "value": 1,
@@ -8309,14 +8082,6 @@
         {
           "type": "SYMBOL",
           "name": "variable_declaration"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_else_block_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_else_statement"
         },
         {
           "type": "SYMBOL",
@@ -8429,36 +8194,6 @@
         {
           "type": "SYMBOL",
           "name": "preproc_endinput"
-        }
-      ]
-    },
-    "_direct_loop_statement_variant": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_loop_header"
-        },
-        {
-          "type": "FIELD",
-          "name": "body",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_nonblock_statement"
-          }
-        }
-      ]
-    },
-    "_loop_statement_variant": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_direct_loop_statement_variant"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "loop_header_selection_statement"
         }
       ]
     },
@@ -9241,10 +8976,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "conditional_else_statement"
-        },
-        {
-          "type": "SYMBOL",
           "name": "if_statement"
         },
         {
@@ -9254,10 +8985,6 @@
         {
           "type": "SYMBOL",
           "name": "conditional_loop_fallback_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "conditional_loop_variant_statement"
         },
         {
           "type": "SYMBOL",
@@ -18583,14 +18310,6 @@
     [
       "if_statement",
       "_if_header"
-    ],
-    [
-      "_statement",
-      "_conditional_else_expression_branch"
-    ],
-    [
-      "_statement",
-      "_conditional_else_if_branch"
     ],
     [
       "_loop_header",

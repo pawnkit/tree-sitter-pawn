@@ -98,8 +98,6 @@ module.exports = grammar({
     ]),
     [$._top_level_conditional_block, $._top_level_shared_tail_function_block],
     [$.if_statement, $._if_header],
-    [$._statement, $._conditional_else_expression_branch],
-    [$._statement, $._conditional_else_if_branch],
     [$._loop_header, $.macro_iterator_loop_statement],
     [$._loop_header, $.for_statement],
     [$._sizeof_subscript_expression, $.subscript_expression],
@@ -858,32 +856,6 @@ module.exports = grammar({
         ],
       }),
 
-    conditional_else_statement: ($) =>
-      prec.right(
-        1,
-        seq(
-          $.preproc_if,
-          "else",
-          field("alternative", $._statement),
-          $.preproc_endif,
-        ),
-      ),
-
-    conditional_else_block_statement: ($) =>
-      prec.right(
-        1,
-        seq(
-          $.preproc_if,
-          "else",
-          "{",
-          $.preproc_endif,
-          repeat($._statement),
-          $.preproc_if,
-          "}",
-          $.preproc_endif,
-        ),
-      ),
-
     conditional_else_expression_statement: directiveBranchChain({
       dynamicPrecedence: 2,
       ifBuilder: ($) =>
@@ -1053,12 +1025,6 @@ module.exports = grammar({
       elseBuilder: ($) => repeat1(field("alternative", $._statement)),
     }),
 
-    conditional_loop_variant_statement: directiveBranchChain({
-      ifBuilder: ($) => field("consequence", $._direct_loop_statement_variant),
-      elseifBuilder: ($) => field("elseif", $._direct_loop_statement_variant),
-      elseBuilder: ($) => field("alternative", $._loop_statement_variant),
-    }),
-
     conditional_loop_statement: directiveBranchChain({
       ifBuilder: ($) => field("consequence", $._direct_loop_preamble),
       elseifBuilder: ($) => field("elseif", $._direct_loop_preamble),
@@ -1067,15 +1033,6 @@ module.exports = grammar({
     }),
 
     _loop_body_statement: ($) => loopBodyStatementChoice($),
-
-    _direct_loop_statement_variant: ($) =>
-      seq($._loop_header, field("body", $._nonblock_statement)),
-
-    _loop_statement_variant: ($) =>
-      choice(
-        $._direct_loop_statement_variant,
-        $.loop_header_selection_statement,
-      ),
 
     loop_header_selection_statement: ($) =>
       directiveSignatureChain($, {
@@ -1224,11 +1181,9 @@ module.exports = grammar({
         $.assert_statement,
         $.exit_statement,
         $.sleep_statement,
-        $.conditional_else_statement,
         $.if_statement,
         $.switch_statement,
         $.conditional_loop_fallback_statement,
-        $.conditional_loop_variant_statement,
         $.conditional_loop_statement,
         $.while_statement,
         $.macro_iterator_loop_statement,
@@ -3279,8 +3234,6 @@ function statementChoice(
       $._incomplete_macro_invocation_statement,
       $.macro_invocation_statement,
     ),
-    $.conditional_else_block_statement,
-    $.conditional_else_statement,
     ...(includeConditionalElseIfBranch
       ? [$.conditional_else_if_branch_statement]
       : []),
@@ -3297,7 +3250,6 @@ function statementChoice(
     $.if_statement,
     $.switch_statement,
     $.conditional_loop_fallback_statement,
-    $.conditional_loop_variant_statement,
     $.conditional_loop_statement,
     $.while_statement,
     $.macro_iterator_loop_statement,
@@ -3337,8 +3289,6 @@ function loopBodyStatementChoice($) {
   return choice(
     $.block,
     $.variable_declaration,
-    $.conditional_else_block_statement,
-    $.conditional_else_statement,
     $.if_statement,
     $.switch_statement,
     $.loop_body_conditional_if_statement,

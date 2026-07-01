@@ -14,12 +14,7 @@ const corpus = fs
 const assertedNodes = new Set(
   [...corpus.matchAll(/\(([A-Za-z_][A-Za-z0-9_]*)/g)].map((match) => match[1]),
 );
-const externalOnlyNodes = new Set([
-  "conditional_else_block_statement",
-  "conditional_else_if_statement",
-  "conditional_else_statement",
-  "conditional_loop_variant_statement",
-]);
+const externalOnlyNodes = new Set(["conditional_else_if_statement"]);
 
 const requiredPublicNodes = [
   "prefixed_function_declaration",

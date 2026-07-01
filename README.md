@@ -38,10 +38,6 @@ External compatibility fixtures are kept separate from the normal test suite:
 npm run check:external
 ```
 
-Parser-size findings and the future conditional-wrapper migration are documented
-in [docs/parser-size.md](docs/parser-size.md) and
-[docs/conditional-wrappers.md](docs/conditional-wrappers.md).
-
 ## Limitations
 
 - Macro expansion and semantic analysis are out of scope.
