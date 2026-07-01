@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
-ROOT="$REPO_ROOT/test/external"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
+ROOT="$SCRIPT_DIR"
 DOWNLOADS="$REPO_ROOT/.fixtures/pawn-projects"
 CONFIG="$ROOT/tree-sitter-config.json"
 
@@ -30,7 +31,7 @@ for file in "${files[@]}"; do
     file_failed=1
   fi
 
-  if rg -q 'ERROR|MISSING' "$tmp_output"; then
+  if grep -Eq 'ERROR|MISSING' "$tmp_output"; then
     file_failed=1
   fi
 

@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
-ROOT="$REPO_ROOT/test/external"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
+ROOT="$SCRIPT_DIR"
 MANIFEST="$ROOT/sources.tsv"
 DOWNLOADS="$REPO_ROOT/.fixtures/pawn-projects"
 
