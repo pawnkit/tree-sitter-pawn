@@ -1,0 +1,95 @@
+=============================
+comments in formatter positions
+=============================
+
+// leading function comment
+stock Foo() {}
+
+new value; // trailing variable comment
+
+/*
+ * block comment before enum
+ */
+enum Kind {
+    Kind_A,
+    Kind_B
+}
+
+stock UseComments() {
+    Call(
+        a, // first argument
+        b  // second argument
+    );
+
+    new values[] = {
+        1, // one
+        2  // two
+    };
+}
+
+#if defined FEATURE
+// enabled branch
+stock Enabled() {}
+#else
+// disabled branch
+stock Disabled() {}
+#endif
+
+---
+
+(source_file
+  (comment)
+  (function_definition
+    (identifier)
+    (parameter_list)
+    (block))
+  (variable_declaration
+    (variable_declarator
+      (identifier)))
+  (comment)
+  (comment)
+  (enum_declaration
+    (identifier)
+    (enum_entry
+      (identifier))
+    (enum_entry
+      (identifier)))
+  (function_definition
+    (identifier)
+    (parameter_list)
+    (block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (identifier)
+            (comment)
+            (identifier)
+            (comment))))
+      (variable_declaration
+        (variable_declarator
+          (identifier)
+          (dimension)
+          (array_literal
+            (integer_literal)
+            (comment)
+            (integer_literal)
+            (comment))))))
+  (top_level_conditional
+    (preproc_if
+      (preproc_expression
+        (preproc_defined
+          (identifier))))
+    (comment)
+    (function_definition
+      (identifier)
+      (parameter_list)
+      (block))
+    (top_level_else
+      (preproc_else)
+      (comment)
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (block)))
+    (preproc_endif)))

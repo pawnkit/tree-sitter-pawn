@@ -1,0 +1,67 @@
+====================================
+semicolon and newline terminated forms
+====================================
+
+stock bool:Same(const left[], const right[])
+    return strcmp(left, right) == 0
+
+stock SetMode()
+    state Running
+
+stock Calls() {
+    CallSomething()
+    CallSomethingElse();
+}
+
+#define MULTI_LINE(%0) \
+    Call(%0)
+
+---
+
+(source_file
+  (function_definition
+    (tagged_type
+      (identifier))
+    (identifier)
+    (parameter_list
+      (parameter_declaration
+        (identifier)
+        (dimension))
+      (parameter_declaration
+        (identifier)
+        (dimension)))
+    (return_statement
+      (binary_expression
+        (call_expression
+          (identifier)
+          (argument_list
+            (identifier)
+            (identifier)))
+        (integer_literal))))
+  (function_definition
+    (identifier)
+    (parameter_list)
+    (state_statement
+      (state_name)))
+  (function_definition
+    (identifier)
+    (parameter_list)
+    (block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list)))
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list)))))
+  (preproc_define
+    (identifier)
+    (macro_parameter_list
+      (macro_parameter))
+    (macro_replacement
+      (preproc_expression
+        (preproc_call_expression
+          (identifier)
+          (preproc_expression
+            (macro_parameter)))))))
