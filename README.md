@@ -61,7 +61,3 @@ in [docs/parser-size.md](docs/parser-size.md) and
 - Macro expansion and semantic analysis are out of scope.
 - Ambiguous macro replacement bodies may remain as `preproc_text`.
 - Deeply interleaved preprocessor branches may require error recovery.
-
-## License
-
-MIT
