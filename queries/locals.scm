@@ -18,8 +18,8 @@
     name: (identifier) @local.definition))
 
 ; References
-; Definitions may also match this broad reference pattern. Tree-sitter's locals
-; consumer uses the more specific definition capture to classify them, while this
-; pattern keeps references working in every expression position without an
-; ever-growing enumeration of expression node shapes.
+; This is a lexical reference candidate, not semantic name resolution. Definitions
+; may also match; locals consumers use the more specific definition capture and
+; scope information to classify them. Linters and LSPs should resolve identifiers
+; from the syntax tree rather than treating every capture as a proven variable use.
 (identifier) @local.reference
