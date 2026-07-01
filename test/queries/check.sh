@@ -32,7 +32,10 @@ check_query() {
 
 cd "$ROOT"
 check_query queries/highlights.scm test/queries/highlights.pwn \
-  'preproc=#define DOUBLE(%0) ((%0) * 2)' function.macro=DOUBLE 'parameter=%0' \
+  'preproc=#define DOUBLE(%0) ((%0) * 2)' 'preproc=#include <core>' \
+  'preproc=#tryinclude "optional"' 'preproc=#if defined FEATURE' \
+  'preproc=#elseif defined FALLBACK' 'preproc=#else' 'preproc=#endif' \
+  attribute=unused function.macro=DOUBLE 'parameter=%0' \
   type=Float function=scale function=operator+ function=@Callback function=Func \
   variable.parameter=value variable=result function.call=DOUBLE function.call=Callback \
   function.call=handlers
