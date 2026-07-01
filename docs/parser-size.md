@@ -55,6 +55,12 @@ to 30,932 states and from 1,772,780 to 1,750,123 lines. The three additional
 symbols are the two supertypes and supporting generated metadata. This reduction
 is retained because it improves both tooling and parser size.
 
+An experiment removing six conditional wrapper alternatives reduced the parser to
+29,407 states, but was rejected because `nex-ac` then parsed as one file-wide
+`ERROR`. This confirms that corpus absence is not proof that a recovery alternative
+is unused. Reducing that real-world trigger is a prerequisite to simplifying these
+wrappers safely.
+
 History provides a second useful isolation point. Commit `13e350e` introduced the
 context-specific conditional families and moved the parser from 6,061 to 26,144
 states. Later changes to macro shapes account for a much smaller fraction. This is
