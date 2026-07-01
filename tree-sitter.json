@@ -19,7 +19,6 @@
         "description": "Tree-sitter grammar for classic Pawn v3 as used by SA-MP/open.mp"
     },
     "bindings": {
-        "c": true,
-        "go": true
+        "c": true
     }
 }
