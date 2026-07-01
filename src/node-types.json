@@ -1,5 +1,101 @@
 [
   {
+    "type": "_declaration",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "enum_declaration",
+        "named": true
+      },
+      {
+        "type": "function_declaration",
+        "named": true
+      },
+      {
+        "type": "function_definition",
+        "named": true
+      },
+      {
+        "type": "prefixed_function_declaration",
+        "named": true
+      },
+      {
+        "type": "variable_declaration",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "_directive",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "preproc_assert",
+        "named": true
+      },
+      {
+        "type": "preproc_define",
+        "named": true
+      },
+      {
+        "type": "preproc_else",
+        "named": true
+      },
+      {
+        "type": "preproc_elseif",
+        "named": true
+      },
+      {
+        "type": "preproc_emit",
+        "named": true
+      },
+      {
+        "type": "preproc_endif",
+        "named": true
+      },
+      {
+        "type": "preproc_endinput",
+        "named": true
+      },
+      {
+        "type": "preproc_error",
+        "named": true
+      },
+      {
+        "type": "preproc_file",
+        "named": true
+      },
+      {
+        "type": "preproc_if",
+        "named": true
+      },
+      {
+        "type": "preproc_include",
+        "named": true
+      },
+      {
+        "type": "preproc_line",
+        "named": true
+      },
+      {
+        "type": "preproc_pragma",
+        "named": true
+      },
+      {
+        "type": "preproc_tryinclude",
+        "named": true
+      },
+      {
+        "type": "preproc_undef",
+        "named": true
+      },
+      {
+        "type": "preproc_warning",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "_expression",
     "named": true,
     "subtypes": [
@@ -10391,75 +10487,19 @@
       "required": false,
       "types": [
         {
+          "type": "_declaration",
+          "named": true
+        },
+        {
+          "type": "_directive",
+          "named": true
+        },
+        {
           "type": "conditional_function_definition",
           "named": true
         },
         {
-          "type": "enum_declaration",
-          "named": true
-        },
-        {
-          "type": "function_declaration",
-          "named": true
-        },
-        {
-          "type": "function_definition",
-          "named": true
-        },
-        {
           "type": "macro_invocation_statement",
-          "named": true
-        },
-        {
-          "type": "prefixed_function_declaration",
-          "named": true
-        },
-        {
-          "type": "preproc_assert",
-          "named": true
-        },
-        {
-          "type": "preproc_define",
-          "named": true
-        },
-        {
-          "type": "preproc_emit",
-          "named": true
-        },
-        {
-          "type": "preproc_endinput",
-          "named": true
-        },
-        {
-          "type": "preproc_error",
-          "named": true
-        },
-        {
-          "type": "preproc_file",
-          "named": true
-        },
-        {
-          "type": "preproc_include",
-          "named": true
-        },
-        {
-          "type": "preproc_line",
-          "named": true
-        },
-        {
-          "type": "preproc_pragma",
-          "named": true
-        },
-        {
-          "type": "preproc_tryinclude",
-          "named": true
-        },
-        {
-          "type": "preproc_undef",
-          "named": true
-        },
-        {
-          "type": "preproc_warning",
           "named": true
         },
         {
@@ -10468,10 +10508,6 @@
         },
         {
           "type": "top_level_shared_tail_function_branch",
-          "named": true
-        },
-        {
-          "type": "variable_declaration",
           "named": true
         }
       ]

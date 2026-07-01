@@ -71,6 +71,7 @@ module.exports = grammar({
   ],
 
   conflicts: ($) => [
+    [$._directive, $.top_level_conditional],
     [$._declaration_qualifier, $._function_modifier],
     [$._function_modifier, $.variable_declaration],
     [$._callback_named_identifier, $.variable_declarator],
@@ -128,6 +129,8 @@ module.exports = grammar({
   supertypes: ($) => [
     $._expression,
     $._statement,
+    $._declaration,
+    $._directive,
     $._type,
     $._literal,
     $._preproc_expression,
@@ -137,28 +140,17 @@ module.exports = grammar({
     // Root and top-level forms
     source_file: ($) => repeat($._top_level_item),
 
-    _top_level_item: ($) =>
+    _declaration: ($) =>
       choice(
-        $.top_level_shared_tail_function_branch,
-        $.top_level_conditional,
-        $._top_level_item_base,
-        $.conditional_function_definition,
+        $.function_definition,
+        $.function_declaration,
+        $.prefixed_function_declaration,
+        $.variable_declaration,
+        $.enum_declaration,
       ),
 
-    _top_level_item_base: ($) =>
-      choice($.function_definition, $._top_level_nonfunction_item),
-
-    _top_level_nonfunction_item: ($) =>
+    _directive: ($) =>
       choice(
-        $.prefixed_function_declaration,
-        $.macro_invocation_statement,
-        alias(
-          $._incomplete_macro_invocation_statement,
-          $.macro_invocation_statement,
-        ),
-        $.function_declaration,
-        $.enum_declaration,
-        $.variable_declaration,
         $.preproc_include,
         $.preproc_tryinclude,
         $.preproc_define,
@@ -171,6 +163,45 @@ module.exports = grammar({
         $.preproc_line,
         $.preproc_file,
         $.preproc_endinput,
+        $.preproc_if,
+        $.preproc_elseif,
+        $.preproc_else,
+        $.preproc_endif,
+      ),
+
+    _top_level_item: ($) =>
+      choice(
+        $.top_level_shared_tail_function_branch,
+        $.top_level_conditional,
+        $._top_level_item_base,
+        $.conditional_function_definition,
+      ),
+
+    _top_level_item_base: ($) =>
+      choice($._declaration, $._top_level_nonfunction_item),
+
+    _top_level_nonfunction_item: ($) =>
+      choice(
+        $.macro_invocation_statement,
+        alias(
+          $._incomplete_macro_invocation_statement,
+          $.macro_invocation_statement,
+        ),
+        $._directive,
+      ),
+
+    _top_level_conditional_nonfunction_item: ($) =>
+      choice(
+        $.prefixed_function_declaration,
+        $.function_declaration,
+        $.enum_declaration,
+        $.variable_declaration,
+        $.macro_invocation_statement,
+        alias(
+          $._incomplete_macro_invocation_statement,
+          $.macro_invocation_statement,
+        ),
+        ...nonBranchDirectiveStatementChoices($),
       ),
 
     ...directiveIfGroup(
@@ -211,7 +242,7 @@ module.exports = grammar({
           $.function_definition,
         ),
         $.conditional_function_definition,
-        $._top_level_nonfunction_item,
+        $._top_level_conditional_nonfunction_item,
       ),
 
     _block_conditional_item: ($) =>

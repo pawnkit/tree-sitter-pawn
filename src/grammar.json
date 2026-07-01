@@ -10,6 +10,100 @@
         "name": "_top_level_item"
       }
     },
+    "_declaration": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "function_definition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "function_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "prefixed_function_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "variable_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "enum_declaration"
+        }
+      ]
+    },
+    "_directive": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "preproc_include"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_tryinclude"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_define"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_emit"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_pragma"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_undef"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_assert"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_error"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_warning"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_line"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_file"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endinput"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_if"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_elseif"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_else"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_endif"
+        }
+      ]
+    },
     "_top_level_item": {
       "type": "CHOICE",
       "members": [
@@ -36,7 +130,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "function_definition"
+          "name": "_declaration"
         },
         {
           "type": "SYMBOL",
@@ -47,10 +141,6 @@
     "_top_level_nonfunction_item": {
       "type": "CHOICE",
       "members": [
-        {
-          "type": "SYMBOL",
-          "name": "prefixed_function_declaration"
-        },
         {
           "type": "SYMBOL",
           "name": "macro_invocation_statement"
@@ -66,6 +156,19 @@
         },
         {
           "type": "SYMBOL",
+          "name": "_directive"
+        }
+      ]
+    },
+    "_top_level_conditional_nonfunction_item": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "prefixed_function_declaration"
+        },
+        {
+          "type": "SYMBOL",
           "name": "function_declaration"
         },
         {
@@ -75,6 +178,19 @@
         {
           "type": "SYMBOL",
           "name": "variable_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "macro_invocation_statement"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_incomplete_macro_invocation_statement"
+          },
+          "named": true,
+          "value": "macro_invocation_statement"
         },
         {
           "type": "SYMBOL",
@@ -1662,7 +1778,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_top_level_nonfunction_item"
+          "name": "_top_level_conditional_nonfunction_item"
         }
       ]
     },
@@ -18117,6 +18233,10 @@
   ],
   "conflicts": [
     [
+      "_directive",
+      "top_level_conditional"
+    ],
+    [
       "_declaration_qualifier",
       "_function_modifier"
     ],
@@ -18323,6 +18443,8 @@
   "supertypes": [
     "_expression",
     "_statement",
+    "_declaration",
+    "_directive",
     "_type",
     "_literal",
     "_preproc_expression"
