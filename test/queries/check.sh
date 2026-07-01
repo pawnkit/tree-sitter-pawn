@@ -1,49 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 CONFIG="$ROOT/test/external/tree-sitter-config.json"
+TREE_SITTER="$ROOT/node_modules/.bin/tree-sitter"
 
-check_query() {
-  local query=$1
-  local fixture=$2
-  shift 2
-
-  local output
-  output=$(tree-sitter query --captures --config-path "$CONFIG" "$query" "$fixture")
-
-  local expectation capture source matches
-  for expectation in "$@"; do
-    capture=${expectation%%=*}
-    if [[ "$expectation" == *=* ]]; then
-      source=${expectation#*=}
-    else
-      source=""
-    fi
-    matches=$(grep -F -- "- $capture," <<<"$output" || true)
-    if [[ -z "$matches" ]] || \
-      { [[ -n "$source" ]] && ! grep -Fq -- "text: \`$source\`" <<<"$matches"; }; then
-      printf 'Missing @%s capture for %q from %s on %s\n' \
-        "$capture" "$source" "$query" "$fixture" >&2
-      exit 1
-    fi
-  done
-}
+tmp_output="$(mktemp)"
+trap 'rm -f "$tmp_output"' EXIT
 
 cd "$ROOT"
-check_query queries/highlights.scm test/queries/highlights.pwn \
-  'preproc=#define DOUBLE(%0) ((%0) * 2)' 'preproc=#include <core>' \
-  'preproc=#tryinclude "optional"' 'preproc=#if defined FEATURE' \
-  'preproc=#elseif defined FALLBACK' 'preproc=#else' 'preproc=#endif' \
-  attribute=unused function.macro=DOUBLE 'parameter=%0' \
-  type=Float function=scale function=operator+ function=@Callback function=Func \
-  variable.parameter=value variable=result function.call=DOUBLE function.call=Callback \
-  function.call=handlers
-check_query queries/locals.scm test/queries/locals.pwn \
-  local.scope local.definition=input local.definition=total \
-  local.reference=total
-check_query queries/tags.scm test/queries/tags.pwn \
-  definition.macro definition.function definition.type definition.constant \
-  definition.variable reference.call name=DOUBLE name=OnReady name=Status \
-  name=Status_Ready name=global_value name=operator+ name=@Callback name=Func \
-  name=Callback name=handlers
+for name in highlights locals tags; do
+  "$TREE_SITTER" query --captures --config-path "$CONFIG" \
+    "queries/$name.scm" "test/queries/$name.pwn" |
+    sed -n 's/^.* - \([^,]*\), start: \(([^)]*)\), end: \(([^)]*)\),.*/\1|\2|\3/p' \
+      >"$tmp_output"
+  diff -u "test/queries/$name.expected" "$tmp_output"
+done
