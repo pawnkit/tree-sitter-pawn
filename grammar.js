@@ -631,7 +631,15 @@ module.exports = grammar({
         item: $.enum_entry,
         conditional: $._enum_conditional,
         conditionalNoComma: $._enum_conditional_no_comma,
+        prefix: $._enum_entry_prefix,
       }),
+
+    _enum_entry_prefix: ($) =>
+      directiveListPrefix(
+        $._enum_entry_prefix,
+        $.enum_entry,
+        $._enum_conditional,
+      ),
 
     enum_entry: ($) =>
       seq(
@@ -1797,7 +1805,15 @@ module.exports = grammar({
         item: $._array_literal_item,
         conditional: $._array_literal_conditional,
         conditionalNoComma: $._array_literal_conditional_no_comma,
+        prefix: $._array_literal_item_prefix,
       }),
+
+    _array_literal_item_prefix: ($) =>
+      directiveListPrefix(
+        $._array_literal_item_prefix,
+        $._array_literal_item,
+        $._array_literal_conditional,
+      ),
 
     // Preprocessor directives
     preproc_include: ($) => includeDirective($, "include"),
@@ -3058,14 +3074,27 @@ function directiveListGroup(baseName, item) {
   };
 }
 
-function directiveListItems($, { item, conditional, conditionalNoComma }) {
-  return choice(
-    seq(
-      repeat(choice(seq(item, ","), conditional)),
-      choice(item, conditionalNoComma),
-    ),
-    repeat1(choice(seq(item, ","), conditional)),
-  );
+function directiveListItems(
+  $,
+  { item, conditional, conditionalNoComma, prefix = null },
+) {
+  if (prefix === null) {
+    return choice(
+      seq(
+        repeat(choice(seq(item, ","), conditional)),
+        choice(item, conditionalNoComma),
+      ),
+      repeat1(choice(seq(item, ","), conditional)),
+    );
+  }
+
+  const tail = choice(item, conditionalNoComma);
+  return choice(prefix, seq(prefix, tail), tail);
+}
+
+function directiveListPrefix(prefix, item, conditional) {
+  const part = choice(seq(item, ","), conditional);
+  return choice(part, seq(prefix, part));
 }
 
 function directiveListElseConflicts($, baseNames) {

@@ -26,6 +26,14 @@ if (/aux_sym_source_file_repeat\d+/.test(parser)) {
   );
 }
 
+for (const name of ["array_literal_items", "enum_entries"]) {
+  if (new RegExp(`aux_sym__${name}_repeat\\d+`).test(parser)) {
+    throw new Error(
+      `${name} must not use a generated repeat symbol; downstream GLR runtimes fork at every ordinary list item`,
+    );
+  }
+}
+
 for (const [name, actual] of Object.entries(measurements)) {
   if (actual > limits[name]) {
     throw new Error(`parser ${name} ${actual} exceeds budget ${limits[name]}`);
