@@ -120,6 +120,7 @@ module.exports = grammar({
     [$._prefixed_function_definition_signature, $.variable_declaration],
     [$.macro_iterator, $._expression],
     [$._macro_iterator_argument_list, $.macro_iterator],
+    [$._conditional_macro_iterator, $._new_macro_iterator],
   ],
 
   supertypes: ($) => [
@@ -1046,12 +1047,29 @@ module.exports = grammar({
     _loop_body_statement: ($) => loopBodyStatementChoice($),
 
     loop_header_selection_statement: ($) =>
-      directiveSignatureChain($, {
-        signature: field("signature", $._loop_header),
-        elseifSignature: field("elseif_signature", $._loop_header),
-        elseSignature: field("alternative_signature", $._loop_header),
-        tail: field("body", $.block),
-      }),
+      choice(
+        // Keep the common `#if foreach / #else for / #endif { ... }` shape
+        // independent from the complete macro-iterator statement reduction.
+        // Reusing `macro_iterator` here leaves some GLR runtimes with only a
+        // doomed statement path when the next token is `#else`.
+        prec.dynamic(
+          1,
+          seq(
+            $.preproc_if,
+            field("signature", $._conditional_macro_iterator_loop_header),
+            $.preproc_else,
+            field("alternative_signature", $._for_header),
+            $.preproc_endif,
+            field("body", $.block),
+          ),
+        ),
+        directiveSignatureChain($, {
+          signature: field("signature", $._loop_header),
+          elseifSignature: field("elseif_signature", $._loop_header),
+          elseSignature: field("alternative_signature", $._loop_header),
+          tail: field("body", $.block),
+        }),
+      ),
 
     _direct_loop_preamble: ($) =>
       seq($._loop_header, "{", repeat($._loop_body_statement)),
@@ -1103,6 +1121,26 @@ module.exports = grammar({
         "(",
         field("iterator", $.macro_iterator),
         ")",
+      ),
+
+    _conditional_macro_iterator_loop_header: ($) =>
+      seq(
+        field("name", $.identifier),
+        "(",
+        field(
+          "iterator",
+          alias($._conditional_macro_iterator, $.macro_iterator),
+        ),
+        ")",
+      ),
+
+    _conditional_macro_iterator: ($) =>
+      seq(
+        "new",
+        optional(field("type", $.tagged_type)),
+        field("name", $.identifier),
+        ":",
+        field("collection", $.identifier),
       ),
 
     macro_iterator_loop_statement: ($) =>

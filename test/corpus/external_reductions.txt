@@ -152,6 +152,61 @@ stock Check(value) {
             (argument_list
               (identifier))))))))
 
+=================================================
+conditional selection between foreach and for headers
+=================================================
+
+RemoveBuilding()
+{
+    if (x)
+    {
+        #if defined foreach
+        foreach(new i : Player)
+        #else
+        for(new i = 0; i >= 0; --i)
+        #endif
+        {
+            DoStuff(i);
+        }
+    }
+}
+
+---
+
+(source_file
+  (function_definition
+    (identifier)
+    (parameter_list)
+    (block
+      (if_statement
+        (identifier)
+        (block
+          (loop_header_selection_statement
+            (preproc_if
+              (preproc_expression
+                (preproc_defined
+                  (identifier))))
+            (identifier)
+            (macro_iterator
+              (identifier)
+              (identifier))
+            (preproc_else)
+            (variable_declarator
+              (identifier)
+              (integer_literal))
+            (binary_expression
+              (identifier)
+              (integer_literal))
+            (update_expression
+              (identifier))
+            (preproc_endif)
+            (block
+              (expression_statement
+                (call_expression
+                  (identifier)
+                  (argument_list
+                    (identifier)))))))))))
+
 ========================================
 conditional if inside a shared loop body
 ========================================
