@@ -14,14 +14,19 @@ const corpus = fs
 const assertedNodes = new Set(
   [...corpus.matchAll(/\(([A-Za-z_][A-Za-z0-9_]*)/g)].map((match) => match[1]),
 );
-const externalOnlyNodes = new Set(["conditional_else_if_statement"]);
+const externalOnlyNodes = new Set([
+  "block_elseif",
+  "preproc_tagged_constant",
+  "switch_item_conditional",
+  "switch_item_else",
+  "switch_item_elseif",
+]);
 
 const requiredPublicNodes = [
   "prefixed_function_declaration",
   "preproc_text",
-  "macro_replacement",
 ];
-for (const name of ["_declaration", "_directive"]) {
+for (const name of ["_declaration"]) {
   const node = nodeTypes.find((candidate) => candidate.type === name);
   if (!node?.subtypes?.length) {
     throw new Error(`missing or empty public supertype: ${name}`);

@@ -45,10 +45,14 @@ Legend: **parsed**, **recovery**, **opaque**, **unsupported**, or **non-goal**.
 - **Parsed:** `#include`, `#tryinclude`, `#define`, `#undef`, `#if`, `#elseif`,
   `#else`, `#endif`, `#assert`, `#error`, `#warning`, `#emit`, `#file`, `#line`,
   `#pragma`, `#endinput`, and line continuations.
-- **Parsed:** unambiguous structured replacements as `macro_replacement`.
-- **Opaque:** ambiguous or unsupported replacement text as `preproc_text`.
-- **Recovery:** conditionals that divide statements, functions, or lists use
-  public conditional wrapper nodes.
+- **Parsed:** common conditional expressions using `defined`, identifiers, literals,
+  tagged constants, parentheses, unary operators, and binary operators.
+- **Opaque:** replacement text is preserved as `preproc_text`; the grammar does not
+  attempt to interpret replacement programs.
+- **Parsed:** conditional regions containing complete top-level items, block
+  statements, switch items, or list elements.
+- **Recovery:** constructs assembled across multiple conditional branches may
+  contain localized recovery nodes; token-stream reconstruction is out of scope.
 
 ## Generic macro-shaped syntax
 

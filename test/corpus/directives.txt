@@ -29,31 +29,15 @@ directives
     path: (string_literal))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (integer_literal))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_parenthesized_expression
-          expression: (preproc_expression
-            (preproc_binary_expression
-              left: (preproc_expression
-                (preproc_parenthesized_expression
-                  expression: (preproc_expression
-                    (macro_parameter))))
-              right: (preproc_expression
-                (preproc_parenthesized_expression
-                  expression: (preproc_expression
-                    (macro_parameter))))))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (string_literal))))
+    value: (preproc_text))
   (preproc_undef
     name: (identifier))
   (preproc_assert
@@ -95,7 +79,7 @@ directives
     (preproc_endif)))
 
 =================================
-structured macro replacement forms
+opaque macro replacement forms
 =================================
 
 #define DIALOG_TITLE "Server"
@@ -125,88 +109,37 @@ structured macro replacement forms
 (source_file
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (string_literal))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_call_expression
-          function: (identifier)
-          (preproc_expression
-            (macro_parameter))
-          (preproc_expression
-            (hex_literal))
-          (preproc_expression
-            (macro_parameter))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_assignment_expression
-          left: (preproc_subscript_expression
-            array: (macro_parameter)
-            index: (preproc_expression
-              (macro_parameter)))
-          right: (preproc_expression
-            (macro_parameter))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_sizeof_expression
-          argument: (preproc_expression
-            (macro_parameter))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      expression: (preproc_expression
-        (preproc_assignment_expression
-          left: (macro_parameter)
-          right: (preproc_expression
-            (macro_parameter))))
-      expression: (preproc_expression
-        (preproc_assignment_expression
-          left: (macro_parameter)
-          right: (preproc_expression
-            (macro_parameter))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_parenthesized_expression
-          expression: (preproc_expression
-            (preproc_tagged_expression
-              type: (tagged_type
-                tag: (tag_wildcard))
-              value: (preproc_unary_expression
-                argument: (preproc_expression
-                  (integer_literal)))))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_parenthesized_expression
-          expression: (preproc_expression
-            (preproc_tagged_expression
-              type: (tagged_type
-                tag: (tag_wildcard))
-              value: (preproc_unary_expression
-                argument: (preproc_expression
-                  (integer_literal)))))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (complex_macro_parameter_list
@@ -239,27 +172,13 @@ structured macro replacement forms
     value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_tag_set
-          (identifier)
-          (identifier)))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression_list
-        left: (preproc_expression
-          (identifier))
-        right: (preproc_expression
-          (identifier)))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression_list
-        left: (preproc_expression
-          (tag_wildcard))
-        right: (preproc_expression
-          (identifier)))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
@@ -270,85 +189,23 @@ structured macro replacement forms
     value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_parenthesized_expression
-          expression: (preproc_expression
-            (preproc_tagged_expression
-              type: (tagged_type
-                tag: (tag_wildcard))
-              value: (macro_at_identifier
-                (identifier))))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_parenthesized_expression
-          expression: (preproc_expression
-            (preproc_tagged_expression
-              type: (tagged_type
-                tag: (tag_wildcard))
-              value: (preproc_tagged_expression
-                type: (tagged_type
-                  tag: (macro_at_identifier
-                    (identifier)))
-                value: (preproc_tagged_expression
-                  type: (tagged_type
-                    tag: (macro_at_identifier
-                      (identifier)))
-                  value: (preproc_parenthesized_expression
-                    expression: (preproc_expression
-                      (macro_parameter)))))))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_parenthesized_expression
-          expression: (preproc_expression
-            (preproc_tagged_expression
-              type: (tagged_type
-                tag: (tag_wildcard))
-              value: (preproc_tagged_expression
-                type: (tagged_type
-                  tag: (identifier))
-                value: (preproc_tagged_expression
-                  type: (tagged_type
-                    tag: (identifier))
-                  value: (preproc_member_expression
-                    object: (macro_parameter)
-                    property: (preproc_dollar_expression
-                      argument: (integer_literal)))))))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_parenthesized_expression
-          expression: (preproc_expression
-            (preproc_call_expression
-              function: (identifier)
-              (preproc_expression
-                (preproc_member_expression
-                  object: (preproc_member_expression
-                    object: (identifier)
-                    property: (identifier))
-                  property: (identifier)))))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_adjacent_string_expression
-          left: (preproc_stringify_expression
-            argument: (identifier))
-          right: (string_literal)
-          right: (preproc_stringify_expression
-            argument: (identifier))
-          right: (string_literal)
-          right: (preproc_stringify_expression
-            argument: (identifier)))))))
+    value: (preproc_text)))
 
 =====================================
 unsupported define header recovery
@@ -392,17 +249,7 @@ macro pasted identifiers
     name: (macro_pasted_identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      expression: (preproc_expression
-        (preproc_call_expression
-          function: (macro_pasted_identifier)
-          (preproc_expression
-            (macro_parameter))))
-      tail: (preproc_expression
-        (preproc_call_expression
-          function: (macro_pasted_identifier)
-          (preproc_expression
-            (macro_parameter)))))))
+    value: (preproc_text)))
 
 =================================
 declaration led macro replacement
@@ -421,74 +268,7 @@ declaration led macro replacement
       (macro_parameter)
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      type: (tagged_type
-        tag: (identifier))
-      name: (macro_parameter)
-      initializer: (preproc_expression
-        (preproc_call_expression
-          function: (identifier)
-          (preproc_expression
-            (macro_parameter))
-          (preproc_expression
-            (float_literal))))
-      expression: (preproc_expression
-        (preproc_assignment_expression
-          left: (macro_parameter)
-          right: (preproc_expression
-            (preproc_call_expression
-              function: (identifier)
-              (preproc_expression
-                (macro_parameter))
-              (preproc_expression
-                (identifier))))))
-      expression: (preproc_expression
-        (preproc_assignment_expression
-          left: (macro_parameter)
-          right: (preproc_expression
-            (preproc_call_expression
-              function: (identifier)
-              (preproc_expression
-                (preproc_call_expression
-                  function: (identifier)
-                  (preproc_expression
-                    (preproc_binary_expression
-                      left: (preproc_expression
-                        (macro_parameter))
-                      right: (preproc_expression
-                        (macro_parameter))))
-                  (preproc_expression
-                    (float_literal))))
-              (preproc_expression
-                (identifier))))))
-      tail: (preproc_expression
-        (preproc_assignment_expression
-          left: (macro_parameter)
-          right: (preproc_expression
-            (preproc_call_expression
-              function: (identifier)
-              (preproc_expression
-                (preproc_call_expression
-                  function: (identifier)
-                  (preproc_expression
-                    (preproc_binary_expression
-                      left: (preproc_expression
-                        (preproc_call_expression
-                          function: (identifier)
-                          (preproc_expression
-                            (preproc_binary_expression
-                              left: (preproc_expression
-                                (macro_parameter))
-                              right: (preproc_expression
-                                (macro_parameter))))
-                          (preproc_expression
-                            (float_literal))))
-                      right: (preproc_expression
-                        (macro_parameter))))
-                  (preproc_expression
-                    (float_literal))))
-              (preproc_expression
-                (identifier)))))))))
+    value: (preproc_text)))
 
 ======================================
 spaced forward public macro replacement
@@ -503,14 +283,7 @@ spaced forward public macro replacement
     name: (macro_pasted_identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      (_macro_function_statement
-        name: (macro_parameter)
-        parameters: (macro_parameter_list
-          (macro_parameter)))
-      name: (macro_parameter)
-      parameters: (macro_parameter_list
-        (macro_parameter)))))
+    value: (preproc_text)))
 
 =================================
 at-prefixed macro function names
@@ -530,40 +303,12 @@ at-prefixed macro function names
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      (_macro_function_statement
-        name: (macro_at_identifier
-          (macro_pasted_identifier))
-        parameters: (parameter_list
-          (parameter_declaration
-            name: (identifier)
-            (dimension))
-          (parameter_declaration
-            name: (identifier)
-            (dimension))))
-      name: (macro_at_identifier
-        (macro_pasted_identifier))
-      parameters: (parameter_list
-        (parameter_declaration
-          name: (identifier)
-          (dimension))
-        (parameter_declaration
-          name: (identifier)
-          (dimension)))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      (_macro_function_statement
-        name: (macro_at_identifier
-          (macro_pasted_identifier))
-        parameters: (parameter_list))
-      name: (macro_at_identifier
-        (macro_pasted_identifier))
-      parameters: (parameter_list)
-      value: (preproc_expression
-        (integer_literal)))))
+    value: (preproc_text)))
 
 =================================
 macro operator function names
@@ -581,24 +326,7 @@ macro operator function names
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      (_macro_function_statement
-        name: (operator_name)
-        parameters: (macro_parameter_list
-          (macro_colon_parameter
-            left: (macro_parameter)
-            right: (identifier))
-          (macro_colon_parameter
-            left: (macro_parameter)
-            right: (identifier))))
-      name: (operator_name)
-      parameters: (macro_parameter_list
-        (macro_colon_parameter
-          left: (macro_parameter)
-          right: (identifier))
-        (macro_colon_parameter
-          left: (macro_parameter)
-          right: (identifier))))))
+    value: (preproc_text)))
 
 =============================================
 adjacent identifier string define replacements
@@ -613,23 +341,13 @@ adjacent identifier string define replacements
 (source_file
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (string_literal))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_adjacent_string_expression
-          left: (identifier)
-          right: (string_literal)))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_adjacent_string_expression
-          left: (identifier)
-          right: (string_literal))))))
+    value: (preproc_text)))
 
 ====================================
 macro stringify and comma grouping
@@ -647,58 +365,14 @@ macro stringify and comma grouping
       (macro_parameter)
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_call_expression
-          function: (identifier)
-          (preproc_expression
-            (preproc_parenthesized_expression
-              expression: (preproc_expression_list
-                left: (preproc_expression
-                  (preproc_assignment_expression
-                    left: (preproc_subscript_expression
-                      array: (macro_parameter)
-                      index: (preproc_expression
-                        (integer_literal)))
-                    right: (preproc_expression
-                      (char_literal
-                        (escape_sequence)))))
-                right: (preproc_expression
-                  (macro_parameter)))))
-          (preproc_expression
-            (macro_parameter))
-          (preproc_expression
-            (macro_parameter))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      condition: (preproc_expression
-        (preproc_unary_expression
-          argument: (preproc_expression
-            (preproc_call_expression
-              function: (identifier)
-              (preproc_expression
-                (preproc_subscript_expression
-                  array: (preproc_parenthesized_expression
-                    expression: (preproc_expression
-                      (macro_parameter)))
-                  index: (preproc_expression
-                    (integer_literal))))
-              (preproc_expression
-                (preproc_stringify_expression
-                  argument: (macro_parameter)))
-              (preproc_expression
-                (boolean_literal))
-              (preproc_expression
-                (preproc_parenthesized_expression
-                  expression: (preproc_expression
-                    (macro_parameter))))))))
-      value: (preproc_expression
-        (integer_literal)))))
+    value: (preproc_text)))
 
 ================================
 statement-like macro replacements
@@ -717,45 +391,28 @@ statement-like macro replacements
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      condition: (preproc_expression
-        (macro_parameter))
-      value: (preproc_expression
-        (integer_literal))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      condition: (preproc_expression
-        (macro_parameter))
-      value: (preproc_expression
-        (integer_literal))
-      value: (preproc_expression
-        (integer_literal))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      condition: (preproc_expression
-        (macro_parameter))
-      expression: (preproc_expression
-        (macro_parameter))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      value: (preproc_expression
-        (macro_parameter))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      label: (macro_parameter))))
+    value: (preproc_text)))
 
 =====================================
 loop and control macro replacements
@@ -778,22 +435,13 @@ loop and control macro replacements
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      condition: (preproc_expression
-        (macro_parameter))
-      expression: (preproc_expression
-        (macro_parameter))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_do_while_expression
-        expression: (preproc_expression
-          (macro_parameter))
-        condition: (preproc_expression
-          (macro_parameter)))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
@@ -801,15 +449,7 @@ loop and control macro replacements
       (macro_parameter)
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      initializer: (preproc_expression
-        (macro_parameter))
-      condition: (preproc_expression
-        (macro_parameter))
-      update: (preproc_expression
-        (macro_parameter))
-      expression: (preproc_expression
-        (macro_parameter))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
@@ -817,18 +457,7 @@ loop and control macro replacements
       (macro_parameter)
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      type: (tagged_type
-        tag: (identifier))
-      name: (macro_parameter)
-      initializer: (preproc_expression
-        (macro_parameter))
-      condition: (preproc_expression
-        (macro_parameter))
-      update: (preproc_expression
-        (macro_parameter))
-      expression: (preproc_expression
-        (macro_parameter))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
@@ -836,46 +465,20 @@ loop and control macro replacements
       (macro_parameter)
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      initializer: (preproc_expression
-        (macro_parameter))
-      condition: (preproc_expression
-        (macro_parameter))
-      update: (preproc_expression
-        (macro_parameter))
-      condition: (preproc_expression
-        (macro_parameter))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_colon_parameter
         left: (macro_parameter)
         right: (macro_parameter)))
-    value: (macro_replacement
-      type: (tagged_type
-        tag: (identifier))
-      name: (macro_parameter)
-      initializer: (preproc_expression
-        (preproc_call_expression
-          function: (identifier)
-          (preproc_expression
-            (macro_parameter))))
-      condition: (preproc_expression
-        (preproc_call_expression
-          function: (identifier)
-          (preproc_expression
-            (macro_parameter))))
-      update: (preproc_expression
-        (preproc_call_expression
-          function: (identifier)
-          (preproc_expression
-            (macro_parameter))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement)))
+    value: (preproc_text)))
 
 ========================
 switch macro replacements
@@ -892,39 +495,17 @@ switch macro replacements
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      condition: (preproc_expression
-        (macro_parameter))
-      value: (preproc_expression
-        (integer_literal))
-      value: (preproc_expression
-        (integer_literal))
-      value: (preproc_expression
-        (integer_literal))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      condition: (preproc_expression
-        (macro_parameter))
-      value: (preproc_expression
-        (integer_literal))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      condition: (preproc_expression
-        (macro_parameter))
-      left: (preproc_expression
-        (integer_literal))
-      start: (preproc_expression
-        (integer_literal))
-      end: (preproc_expression
-        (integer_literal))
-      value: (preproc_expression
-        (integer_literal)))))
+    value: (preproc_text)))
 
 ========================
 weird supported defines
@@ -941,29 +522,19 @@ weird supported defines
 (source_file
   (preproc_define
     name: (identifier)
-    value: (macro_replacement))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      condition: (preproc_expression
-        (macro_parameter))
-      condition: (preproc_expression
-        (macro_parameter))
-      value: (preproc_expression
-        (integer_literal))
-      value: (preproc_expression
-        (integer_literal))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_parenthesized_expression))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
@@ -975,6 +546,4 @@ weird supported defines
           right: (macro_colon_parameter
             left: (identifier)
             right: (macro_parameter)))))
-    value: (macro_replacement
-      (preproc_expression
-        (macro_parameter)))))
+    value: (preproc_text)))

@@ -59,9 +59,4 @@ stock Calls() {
     (identifier)
     (macro_parameter_list
       (macro_parameter))
-    (macro_replacement
-      (preproc_expression
-        (preproc_call_expression
-          (identifier)
-          (preproc_expression
-            (macro_parameter)))))))
+    (preproc_text)))

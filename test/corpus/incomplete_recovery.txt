@@ -24,7 +24,6 @@ stock Test() {
     name: (identifier)
     parameters: (parameter_list)
     body: (block
-      (macro_invocation_statement
-        name: (identifier)
-        arguments: (argument_list
-          (identifier))))))
+      (ERROR
+        (identifier)
+        (identifier)))))

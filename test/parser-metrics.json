@@ -1,0 +1,33 @@
+{
+  "generator": "tree-sitter 0.25.10",
+  "baseline": {
+    "bytes": 10226932,
+    "lines": 348602,
+    "states": 6818,
+    "largeStates": 787,
+    "symbols": 333,
+    "tokens": 128,
+    "externalTokens": 5,
+    "productionIds": 246,
+    "rules": 204,
+    "conflicts": 15
+  },
+  "limits": {
+    "bytes": 10226932,
+    "lines": 348602,
+    "states": 6818,
+    "largeStates": 787,
+    "symbols": 333,
+    "tokens": 128,
+    "externalTokens": 5,
+    "productionIds": 246,
+    "rules": 204,
+    "conflicts": 15
+  },
+  "targets": {
+    "bytes": 20971520,
+    "states": 10000,
+    "externalTokens": 6,
+    "conflicts": 10
+  }
+}

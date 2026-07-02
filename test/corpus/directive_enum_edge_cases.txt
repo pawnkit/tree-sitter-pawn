@@ -41,14 +41,7 @@ macro signature and complex preproc if
     parameters: (macro_parameter_list
       (identifier)
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_call_expression
-          function: (identifier)
-          (preproc_expression
-            (identifier))
-          (preproc_expression
-            (macro_parameter))))))
+    value: (preproc_text))
   (top_level_conditional
     (preproc_if
       condition: (preproc_expression
@@ -150,17 +143,7 @@ multi-line replacement body
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_do_while_expression
-        expression: (preproc_expression
-          (preproc_assignment_expression
-            left: (macro_parameter)
-            right: (preproc_expression
-              (preproc_parenthesized_expression
-                expression: (preproc_expression
-                  (macro_parameter))))))
-        condition: (preproc_expression
-          (integer_literal))))))
+    value: (preproc_text)))
 
 ====================
 enum increment forms

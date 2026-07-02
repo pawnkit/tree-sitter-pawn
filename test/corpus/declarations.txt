@@ -397,7 +397,8 @@ foo bar + baz;
   (ERROR
     (identifier)
     (identifier)
-    (identifier)))
+    (preproc_text)
+    (preproc_text)))
 
 ========================================
 identifiers and subscripts are not declarations
@@ -424,7 +425,6 @@ foo bar = baz();
 
 (source_file
   (ERROR
-    (identifier)
     (identifier)
     (identifier)
     (preproc_text)))

@@ -26,7 +26,7 @@ unsupported replacements stay inside defines
     value: (preproc_text)))
 
 ========================================
-safe replacements retain structured form
+replacement bodies remain opaque
 ========================================
 
 #define DOUBLE(%0) ((%0) * 2)
@@ -39,28 +39,13 @@ safe replacements retain structured form
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_parenthesized_expression
-          expression: (preproc_expression
-            (preproc_binary_expression
-              left: (preproc_expression
-                (preproc_parenthesized_expression
-                  expression: (preproc_expression
-                    (macro_parameter))))
-              right: (preproc_expression
-                (integer_literal))))))))
+    value: (preproc_text))
   (preproc_define
     name: (identifier)
     parameters: (macro_parameter_list
       (macro_parameter)
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_assignment_expression
-          left: (macro_parameter)
-          right: (preproc_expression
-            (macro_parameter)))))))
+    value: (preproc_text)))
 
 ========================================
 formatter macro boundaries
@@ -76,27 +61,13 @@ formatter macro boundaries
 (source_file
   (preproc_define
     (identifier)
-    (macro_replacement
-      (preproc_expression
-        (integer_literal))))
+    (preproc_text))
   (preproc_define
     (identifier)
     (macro_parameter_list
       (macro_parameter)
       (macro_parameter))
-    (macro_replacement
-      (preproc_expression
-        (preproc_parenthesized_expression
-          (preproc_expression
-            (preproc_binary_expression
-              (preproc_expression
-                (preproc_parenthesized_expression
-                  (preproc_expression
-                    (macro_parameter))))
-              (preproc_expression
-                (preproc_parenthesized_expression
-                  (preproc_expression
-                    (macro_parameter))))))))))
+    (preproc_text))
   (preproc_define
     (identifier)
     (complex_macro_parameter_list

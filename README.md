@@ -28,6 +28,7 @@ npm install
 npm run generate       # regenerate parser artifacts
 npm test               # run corpus tests
 npm run test:queries   # test shipped queries
+npm run diagnose:parser # compare generated complexity with baseline and budgets
 npm run check          # run the full local check
 npm run pack:check     # inspect the npm package
 ```
@@ -41,5 +42,5 @@ npm run check:external
 ## Limitations
 
 - Macro expansion and semantic analysis are out of scope.
-- Ambiguous macro replacement bodies may remain as `preproc_text`.
+- Macro replacement bodies are preserved as opaque `preproc_text`.
 - Deeply interleaved preprocessor branches may require error recovery.

@@ -45,33 +45,19 @@ module.exports = grammar({
   externals: ($) => [
     $._callback_signature_start,
     $._statement_line_terminator,
-    $._incomplete_call_line_terminator,
     $._directive_line_terminator,
-    $._conditional_if_else_preamble,
-    $._conditional_if_else_if_preamble,
-    $._conditional_if_block_preamble,
-    $._conditional_if_else_block_preamble,
-    $._conditional_if_preamble,
-    $._conditional_if_wrapped_else_preamble,
-    $._conditional_if_else_closing,
-    $._conditional_if_closing,
     $._unsupported_define_header,
     $._unsupported_macro_parameter_list,
-    $._opaque_define_value,
   ],
 
   inline: ($) => [
     $._expression_not_binary,
-    $._top_level_shared_tail_function_alternative_body_statement_base,
-    $._top_level_conditional_block_statement_base,
-    $._block_conditional_item_base,
     $._block_statement_base,
     $._statement_base,
     $._nonblock_statement_base,
   ],
 
   conflicts: ($) => [
-    [$._directive, $.top_level_conditional],
     [$._declaration_qualifier, $._function_modifier],
     [$._function_modifier, $.variable_declaration],
     [$._callback_named_identifier, $.variable_declarator],
@@ -82,36 +68,14 @@ module.exports = grammar({
     ],
     [$.variable_declarator, $._state_variable_declarator],
     // A generic top-level macro invocation and a bare function signature both start with `identifier(`.
-    [
-      $.macro_invocation_statement,
-      $._incomplete_macro_invocation_statement,
-      $._function_name,
-    ],
-    [$._incomplete_argument_list, $._argument_list_items],
+    [$.macro_invocation_statement, $._function_name],
     [$._function_name, $.tagged_type],
-    ...directiveListElseConflicts($, [
-      "_argument",
-      "_array_literal",
-      "_enum",
-      "_parameter",
-      "_variable_declarator",
-    ]),
-    [$._top_level_conditional_block, $._top_level_shared_tail_function_block],
-    [$.if_statement, $._if_header],
-    [$._loop_header, $.macro_iterator_loop_statement],
-    [$._loop_header, $.for_statement],
     [$._sizeof_subscript_expression, $.subscript_expression],
     // Semicolonless braceless return bodies expose the existing `sizeof value[...]`
     // ambiguity between a complete sizeof-expression and a longer sizeof-subscript tail.
     [$.sizeof_expression, $._sizeof_subscript_expression],
-    [$._preproc_sizeof_subscript_expression, $.preproc_subscript_expression],
-    [$.preproc_parenthesized_expression, $.preproc_sizeof_expression],
     [$.expression_list, $._argument_list_item],
     [$.parenthesized_expression, $._argument_list_item],
-    [
-      $._block_conditional_item,
-      $._conditional_if_split_wrapped_else_setup_statement,
-    ],
     [
       $._prefixed_function_definition_signature,
       $.prefixed_function_declaration,
@@ -120,14 +84,12 @@ module.exports = grammar({
     [$._prefixed_function_definition_signature, $.variable_declaration],
     [$.macro_iterator, $._expression],
     [$._macro_iterator_argument_list, $.macro_iterator],
-    [$._conditional_macro_iterator, $._new_macro_iterator],
   ],
 
   supertypes: ($) => [
     $._expression,
     $._statement,
     $._declaration,
-    $._directive,
     $._type,
     $._literal,
     $._preproc_expression,
@@ -149,58 +111,13 @@ module.exports = grammar({
         $.enum_declaration,
       ),
 
-    _directive: ($) =>
-      choice(
-        $.preproc_include,
-        $.preproc_tryinclude,
-        $.preproc_define,
-        $.preproc_emit,
-        $.preproc_pragma,
-        $.preproc_undef,
-        $.preproc_assert,
-        $.preproc_error,
-        $.preproc_warning,
-        $.preproc_line,
-        $.preproc_file,
-        $.preproc_endinput,
-        $.preproc_if,
-        $.preproc_elseif,
-        $.preproc_else,
-        $.preproc_endif,
-      ),
-
     _top_level_item: ($) =>
-      choice(
-        $.top_level_shared_tail_function_branch,
-        $.top_level_conditional,
-        $._top_level_item_base,
-        $.conditional_function_definition,
-      ),
+      choice($.top_level_conditional, $._top_level_item_base),
 
     _top_level_item_base: ($) =>
-      choice($._declaration, $._top_level_nonfunction_item),
-
-    _top_level_nonfunction_item: ($) =>
       choice(
+        $._declaration,
         $.macro_invocation_statement,
-        alias(
-          $._incomplete_macro_invocation_statement,
-          $.macro_invocation_statement,
-        ),
-        $._directive,
-      ),
-
-    _top_level_conditional_nonfunction_item: ($) =>
-      choice(
-        $.prefixed_function_declaration,
-        $.function_declaration,
-        $.enum_declaration,
-        $.variable_declaration,
-        $.macro_invocation_statement,
-        alias(
-          $._incomplete_macro_invocation_statement,
-          $.macro_invocation_statement,
-        ),
         ...nonBranchDirectiveStatementChoices($),
       ),
 
@@ -210,7 +127,7 @@ module.exports = grammar({
         elseifName: "top_level_elseif",
         elseName: "top_level_else",
       },
-      ($) => $._top_level_conditional_item,
+      ($) => $._top_level_item,
     ),
 
     ...directiveIfGroup(
@@ -223,62 +140,22 @@ module.exports = grammar({
       1,
     ),
 
-    ...directiveListGroup("_enum", ($) => $.enum_entry),
+    _block_conditional_item: ($) =>
+      choice($.block_conditional, $._block_statement_base),
 
-    ...directiveListGroup("_argument", ($) => $._argument_list_item),
-
-    ...directiveListGroup("_array_literal", ($) => $._array_literal_item),
-
-    ...directiveListGroup("_parameter", ($) => $._parameter_list_item),
-
-    ...directiveListGroup("_variable_declarator", ($) => $.variable_declarator),
-
-    _top_level_conditional_item: ($) =>
-      choice(
-        $.top_level_shared_tail_function_branch,
-        $.top_level_conditional,
-        alias(
-          $.top_level_conditional_function_definition,
-          $.function_definition,
+    _preproc_list_directives: ($) =>
+      prec.right(
+        choice(
+          $._preproc_list_directive,
+          seq($._preproc_list_directive, $._preproc_list_directives),
         ),
-        $.conditional_function_definition,
-        $._top_level_conditional_nonfunction_item,
       ),
 
-    _block_conditional_item: ($) =>
-      blockConditionalChoice($, $._block_conditional_item_base),
-
-    _block_conditional_item_base: ($) => blockStatementBaseChoice($),
+    _preproc_list_directive: ($) =>
+      choice($.preproc_if, $.preproc_elseif, $.preproc_else, $.preproc_endif),
 
     // Function and declaration forms
     function_definition: ($) => functionDefinitionWithBody($, $._function_body),
-
-    top_level_shared_tail_function_branch: ($) =>
-      seq(
-        $.preproc_if,
-        alias(
-          $.top_level_shared_tail_function_definition,
-          $.function_definition,
-        ),
-      ),
-
-    top_level_shared_tail_function_definition: ($) =>
-      functionDefinitionWithBody(
-        $,
-        alias($._top_level_shared_tail_function_block, $.block),
-      ),
-
-    top_level_conditional_function_definition: ($) =>
-      functionDefinitionWithBody($, $._top_level_conditional_function_body),
-
-    conditional_function_definition: directiveBranchChain({
-      ifBuilder: ($) => field("signature", $._function_definition_signature),
-      elseifBuilder: ($) =>
-        field("elseif_signature", $._function_definition_signature),
-      elseBuilder: ($) =>
-        field("alternative_signature", $._function_definition_signature),
-      tailBuilder: ($) => field("body", $._function_body),
-    }),
 
     _prefixed_function_definition_signature: ($) =>
       choice(
@@ -312,17 +189,7 @@ module.exports = grammar({
         $._plain_function_definition_signature,
       ),
 
-    _function_body: ($) =>
-      functionBodyChoice($, {
-        blockRule: $.block,
-        conditionalRule: $.block_conditional,
-      }),
-
-    _top_level_conditional_function_body: ($) =>
-      functionBodyChoice($, {
-        blockRule: alias($._top_level_conditional_block, $.block),
-        conditionalRule: $.block_conditional,
-      }),
+    _function_body: ($) => functionBodyChoice($, { blockRule: $.block }),
 
     macro_invocation_statement: ($) =>
       prec.right(
@@ -353,25 +220,6 @@ module.exports = grammar({
         field("name", macroNamedIdentifier($)),
         field("arguments", $.argument_list),
         field("body", $.block),
-      ),
-
-    _incomplete_macro_invocation_statement: ($) =>
-      seq(
-        field("name", macroNamedIdentifier($)),
-        field("arguments", alias($._incomplete_argument_list, $.argument_list)),
-      ),
-
-    _incomplete_argument_list: ($) =>
-      seq(
-        "(",
-        optional(
-          seq(
-            $._argument_list_item,
-            repeat(seq(",", $._argument_list_item)),
-            optional(","),
-          ),
-        ),
-        $._incomplete_call_line_terminator,
       ),
 
     function_declaration: ($) =>
@@ -461,11 +309,14 @@ module.exports = grammar({
       choice($.parameter_declaration, $.variadic_parameter),
 
     _parameter_list_items: ($) =>
-      directiveListItems($, {
-        item: $._parameter_list_item,
-        conditional: $._parameter_conditional,
-        conditionalNoComma: $._parameter_conditional_no_comma,
-      }),
+      directiveSeparatedList($, $._parameter_list_item, $._parameter_list_tail),
+
+    _parameter_list_tail: ($) =>
+      directiveSeparatedListTail(
+        $,
+        $._parameter_list_item,
+        $._parameter_list_tail,
+      ),
 
     parameter_declaration: ($) =>
       seq(
@@ -545,14 +396,24 @@ module.exports = grammar({
       ),
 
     declaration_qualifier_reference: ($) =>
-      choice($.identifier, $.macro_pasted_identifier),
+      prec(-1, choice($.identifier, $.macro_pasted_identifier)),
 
     _variable_declarator_list: ($) =>
-      directiveListItems($, {
-        item: $.variable_declarator,
-        conditional: $._variable_declarator_conditional,
-        conditionalNoComma: $._variable_declarator_conditional_no_comma,
-      }),
+      prec(
+        1,
+        directiveSeparatedList(
+          $,
+          $.variable_declarator,
+          $._variable_declarator_list_tail,
+        ),
+      ),
+
+    _variable_declarator_list_tail: ($) =>
+      directiveSeparatedListTail(
+        $,
+        $.variable_declarator,
+        $._variable_declarator_list_tail,
+      ),
 
     _declaration_qualifier: ($) => choice("new", "const", "static"),
 
@@ -628,19 +489,10 @@ module.exports = grammar({
       ),
 
     _enum_entries: ($) =>
-      directiveListItems($, {
-        item: $.enum_entry,
-        conditional: $._enum_conditional,
-        conditionalNoComma: $._enum_conditional_no_comma,
-        prefix: $._enum_entry_prefix,
-      }),
+      directiveSeparatedList($, $.enum_entry, $._enum_entries_tail),
 
-    _enum_entry_prefix: ($) =>
-      directiveListPrefix(
-        $._enum_entry_prefix,
-        $.enum_entry,
-        $._enum_conditional,
-      ),
+    _enum_entries_tail: ($) =>
+      directiveSeparatedListTail($, $.enum_entry, $._enum_entries_tail),
 
     enum_entry: ($) =>
       seq(
@@ -654,16 +506,6 @@ module.exports = grammar({
     tagged_type: ($) =>
       seq(
         field("tag", choice($.identifier, $.tag_wildcard)),
-        optional(field("callback_signature", $.callback_signature)),
-        token.immediate(":"),
-      ),
-
-    preproc_tagged_type: ($) =>
-      seq(
-        field(
-          "tag",
-          choice($.identifier, $.macro_at_identifier, $.tag_wildcard),
-        ),
         optional(field("callback_signature", $.callback_signature)),
         token.immediate(":"),
       ),
@@ -686,80 +528,25 @@ module.exports = grammar({
     // Statements and conditional statement layouts
     block: ($) => seq("{", repeat($._block_statement), "}"),
 
-    _top_level_conditional_block: ($) =>
-      seq("{", repeat($._top_level_conditional_block_statement), "}"),
-
-    _top_level_shared_tail_function_block: ($) =>
-      seq(
-        "{",
-        repeat(choice($._top_level_conditional_block_statement, $._if_header)),
-        choice(
-          $.function_initializer_alternative_statement,
-          $.top_level_shared_tail_function_alternative_statement,
-        ),
-        repeat($._block_statement),
-        "}",
-      ),
-
-    top_level_shared_tail_function_alternative_statement: ($) =>
-      directiveElseAlternative($, {
-        signature: field(
-          "alternative_signature",
-          $._bare_function_definition_signature,
-        ),
-        body: [
-          "{",
-          repeat($._top_level_shared_tail_function_alternative_body_statement),
-        ],
-      }),
-
-    _top_level_shared_tail_function_alternative_body_statement: ($) =>
-      blockConditionalChoice(
-        $,
-        $._top_level_shared_tail_function_alternative_body_statement_base,
-      ),
-
-    _top_level_shared_tail_function_alternative_body_statement_base: ($) =>
-      statementChoice($, {
-        includeTopLevelConditionalBlock: true,
-        includeTopLevelSharedTailIfHeader: true,
-        ...wrapperFirstStatementOptions(),
-      }),
-
-    _top_level_conditional_block_statement: ($) =>
-      blockConditionalChoice(
-        $,
-        alias($._top_level_conditional_block, $.block),
-        $._top_level_conditional_block_statement_base,
-      ),
-
-    _top_level_conditional_block_statement_base: ($) =>
-      statementChoice($, {
-        includeTopLevelConditionalBlock: true,
-        ...wrapperFirstConditionalElseStatementOptions(),
-      }),
-
-    _block_statement: ($) => blockConditionalChoice($, $._block_statement_base),
+    _block_statement: ($) =>
+      choice($.block_conditional, $._block_statement_base),
 
     _block_statement_base: ($) => blockStatementBaseChoice($),
 
-    _statement: ($) => blockConditionalChoice($, $._statement_base),
+    _statement: ($) => choice($.block_conditional, $._statement_base),
 
     _statement_base: ($) => blockStatementBaseChoice($),
 
     _nonempty_statement: ($) =>
-      prec(1, blockConditionalChoice($, $._nonempty_statement_base)),
+      prec(1, choice($.block_conditional, $._nonempty_statement_base)),
 
     _nonempty_statement_base: ($) =>
       prec(1, blockStatementBaseChoice($, { includeEmpty: false })),
 
     _nonblock_statement: ($) =>
-      blockConditionalChoice($, $._nonblock_statement_base),
+      choice($.block_conditional, $._nonblock_statement_base),
 
-    _nonblock_statement_base: ($) =>
-      statementChoice($, {
-        ...wrappedNonblockStatementOptions(),
-      }),
+    _nonblock_statement_base: ($) => statementChoice($),
 
     if_statement: ($) =>
       prec.right(
@@ -853,259 +640,6 @@ module.exports = grammar({
         ),
       ),
 
-    function_initializer_alternative_statement: ($) =>
-      directiveElseAlternative($, {
-        signature: field(
-          "alternative_signature",
-          $._alternative_function_definition_signature,
-        ),
-        body: [
-          "{",
-          field(
-            "alternative_initializer",
-            choice($.variable_declaration, $.block_conditional),
-          ),
-        ],
-      }),
-
-    conditional_else_expression_statement: directiveBranchChain({
-      dynamicPrecedence: 2,
-      ifBuilder: ($) =>
-        field("consequence", $._conditional_else_expression_branch),
-      elseBuilder: ($) =>
-        field("alternative", $._conditional_else_expression_branch),
-    }),
-
-    _conditional_else_expression_branch: ($) =>
-      prec.dynamic(1, seq("else", $.expression_statement)),
-
-    conditional_else_if_branch_statement: directiveBranchChain({
-      dynamicPrecedence: 2,
-      ifBuilder: ($) => field("consequence", $._conditional_else_if_branch),
-      elseifBuilder: ($) => field("elseif", $._conditional_else_if_branch),
-      elseBuilder: ($) => field("alternative", $._conditional_else_if_branch),
-      tailBuilder: ($) =>
-        optional(seq("else", field("shared_alternative", $._statement))),
-    }),
-
-    _conditional_else_if_branch: ($) =>
-      prec.dynamic(1, seq("else", $.if_statement)),
-
-    conditional_else_if_statement: directiveBranchChain({
-      ifBuilder: ($) => field("consequence", $._conditional_else_if_header),
-      elseifBuilder: ($) => field("elseif", $._conditional_else_if_header),
-      elseBuilder: ($) => field("alternative", $._conditional_else_if_header),
-      tailBuilder: ($) => field("body", $._statement),
-    }),
-
-    conditional_if_else_if_statement: ($) =>
-      prec.dynamic(
-        10,
-        prec.right(
-          2,
-          seq(
-            preprocessor("if"),
-            field("condition", $.preproc_expression),
-            $._conditional_if_else_if_preamble,
-            "else",
-            field("alternative", $.if_statement),
-          ),
-        ),
-      ),
-
-    conditional_if_block_statement: ($) =>
-      prec.dynamic(
-        10,
-        prec.right(
-          2,
-          seq(
-            preprocessor("if"),
-            field("condition", $.preproc_expression),
-            $._conditional_if_block_preamble,
-            field("consequence", $.block),
-          ),
-        ),
-      ),
-
-    conditional_if_else_block_statement: ($) =>
-      prec.dynamic(
-        10,
-        prec.right(
-          2,
-          seq(
-            preprocessor("if"),
-            field("condition", $.preproc_expression),
-            $._conditional_if_else_block_preamble,
-            repeat($._statement),
-            $._conditional_if_closing,
-          ),
-        ),
-      ),
-
-    _conditional_else_if_header: ($) => seq("else", $._if_header),
-
-    conditional_if_else_statement: ($) =>
-      prec.dynamic(
-        10,
-        prec.right(
-          2,
-          seq(
-            preprocessor("if"),
-            field("condition", $.preproc_expression),
-            $._conditional_if_else_preamble,
-            field("consequence", $.block),
-            "else",
-            field("alternative", $._statement),
-          ),
-        ),
-      ),
-
-    conditional_if_wrapped_else_statement: ($) =>
-      prec.dynamic(
-        5,
-        prec.right(
-          2,
-          seq(
-            preprocessor("if"),
-            field("condition", $.preproc_expression),
-            $._conditional_if_wrapped_else_preamble,
-            repeat($._statement),
-            $._conditional_if_else_closing,
-            "else",
-            field("alternative", $._statement),
-            $.preproc_endif,
-          ),
-        ),
-      ),
-
-    conditional_if_split_wrapped_else_statement: ($) =>
-      prec.dynamic(
-        5,
-        prec.right(
-          2,
-          seq(
-            $.preproc_if,
-            repeat($._conditional_if_split_wrapped_else_setup_statement),
-            field("consequence", seq($._if_header, "{")),
-            $.preproc_else,
-            repeat1(
-              field(
-                "alternative",
-                $._conditional_if_split_wrapped_else_setup_statement,
-              ),
-            ),
-            $.preproc_endif,
-            repeat($._statement),
-            $.preproc_if,
-            "}",
-            "else",
-            field("shared_alternative", $._statement),
-            $.preproc_endif,
-          ),
-        ),
-      ),
-
-    _conditional_if_split_wrapped_else_setup_statement: ($) =>
-      choice($.expression_statement, $.if_statement),
-
-    conditional_if_statement: ($) =>
-      prec.dynamic(
-        20,
-        prec.right(
-          2,
-          seq(
-            preprocessor("if"),
-            field("condition", $.preproc_expression),
-            $._conditional_if_preamble,
-            repeat($._statement),
-            $._conditional_if_closing,
-          ),
-        ),
-      ),
-
-    conditional_loop_fallback_statement: directiveBranchChain({
-      ifBuilder: ($) =>
-        field(
-          "consequence",
-          choice($.macro_iterator_loop_statement, $.for_statement),
-        ),
-      elseifBuilder: ($) =>
-        field(
-          "elseif",
-          choice($.macro_iterator_loop_statement, $.for_statement),
-        ),
-      elseBuilder: ($) => repeat1(field("alternative", $._statement)),
-    }),
-
-    conditional_loop_statement: directiveBranchChain({
-      ifBuilder: ($) => field("consequence", $._direct_loop_preamble),
-      elseifBuilder: ($) => field("elseif", $._direct_loop_preamble),
-      elseBuilder: ($) => field("alternative", $.loop_preamble),
-      tailBuilder: ($) => [repeat($._statement), "}"],
-    }),
-
-    _loop_body_statement: ($) => loopBodyStatementChoice($),
-
-    loop_header_selection_statement: ($) =>
-      choice(
-        // Keep the common `#if foreach / #else for / #endif { ... }` shape
-        // independent from the complete macro-iterator statement reduction.
-        // Reusing `macro_iterator` here leaves some GLR runtimes with only a
-        // doomed statement path when the next token is `#else`.
-        prec.dynamic(
-          1,
-          seq(
-            $.preproc_if,
-            field("signature", $._conditional_macro_iterator_loop_header),
-            $.preproc_else,
-            field("alternative_signature", $._for_header),
-            $.preproc_endif,
-            field("body", $.block),
-          ),
-        ),
-        directiveSignatureChain($, {
-          signature: field("signature", $._loop_header),
-          elseifSignature: field("elseif_signature", $._loop_header),
-          elseSignature: field("alternative_signature", $._loop_header),
-          tail: field("body", $.block),
-        }),
-      ),
-
-    _direct_loop_preamble: ($) =>
-      seq($._loop_header, "{", repeat($._loop_body_statement)),
-
-    loop_body_conditional_if_statement: directiveBranchChain({
-      ifBuilder: ($) => field("consequence", $._preproc_branch_if_statement),
-      elseifBuilder: ($) => field("elseif", $._preproc_branch_if_statement),
-      elseBuilder: ($) => field("alternative", $._preproc_branch_if_statement),
-    }),
-
-    _preproc_branch_if_statement: ($) =>
-      seq($._if_header, field("consequence", $._statement)),
-
-    _if_header: ($) =>
-      seq(
-        "if",
-        "(",
-        field("condition", choice($.expression_list, $._expression)),
-        ")",
-      ),
-
-    loop_preamble: ($) =>
-      prec.right(
-        choice(
-          $._direct_loop_preamble,
-          directiveSignatureChain($, {
-            signature: field("signature", $._loop_header),
-            elseifSignature: field("elseif_signature", $._loop_header),
-            elseSignature: field("alternative_signature", $._loop_header),
-            tail: ["{", repeat($._loop_body_statement)],
-          }),
-        ),
-      ),
-
-    _loop_header: ($) => choice($._macro_iterator_loop_header, $._for_header),
-
     while_statement: ($) =>
       seq(
         "while",
@@ -1121,26 +655,6 @@ module.exports = grammar({
         "(",
         field("iterator", $.macro_iterator),
         ")",
-      ),
-
-    _conditional_macro_iterator_loop_header: ($) =>
-      seq(
-        field("name", $.identifier),
-        "(",
-        field(
-          "iterator",
-          alias($._conditional_macro_iterator, $.macro_iterator),
-        ),
-        ")",
-      ),
-
-    _conditional_macro_iterator: ($) =>
-      seq(
-        "new",
-        optional(field("type", $.tagged_type)),
-        field("name", $.identifier),
-        ":",
-        field("collection", $.identifier),
       ),
 
     macro_iterator_loop_statement: ($) =>
@@ -1222,7 +736,6 @@ module.exports = grammar({
 
     inline_labeled_statement: ($) =>
       choice(
-        $.block_conditional,
         $.block,
         $.variable_declaration,
         $.inline_callback_definition,
@@ -1232,8 +745,6 @@ module.exports = grammar({
         $.sleep_statement,
         $.if_statement,
         $.switch_statement,
-        $.conditional_loop_fallback_statement,
-        $.conditional_loop_statement,
         $.while_statement,
         $.macro_iterator_loop_statement,
         $.do_while_statement,
@@ -1723,11 +1234,14 @@ module.exports = grammar({
       ),
 
     _argument_list_items: ($) =>
-      directiveListItems($, {
-        item: $._argument_list_item,
-        conditional: $._argument_conditional,
-        conditionalNoComma: $._argument_conditional_no_comma,
-      }),
+      directiveSeparatedList($, $._argument_list_item, $._argument_list_tail),
+
+    _argument_list_tail: ($) =>
+      directiveSeparatedListTail(
+        $,
+        $._argument_list_item,
+        $._argument_list_tail,
+      ),
 
     named_argument: ($) =>
       seq(".", field("name", $.identifier), "=", field("value", $._expression)),
@@ -1839,18 +1353,17 @@ module.exports = grammar({
     _array_literal_item: ($) => choice($.array_literal, $._expression, "..."),
 
     _array_literal_items: ($) =>
-      directiveListItems($, {
-        item: $._array_literal_item,
-        conditional: $._array_literal_conditional,
-        conditionalNoComma: $._array_literal_conditional_no_comma,
-        prefix: $._array_literal_item_prefix,
-      }),
-
-    _array_literal_item_prefix: ($) =>
-      directiveListPrefix(
-        $._array_literal_item_prefix,
+      directiveSeparatedList(
+        $,
         $._array_literal_item,
-        $._array_literal_conditional,
+        $._array_literal_items_tail,
+      ),
+
+    _array_literal_items_tail: ($) =>
+      directiveSeparatedListTail(
+        $,
+        $._array_literal_item,
+        $._array_literal_items_tail,
       ),
 
     // Preprocessor directives
@@ -1935,225 +1448,6 @@ module.exports = grammar({
         ),
       ),
 
-    // Macro replacement and recovery shapes
-    macro_replacement: ($) => $._macro_item,
-
-    _macro_item: ($) =>
-      choice(
-        $._macro_declaration_sequence,
-        $._macro_function_sequence,
-        $._macro_expression_sequence,
-        $.preproc_do_while_expression,
-        $._macro_if_statement,
-        $._macro_switch_statement,
-        $._macro_while_statement,
-        $._macro_for_statement,
-        $._macro_return_statement,
-        $._macro_goto_statement,
-        $._macro_break_statement,
-        $._macro_continue_statement,
-        $._macro_block,
-        $.preproc_expression_list,
-        $.preproc_expression,
-      ),
-
-    _macro_declaration_sequence: ($) =>
-      seq(
-        $._macro_variable_declaration,
-        repeat($._macro_expression_statement),
-        field("tail", $.preproc_expression),
-      ),
-
-    _macro_variable_declaration_body: ($) =>
-      seq(
-        "new",
-        optional(field("type", $.tagged_type)),
-        field("name", choice($.identifier, $.macro_parameter)),
-        optional(seq("=", field("initializer", $.preproc_expression))),
-      ),
-
-    _macro_variable_declaration: ($) =>
-      seq($._macro_variable_declaration_body, ";"),
-
-    _macro_function_sequence: ($) =>
-      choice(
-        prec.right(
-          2,
-          seq(
-            repeat1($._macro_terminated_function_statement),
-            field("tail", $._macro_unterminated_function_statement),
-          ),
-        ),
-        prec.left(-1, repeat1($._macro_terminated_function_statement)),
-        $._macro_function_statement,
-      ),
-
-    _macro_unterminated_function_statement: ($) =>
-      choice(
-        alias(
-          $._macro_forward_parameter_declaration_statement,
-          $._macro_function_statement,
-        ),
-        alias(
-          $._macro_forward_macro_parameter_statement,
-          $._macro_function_statement,
-        ),
-        $._macro_function_definition_statement,
-        $._macro_function_statement,
-        $._macro_bare_function_statement,
-      ),
-
-    _macro_terminated_function_statement: ($) =>
-      choice(
-        prec(
-          1,
-          seq(
-            alias(
-              $._macro_forward_parameter_declaration_statement,
-              $._macro_function_statement,
-            ),
-            token.immediate(";"),
-          ),
-        ),
-        prec(
-          1,
-          seq(
-            alias(
-              $._macro_forward_macro_parameter_statement,
-              $._macro_function_statement,
-            ),
-            token.immediate(";"),
-          ),
-        ),
-        seq($._macro_function_statement, token.immediate(";")),
-      ),
-
-    _macro_forward_parameter_declaration_statement: ($) =>
-      prec.dynamic(
-        1,
-        seq(
-          "forward",
-          macroFunctionSignature($, {
-            name: field("name", macroCallableIdentifier($)),
-            parameters: field("parameters", $.parameter_list),
-          }),
-        ),
-      ),
-
-    _macro_forward_macro_parameter_statement: ($) =>
-      seq(
-        "forward",
-        macroFunctionSignature($, {
-          name: field("name", macroCallableIdentifier($, { allowAt: false })),
-          parameters: field(
-            "parameters",
-            alias($._macro_function_parameter_list, $.macro_parameter_list),
-          ),
-        }),
-      ),
-
-    _macro_function_statement: ($) =>
-      choice(
-        prec(
-          1,
-          macroFunctionSignature($, {
-            kind: macroFunctionKind(),
-            name: field("name", macroCallableIdentifier($)),
-            parameters: field("parameters", $.parameter_list),
-          }),
-        ),
-        macroFunctionSignature($, {
-          kind: macroFunctionKind(),
-          name: field("name", macroCallableIdentifier($, { allowAt: false })),
-          parameters: field(
-            "parameters",
-            alias($._macro_function_parameter_list, $.macro_parameter_list),
-          ),
-        }),
-      ),
-
-    _macro_function_definition_statement: ($) =>
-      choice(
-        prec(
-          2,
-          seq(
-            macroFunctionSignature($, {
-              kind: macroFunctionKind(),
-              name: field("name", macroCallableIdentifier($)),
-              parameters: field("parameters", $.parameter_list),
-            }),
-            field("body", $._macro_block),
-          ),
-        ),
-        prec(
-          2,
-          seq(
-            macroFunctionSignature($, {
-              kind: macroFunctionKind(),
-              name: field(
-                "name",
-                macroCallableIdentifier($, { allowAt: false }),
-              ),
-              parameters: field(
-                "parameters",
-                alias($._macro_function_parameter_list, $.macro_parameter_list),
-              ),
-            }),
-            field("body", $._macro_block),
-          ),
-        ),
-        prec(
-          2,
-          seq(
-            macroFunctionSignature($, {
-              name: field("name", macroCallableIdentifier($)),
-              parameters: field("parameters", $.parameter_list),
-            }),
-            field("body", $._macro_block),
-          ),
-        ),
-        prec(
-          2,
-          seq(
-            macroFunctionSignature($, {
-              name: field(
-                "name",
-                macroCallableIdentifier($, { allowAt: false }),
-              ),
-              parameters: field(
-                "parameters",
-                alias($._macro_function_parameter_list, $.macro_parameter_list),
-              ),
-            }),
-            field("body", $._macro_block),
-          ),
-        ),
-      ),
-
-    _macro_bare_function_statement: ($) =>
-      choice(
-        macroFunctionSignature($, {
-          name: field("name", macroBareCallableIdentifier($)),
-          parameters: field("parameters", $.parameter_list),
-        }),
-        macroFunctionSignature($, {
-          name: field(
-            "name",
-            macroBareCallableIdentifier($, { allowAt: false }),
-          ),
-          parameters: field(
-            "parameters",
-            alias($._macro_function_parameter_list, $.macro_parameter_list),
-          ),
-        }),
-      ),
-
-    _macro_expression_sequence: ($) =>
-      seq(
-        repeat1($._macro_expression_statement),
-        field("tail", $.preproc_expression),
-      ),
-
     preproc_emit: ($) =>
       seq(preprocessor("emit"), field("value", $.preproc_text)),
 
@@ -2189,13 +1483,6 @@ module.exports = grammar({
         commaSep(
           choice($.macro_parameter, $.identifier, $.macro_colon_parameter),
         ),
-        ")",
-      ),
-
-    _macro_function_parameter_list: ($) =>
-      seq(
-        token.immediate("("),
-        commaSep(choice($.macro_parameter, $.macro_colon_parameter)),
         ")",
       ),
 
@@ -2272,86 +1559,20 @@ module.exports = grammar({
 
     _preproc_expression: ($) =>
       choice(
-        $.preproc_assignment_expression,
-        $.preproc_ternary_expression,
-        $.preproc_adjacent_string_expression,
-        $.preproc_stringify_expression,
         $.preproc_binary_expression,
         $.preproc_unary_expression,
-        $.preproc_sizeof_expression,
-        $.preproc_call_expression,
-        $.preproc_member_expression,
-        $.preproc_subscript_expression,
-        $.preproc_tagged_expression,
-        $.preproc_dollar_expression,
-        $.preproc_tag_set,
+        $.preproc_tagged_constant,
         $.preproc_parenthesized_expression,
         $.preproc_defined,
-        $.operator_symbol,
-        $.macro_at_identifier,
-        $.macro_pasted_identifier,
-        $.macro_parameter,
         $.identifier,
-        $.tag_wildcard,
         $.integer_literal,
+        $.binary_literal,
         $.hex_literal,
         $.float_literal,
         $.string_literal,
         $.char_literal,
         $.boolean_literal,
         $.null_literal,
-      ),
-
-    preproc_tag_set: ($) =>
-      seq(
-        "{",
-        commaSep1(
-          choice(
-            $.identifier,
-            $.macro_parameter,
-            $.macro_pasted_identifier,
-            $.tag_wildcard,
-          ),
-        ),
-        "}",
-      ),
-
-    preproc_expression_list: ($) =>
-      prec.left(
-        seq(
-          field("left", $.preproc_expression),
-          repeat1(seq(",", field("right", $.preproc_expression))),
-        ),
-      ),
-
-    preproc_assignment_expression: ($) =>
-      prec.right(
-        PREC.ASSIGNMENT,
-        seq(
-          field(
-            "left",
-            choice(
-              $.identifier,
-              $.macro_parameter,
-              $.preproc_subscript_expression,
-              $.preproc_parenthesized_expression,
-            ),
-          ),
-          field("operator", choice(...ASSIGNMENT_OPERATORS)),
-          field("right", $.preproc_expression),
-        ),
-      ),
-
-    preproc_ternary_expression: ($) =>
-      prec.right(
-        PREC.TERNARY,
-        seq(
-          field("condition", $.preproc_expression),
-          "?",
-          field("consequence", $.preproc_expression),
-          ":",
-          field("alternative", $.preproc_expression),
-        ),
       ),
 
     preproc_binary_expression: ($) =>
@@ -2386,420 +1607,15 @@ module.exports = grammar({
         ),
       ),
 
-    preproc_stringify_expression: ($) =>
-      prec.left(
-        PREC.UNARY,
-        seq("#", field("argument", choice($.macro_parameter, $.identifier))),
+    preproc_tagged_constant: ($) =>
+      seq(
+        field("tag", $.identifier),
+        token.immediate(":"),
+        field("value", choice($.integer_literal, $.identifier)),
       ),
 
-    preproc_dollar_expression: ($) =>
-      prec.left(
-        PREC.UNARY,
-        seq(
-          "$",
-          field(
-            "argument",
-            choice($.macro_parameter, $.identifier, $.integer_literal),
-          ),
-        ),
-      ),
-
-    preproc_adjacent_string_expression: ($) =>
-      prec.left(
-        PREC.ADD,
-        choice(
-          seq(
-            field("left", $.preproc_stringify_expression),
-            field("right", $.string_literal),
-            repeat(
-              field(
-                "right",
-                choice(
-                  $.identifier,
-                  $.preproc_stringify_expression,
-                  $.string_literal,
-                ),
-              ),
-            ),
-          ),
-          seq(
-            field("left", $.identifier),
-            field("right", $.string_literal),
-            repeat(
-              field(
-                "right",
-                choice(
-                  $.identifier,
-                  $.preproc_stringify_expression,
-                  $.string_literal,
-                ),
-              ),
-            ),
-          ),
-          seq(
-            field("left", $.string_literal),
-            field("right", $.preproc_stringify_expression),
-            repeat(
-              field(
-                "right",
-                choice(
-                  $.identifier,
-                  $.preproc_stringify_expression,
-                  $.string_literal,
-                ),
-              ),
-            ),
-          ),
-          seq(
-            field("left", $.string_literal),
-            field("right", $.identifier),
-            repeat(
-              field(
-                "right",
-                choice(
-                  $.identifier,
-                  $.preproc_stringify_expression,
-                  $.string_literal,
-                ),
-              ),
-            ),
-          ),
-          seq(
-            field("left", $.string_literal),
-            field("right", $.string_literal),
-            repeat(
-              field(
-                "right",
-                choice(
-                  $.identifier,
-                  $.preproc_stringify_expression,
-                  $.string_literal,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     preproc_parenthesized_expression: ($) =>
-      seq(
-        "(",
-        optional(
-          field(
-            "expression",
-            choice($.preproc_expression_list, $.preproc_expression),
-          ),
-        ),
-        optional(","),
-        ")",
-      ),
-
-    preproc_sizeof_expression: ($) =>
-      choice(
-        seq("sizeof", field("argument", $.identifier)),
-        seq(
-          "sizeof",
-          field("argument", $._preproc_sizeof_subscript_expression),
-        ),
-        seq(
-          "sizeof",
-          "(",
-          field(
-            "argument",
-            choice(
-              $.preproc_expression,
-              $._preproc_sizeof_subscript_expression,
-            ),
-          ),
-          ")",
-        ),
-      ),
-
-    _preproc_sizeof_subscript_expression: ($) =>
-      prec.left(
-        PREC.SUBSCRIPT,
-        seq(
-          field(
-            "array",
-            choice(
-              $.identifier,
-              $.macro_pasted_identifier,
-              $.macro_parameter,
-              $.preproc_call_expression,
-              $._preproc_sizeof_subscript_expression,
-              $.preproc_subscript_expression,
-              $.preproc_parenthesized_expression,
-            ),
-          ),
-          "[",
-          optional(field("index", $.preproc_expression)),
-          "]",
-        ),
-      ),
-
-    preproc_do_while_expression: ($) =>
-      seq(
-        "do",
-        field("body", $._macro_block),
-        "while",
-        "(",
-        field("condition", $.preproc_expression),
-        ")",
-      ),
-
-    _macro_block: ($) => seq("{", repeat($._macro_statement), "}"),
-
-    _macro_statement: ($) =>
-      choice(
-        $._macro_if_statement,
-        $._macro_switch_statement,
-        $._macro_while_statement,
-        $._macro_for_statement,
-        $._macro_return_statement,
-        $._macro_goto_statement,
-        $._macro_break_statement,
-        $._macro_continue_statement,
-        $._macro_expression_statement,
-        $._macro_block,
-      ),
-
-    _macro_if_statement: ($) =>
-      prec.right(
-        seq(
-          "if",
-          "(",
-          field("condition", $.preproc_expression),
-          ")",
-          field("consequence", $._macro_control_statement),
-          optional(
-            seq("else", field("alternative", $._macro_control_statement)),
-          ),
-        ),
-      ),
-
-    _macro_open_if_statement: ($) =>
-      prec(-1, seq("if", "(", field("condition", $.preproc_expression), ")")),
-
-    _macro_switch_statement: ($) =>
-      seq(
-        "switch",
-        "(",
-        field("condition", $.preproc_expression),
-        ")",
-        "{",
-        repeat(choice($._macro_case_statement, $._macro_default_statement)),
-        "}",
-      ),
-
-    _macro_case_statement: ($) =>
-      seq(
-        "case",
-        field("value", choice($._macro_case_value_list, $._macro_case_value)),
-        ":",
-        repeat($._macro_statement),
-      ),
-
-    _macro_case_value: ($) => choice($._macro_case_range, $.preproc_expression),
-
-    _macro_case_range: ($) =>
-      seq(
-        field("start", $.preproc_expression),
-        "..",
-        field("end", $.preproc_expression),
-      ),
-
-    _macro_case_value_list: ($) =>
-      seq(
-        field("left", $._macro_case_value),
-        repeat1(seq(",", field("right", $._macro_case_value))),
-      ),
-
-    _macro_default_statement: ($) =>
-      seq("default", ":", repeat($._macro_statement)),
-
-    _macro_control_statement: ($) =>
-      choice(
-        $._macro_block,
-        $._macro_if_statement,
-        $._macro_open_if_statement,
-        $._macro_switch_statement,
-        $._macro_while_statement,
-        $._macro_for_statement,
-        $._macro_return_statement,
-        $._macro_goto_statement,
-        $._macro_break_statement,
-        $._macro_continue_statement,
-        $._macro_expression_statement,
-      ),
-
-    _macro_return_statement: ($) =>
-      choice(
-        prec.right(
-          seq("return", field("value", $.preproc_expression), optional(";")),
-        ),
-        seq("return", ";"),
-      ),
-
-    _macro_while_statement: ($) =>
-      seq(
-        "while",
-        "(",
-        field("condition", $.preproc_expression),
-        ")",
-        field("body", $._macro_control_statement),
-      ),
-
-    _macro_for_statement: ($) =>
-      choice(
-        prec.right(
-          1,
-          seq(
-            "for",
-            "(",
-            field(
-              "initializer",
-              optional(
-                choice(
-                  $.preproc_expression,
-                  $._macro_variable_declaration_body,
-                ),
-              ),
-            ),
-            ";",
-            field("condition", optional($.preproc_expression)),
-            ";",
-            field("update", optional($.preproc_expression)),
-            ")",
-            field("body", $._macro_control_statement),
-          ),
-        ),
-        seq(
-          "for",
-          "(",
-          field(
-            "initializer",
-            optional(
-              choice($.preproc_expression, $._macro_variable_declaration_body),
-            ),
-          ),
-          ";",
-          field("condition", optional($.preproc_expression)),
-          ";",
-          field("update", optional($.preproc_expression)),
-          ")",
-        ),
-      ),
-
-    _macro_goto_statement: ($) =>
-      prec.right(
-        seq(
-          "goto",
-          field("label", choice($.identifier, $.macro_parameter)),
-          optional(";"),
-        ),
-      ),
-
-    _macro_break_statement: ($) => prec.right(seq("break", optional(";"))),
-
-    _macro_continue_statement: ($) =>
-      prec.right(seq("continue", optional(";"))),
-
-    _macro_expression_statement: ($) =>
-      prec(1, seq(field("expression", $.preproc_expression), ";")),
-
-    preproc_subscript_expression: ($) =>
-      prec.left(
-        PREC.SUBSCRIPT,
-        seq(
-          field(
-            "array",
-            choice(
-              $.identifier,
-              $.macro_pasted_identifier,
-              $.macro_parameter,
-              $.preproc_dollar_expression,
-              $.preproc_call_expression,
-              $.preproc_member_expression,
-              $.preproc_subscript_expression,
-              $.preproc_parenthesized_expression,
-            ),
-          ),
-          "[",
-          field("index", $.preproc_expression),
-          "]",
-        ),
-      ),
-
-    preproc_member_expression: ($) =>
-      prec.left(
-        PREC.CALL,
-        seq(
-          field(
-            "object",
-            choice(
-              $.identifier,
-              $.macro_pasted_identifier,
-              $.macro_parameter,
-              $.preproc_dollar_expression,
-              $.preproc_call_expression,
-              $.preproc_subscript_expression,
-              $.preproc_member_expression,
-              $.preproc_parenthesized_expression,
-            ),
-          ),
-          ".",
-          field(
-            "property",
-            choice(
-              $.identifier,
-              $.macro_parameter,
-              $.preproc_dollar_expression,
-            ),
-          ),
-        ),
-      ),
-
-    preproc_tagged_expression: ($) =>
-      prec.right(
-        PREC.CAST,
-        seq(
-          field("type", alias($.preproc_tagged_type, $.tagged_type)),
-          field(
-            "value",
-            choice(
-              $.preproc_tagged_expression,
-              $.preproc_unary_expression,
-              $.preproc_call_expression,
-              $.preproc_member_expression,
-              $.preproc_subscript_expression,
-              $.preproc_dollar_expression,
-              $.preproc_parenthesized_expression,
-              $.macro_at_identifier,
-              $.macro_pasted_identifier,
-              $.macro_parameter,
-              $.identifier,
-              $.integer_literal,
-              $.binary_literal,
-              $.hex_literal,
-              $.float_literal,
-              $.string_literal,
-              $.char_literal,
-              $.boolean_literal,
-              $.null_literal,
-            ),
-          ),
-        ),
-      ),
-
-    preproc_call_expression: ($) =>
-      prec.left(
-        PREC.CALL,
-        seq(
-          field("function", macroCallableIdentifier($)),
-          "(",
-          commaSep($.preproc_expression),
-          ")",
-        ),
-      ),
+      seq("(", field("expression", $.preproc_expression), ")"),
 
     preproc_defined: ($) =>
       choice(
@@ -2876,8 +1692,6 @@ module.exports = grammar({
 
     at_identifier: ($) => seq("@", $.identifier),
 
-    macro_at_identifier: ($) => seq("@", macroNamedIdentifier($)),
-
     define_at_identifier: ($) =>
       seq(
         "@",
@@ -2937,36 +1751,6 @@ function functionDeclarationSignatureTail($) {
   );
 }
 
-function blockConditionalChoice($, ...items) {
-  return choice($.block_conditional, ...items);
-}
-
-function macroFunctionSignature($, { kind = null, name, parameters }) {
-  return seq(
-    ...(kind === null ? [] : [kind]),
-    optional(field("return_type", $.tagged_type)),
-    name,
-    parameters,
-  );
-}
-
-function macroCallableIdentifier($, { allowAt = true } = {}) {
-  return choice(
-    macroNamedIdentifier($),
-    $.operator_name,
-    $.macro_parameter,
-    ...(allowAt ? [$.macro_at_identifier] : []),
-  );
-}
-
-function macroBareCallableIdentifier($, { allowAt = true } = {}) {
-  return choice(
-    $.operator_name,
-    $.macro_parameter,
-    ...(allowAt ? [$.macro_at_identifier] : []),
-  );
-}
-
 function macroNamedIdentifier($) {
   return choice($.identifier, $.macro_pasted_identifier);
 }
@@ -2980,11 +1764,7 @@ function defineDirective($, ...items) {
 }
 
 function defineValue($) {
-  return choice(
-    $.macro_replacement,
-    alias($._opaque_define_value, $.preproc_text),
-    $.preproc_text,
-  );
+  return $.preproc_text;
 }
 
 function includeDirective($, keyword) {
@@ -2992,10 +1772,6 @@ function includeDirective($, keyword) {
     preprocessor(keyword),
     field("path", choice($.string_literal, $.system_lib_string)),
   );
-}
-
-function macroFunctionKind() {
-  return field("kind", choice("public", "stock", "static", "native"));
 }
 
 function operatorSymbol() {
@@ -3086,110 +1862,21 @@ function directiveIfGroup(
   };
 }
 
-function directiveListGroup(baseName, item) {
-  return {
-    ...directiveIfGroup(
-      {
-        ifName: `${baseName}_conditional`,
-        elseifName: `${baseName}_elseif`,
-        elseName: `${baseName}_else`,
-      },
-      ($) => choice(seq(item($), ","), $[`${baseName}_conditional`]),
-      0,
-      false,
-    ),
-
-    ...directiveIfGroup(
-      {
-        ifName: `${baseName}_conditional_no_comma`,
-        elseifName: `${baseName}_elseif_no_comma`,
-        elseName: `${baseName}_else_no_comma`,
-      },
-      item,
-      -1,
-      false,
-    ),
-  };
-}
-
-function directiveListItems(
-  $,
-  { item, conditional, conditionalNoComma, prefix = null },
-) {
-  if (prefix === null) {
-    return choice(
-      seq(
-        repeat(choice(seq(item, ","), conditional)),
-        choice(item, conditionalNoComma),
-      ),
-      repeat1(choice(seq(item, ","), conditional)),
-    );
-  }
-
-  const tail = choice(item, conditionalNoComma);
-  return choice(prefix, seq(prefix, tail), tail);
-}
-
-function directiveListPrefix(prefix, item, conditional) {
-  const part = choice(seq(item, ","), conditional);
-  return choice(part, seq(prefix, part));
-}
-
-function directiveListElseConflicts($, baseNames) {
-  return baseNames.map((baseName) => [
-    $[`${baseName}_else`],
-    $[`${baseName}_else_no_comma`],
-  ]);
-}
-
-function directiveBranchChain({
-  precedence = 1,
-  dynamicPrecedence = null,
-  ifBuilder,
-  elseifBuilder = ifBuilder,
-  elseBuilder = null,
-  tailBuilder = null,
-}) {
-  return ($) => {
-    const tail = tailBuilder ? tailBuilder($) : [];
-    const sequence = seq(
-      $.preproc_if,
-      ifBuilder($),
-      repeat(seq($.preproc_elseif, elseifBuilder($))),
-      ...(elseBuilder ? [optional(seq($.preproc_else, elseBuilder($)))] : []),
-      $.preproc_endif,
-      ...(Array.isArray(tail) ? tail : [tail]),
-    );
-    const rule = prec.right(precedence, sequence);
-    return dynamicPrecedence === null
-      ? rule
-      : prec.dynamic(dynamicPrecedence, rule);
-  };
-}
-
-function directiveElseAlternative($, { signature, body, precedence = 1 }) {
-  return prec.right(
-    precedence,
-    seq(
-      $.preproc_else,
-      signature,
-      ...(Array.isArray(body) ? body : [body]),
-      $.preproc_endif,
-    ),
+function directiveSeparatedList($, item, tail) {
+  return seq(
+    optional($._preproc_list_directives),
+    item,
+    optional(choice(tail, $._preproc_list_directives)),
   );
 }
 
-function directiveSignatureChain(
-  $,
-  { signature, elseifSignature, elseSignature, tail = null },
-) {
-  return seq(
-    $.preproc_if,
-    signature,
-    repeat(seq($.preproc_elseif, elseifSignature)),
-    optional(seq($.preproc_else, elseSignature)),
-    $.preproc_endif,
-    ...(tail === null ? [] : Array.isArray(tail) ? tail : [tail]),
+function directiveSeparatedListTail($, item, tail) {
+  return prec.right(
+    seq(
+      ",",
+      optional($._preproc_list_directives),
+      optional(seq(item, optional(choice(tail, $._preproc_list_directives)))),
+    ),
   );
 }
 
@@ -3266,61 +1953,17 @@ function functionBodyChoice($, { blockRule, conditionalRule = null }) {
 
 function statementChoice(
   $,
-  {
-    includeBlock = false,
-    includeTopLevelConditionalBlock = false,
-    includeTopLevelSharedTailIfHeader = false,
-    includeFunctionInitializerAlternative = false,
-    includeLoopHeaderSelection = false,
-    includeConditionalElseExpression = false,
-    includeConditionalElseIfBranch = false,
-    includeConditionalElseIfStatement = false,
-    includeConditionalIfElseIf = false,
-    includeEmpty = true,
-    includeConditionalIf = true,
-    includeConditionalElseif = true,
-    includeConditionalClosings = false,
-  } = {},
+  { includeBlock = false, includeEmpty = true } = {},
 ) {
   return choice(
     ...(includeBlock ? [$.block] : []),
-    ...(includeTopLevelConditionalBlock
-      ? [alias($._top_level_conditional_block, $.block)]
-      : []),
-    ...(includeTopLevelSharedTailIfHeader ? [$._if_header] : []),
     $.inline_callback_definition,
     $.variable_declaration,
     $.state_statement,
-    ...(includeFunctionInitializerAlternative
-      ? [$.function_initializer_alternative_statement]
-      : []),
-    ...(includeLoopHeaderSelection ? [$.loop_header_selection_statement] : []),
-    ...(includeConditionalElseExpression
-      ? [$.conditional_else_expression_statement]
-      : []),
     $.macro_invocation_block_statement,
     alias($._macro_iterator_invocation_statement, $.macro_invocation_statement),
-    alias(
-      $._incomplete_macro_invocation_statement,
-      $.macro_invocation_statement,
-    ),
-    ...(includeConditionalElseIfBranch
-      ? [$.conditional_else_if_branch_statement]
-      : []),
-    ...(includeConditionalElseIfStatement
-      ? [$.conditional_else_if_statement]
-      : []),
-    ...(includeConditionalIfElseIf ? [$.conditional_if_else_if_statement] : []),
-    $.conditional_if_block_statement,
-    $.conditional_if_else_block_statement,
-    $.conditional_if_else_statement,
-    $.conditional_if_split_wrapped_else_statement,
-    $.conditional_if_wrapped_else_statement,
-    $.conditional_if_statement,
     $.if_statement,
     $.switch_statement,
-    $.conditional_loop_fallback_statement,
-    $.conditional_loop_statement,
     $.while_statement,
     $.macro_iterator_loop_statement,
     $.do_while_statement,
@@ -3337,46 +1980,15 @@ function statementChoice(
     $.continue_statement,
     $.prefixed_call_statement,
     $.expression_statement,
-    ...directiveStatementChoices($, {
-      includeConditionalIf,
-      includeConditionalElseif,
-      includeConditionalClosings,
-    }),
+    ...nonBranchDirectiveStatementChoices($),
   );
 }
 
 function blockStatementBaseChoice($, { includeEmpty = true } = {}) {
   return statementChoice($, {
     includeBlock: true,
-    includeLoopHeaderSelection: true,
     includeEmpty,
-    ...wrapperFirstConditionalElseStatementOptions(),
-    includeConditionalIfElseIf: true,
   });
-}
-
-function loopBodyStatementChoice($) {
-  return choice(
-    $.block,
-    $.variable_declaration,
-    $.if_statement,
-    $.switch_statement,
-    $.loop_body_conditional_if_statement,
-    $.conditional_loop_fallback_statement,
-    $.conditional_loop_statement,
-    $.while_statement,
-    $.macro_iterator_loop_statement,
-    $.do_while_statement,
-    $.for_statement,
-    $.goto_statement,
-    $.label_statement,
-    $.return_statement,
-    $.break_statement,
-    $.continue_statement,
-    $.empty_statement,
-    $.expression_statement,
-    ...nonBranchDirectiveStatementChoices($),
-  );
 }
 
 function nonBranchDirectiveStatementChoices($) {
@@ -3385,35 +1997,6 @@ function nonBranchDirectiveStatementChoices($) {
     includeConditionalElseif: false,
     includeConditionalClosings: false,
   });
-}
-
-function wrapperFirstStatementOptions() {
-  return {
-    includeConditionalIf: false,
-    includeConditionalElseif: false,
-  };
-}
-
-function conditionalElseStatementOptions() {
-  return {
-    includeConditionalElseExpression: true,
-    includeConditionalElseIfBranch: true,
-    includeConditionalElseIfStatement: true,
-  };
-}
-
-function wrapperFirstConditionalElseStatementOptions() {
-  return {
-    ...conditionalElseStatementOptions(),
-    ...wrapperFirstStatementOptions(),
-  };
-}
-
-function wrappedNonblockStatementOptions() {
-  return {
-    includeFunctionInitializerAlternative: true,
-    ...wrapperFirstConditionalElseStatementOptions(),
-  };
 }
 
 function commaSep(rule) {

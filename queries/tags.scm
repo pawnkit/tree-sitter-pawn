@@ -75,10 +75,6 @@
 (macro_reference_expression
   name: (identifier) @name) @reference.call
 
-(preproc_call_expression
-  function: (identifier) @name
-  (#not-match? @name "^(if|for|while|switch)$")) @reference.call
-
 ; Label references
 (goto_statement
   label: (identifier) @name) @reference.label

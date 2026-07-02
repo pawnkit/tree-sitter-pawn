@@ -95,8 +95,4 @@ macro comment before parameters
     (comment)
     parameters: (macro_parameter_list
       (macro_parameter))
-    value: (macro_replacement
-      (preproc_expression
-        (preproc_parenthesized_expression
-          expression: (preproc_expression
-            (macro_parameter)))))))
+    value: (preproc_text)))

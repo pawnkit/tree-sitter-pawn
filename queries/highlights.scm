@@ -61,7 +61,24 @@
     tag: (identifier) @type.cast))
 
 ; Directives
-(_directive) @preproc
+[
+  (preproc_include)
+  (preproc_tryinclude)
+  (preproc_define)
+  (preproc_emit)
+  (preproc_pragma)
+  (preproc_undef)
+  (preproc_assert)
+  (preproc_error)
+  (preproc_warning)
+  (preproc_line)
+  (preproc_file)
+  (preproc_endinput)
+  (preproc_if)
+  (preproc_elseif)
+  (preproc_else)
+  (preproc_endif)
+] @preproc
 
 ; Literals
 (integer_literal) @number
@@ -104,10 +121,6 @@
 (macro_reference_expression
   name: (identifier) @function)
 (sizeof_expression) @function.builtin
-(preproc_call_expression
-  function: (identifier) @function.call
-  (#not-match? @function.call "^(if|for|while|switch)$"))
-(preproc_sizeof_expression) @function.builtin
 
 ; Preprocessor expressions
 (preproc_defined
