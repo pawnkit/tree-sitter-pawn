@@ -67,12 +67,11 @@ module.exports = grammar({
       $._state_variable_declarator,
     ],
     [$.variable_declarator, $._state_variable_declarator],
-    // A generic top-level macro invocation and a bare function signature both start with `identifier(`.
+    // Macro calls and bare function signatures both start with `identifier(`.
     [$.macro_invocation_statement, $._function_name],
     [$._function_name, $.tagged_type],
     [$._sizeof_subscript_expression, $.subscript_expression],
-    // Semicolonless braceless return bodies expose the existing `sizeof value[...]`
-    // ambiguity between a complete sizeof-expression and a longer sizeof-subscript tail.
+    // Braceless returns make `sizeof value[...]` ambiguous.
     [$.sizeof_expression, $._sizeof_subscript_expression],
     [$.expression_list, $._argument_list_item],
     [$.parenthesized_expression, $._argument_list_item],

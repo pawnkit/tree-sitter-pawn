@@ -1,5 +1,6 @@
 .cargo-tree-sitter/
 node_modules/
+build/
 yarn.lock
 .tmp/
 .fixtures/

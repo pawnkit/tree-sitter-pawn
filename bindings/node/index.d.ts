@@ -1,0 +1,25 @@
+type BaseNode = {
+  type: string;
+  named: boolean;
+};
+
+type ChildNode = {
+  multiple: boolean;
+  required: boolean;
+  types: BaseNode[];
+};
+
+type NodeInfo =
+  | (BaseNode & { subtypes: BaseNode[] })
+  | (BaseNode & {
+      fields: Record<string, ChildNode>;
+      children: ChildNode[];
+    });
+
+type PawnLanguage = {
+  language: unknown;
+  nodeTypeInfo: NodeInfo[];
+};
+
+declare const pawn: PawnLanguage;
+export = pawn;

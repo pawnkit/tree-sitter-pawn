@@ -18,8 +18,5 @@
     name: (identifier) @local.definition))
 
 ; References
-; This is a lexical reference candidate, not semantic name resolution. Definitions
-; may also match; locals consumers use the more specific definition capture and
-; scope information to classify them. Linters and LSPs should resolve identifiers
-; from the syntax tree rather than treating every capture as a proven variable use.
+; A lexical candidate only. Consumers must resolve names from the syntax tree.
 (identifier) @local.reference

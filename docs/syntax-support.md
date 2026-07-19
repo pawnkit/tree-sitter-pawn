@@ -1,69 +1,70 @@
 # Pawn syntax support
 
-Legend: **parsed**, **recovery**, **opaque**, **unsupported**, or **non-goal**.
+This page records the grammar's current boundaries. “Recovery” means Tree-sitter
+still returns a useful tree, but it may contain error or missing nodes.
 
 ## Statements
 
-- **Parsed:** `assert`, `break`, `continue`, `do`, `exit`, `for`, `goto`, `if`,
+- Supports `assert`, `break`, `continue`, `do`, `exit`, `for`, `goto`, `if`,
   `return`, `sleep`, `state`, `switch`, `while`, blocks, expression statements,
   and empty statements.
-- **Parsed:** explicit-semicolon and supported newline-terminated forms.
-- **Recovery:** incomplete statements and deeply split conditional layouts may
+- Handles explicit semicolons and supported newline-terminated forms.
+- Incomplete statements and deeply split conditional layouts may
   contain recovery nodes.
 
 ## Declarations
 
-- **Parsed:** `new`, `static`, `const`, `stock`, `public`, `forward`, `native`,
+- Supports `new`, `static`, `const`, `stock`, `public`, `forward`, `native`,
   enums, stateful variables, and global/local variables.
-- **Parsed:** generic identifier-prefixed declarations when the remaining syntax
+- Accepts identifier-prefixed declarations when the remaining syntax
   clearly forms a declaration.
 
 ## Functions
 
-- **Parsed:** normal and braceless bodies, operators, callback-like and `@` names,
+- Supports normal and braceless bodies, operators, callback-like and `@` names,
   member-like forwards, aliases, array/tagged returns, and generic prefixed forms.
-- **Recovery:** incomplete signatures and bodies intended for editor use.
+- Recovers incomplete signatures and bodies for editor use.
 
 ## Types and tags
 
-- **Parsed:** normal tags, wildcard `_:` tags, tag sets, tagged arrays,
+- Supports normal tags, wildcard `_:` tags, tag sets, tagged arrays,
   parameters, expressions, and return types.
 
 ## Expressions
 
-- **Parsed:** tag casts, `sizeof`, `tagof`, packed and normal subscripts, chained
+- Supports tag casts, `sizeof`, `tagof`, packed and normal subscripts, chained
   tags, ternaries, assignments and compound assignments, updates, calls,
   member-like calls, adjacent strings, and switch ranges.
 
 ## Literals, arrays, and enums
 
-- **Parsed:** integers, floats, strings, characters, escapes, packed strings,
+- Supports integers, floats, strings, characters, escapes, packed strings,
   ellipsis fillers, nested arrays, trailing commas, and enum arrays.
 
 ## Preprocessor
 
-- **Parsed:** `#include`, `#tryinclude`, `#define`, `#undef`, `#if`, `#elseif`,
+- Supports `#include`, `#tryinclude`, `#define`, `#undef`, `#if`, `#elseif`,
   `#else`, `#endif`, `#assert`, `#error`, `#warning`, `#emit`, `#file`, `#line`,
   `#pragma`, `#endinput`, and line continuations.
-- **Parsed:** common conditional expressions using `defined`, identifiers, literals,
+- Supports common conditional expressions using `defined`, identifiers, literals,
   tagged constants, parentheses, unary operators, and binary operators.
-- **Opaque:** replacement text is preserved as `preproc_text`; the grammar does not
+- Replacement text remains opaque `preproc_text`; the grammar does not
   attempt to interpret replacement programs.
-- **Parsed:** conditional regions containing complete top-level items, block
+- Handles conditional regions containing complete top-level items, block
   statements, switch items, or list elements.
-- **Recovery:** constructs assembled across multiple conditional branches may
+- Constructs assembled across several conditional branches may
   contain localized recovery nodes; token-stream reconstruction is out of scope.
 
 ## Generic macro-shaped syntax
 
-- **Parsed:** invocation statements, invocation blocks, iterator-shaped loops,
+- Supports invocation statements, invocation blocks, iterator-shaped loops,
   and macro-prefixed declarations/functions.
-- **Recovery:** incomplete calls and unsupported iterator-like argument shapes.
+- Recovers incomplete calls and unsupported iterator-like argument shapes.
 
 ## Non-goals
 
-- **Non-goal:** library-specific macro names or framework semantics.
-- **Non-goal:** macro expansion, include resolution, semantic type checking,
+- Library-specific macro names and framework semantics.
+- Macro expansion, include resolution, semantic type checking,
   compile-time symbol evaluation, or compiler compatibility validation.
-- **Unsupported:** source forms that require those semantics to disambiguate are
+- Source forms that need semantic information for disambiguation are
   intentionally left opaque or represented with recovery nodes.

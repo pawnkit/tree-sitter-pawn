@@ -6,10 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// The external scanner is intentionally narrow: it recognizes the immediate
-// `<` that opens callback signatures without stealing bare `i<10` relational
-// expressions, line-sensitive statement and directive terminators, and the
-// two unsupported macro-header shapes that need bounded recovery.
+// Handles callback brackets, line endings, and malformed macro headers.
 enum TokenType {
   CALLBACK_SIGNATURE_START,
   STATEMENT_LINE_TERMINATOR,

@@ -1,7 +1,22 @@
 {
   "name": "tree-sitter-pawn",
   "version": "0.1.0",
-  "description": "Tree-sitter grammar for Pawn v3 used by SA-MP/open.mp.",
+  "description": "Tree-sitter grammar for Pawn 3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pawnkit/tree-sitter-pawn.git"
+  },
+  "homepage": "https://github.com/pawnkit/tree-sitter-pawn#readme",
+  "bugs": {
+    "url": "https://github.com/pawnkit/tree-sitter-pawn/issues"
+  },
+  "author": "PawnKit contributors",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "main": "bindings/node",
+  "types": "bindings/node",
   "engines": {
     "node": ">=18"
   },
@@ -16,16 +31,23 @@
   "files": [
     "grammar.js",
     "tree-sitter.json",
+    "binding.gyp",
+    "bindings/node/**",
+    "CHANGELOG.md",
     "docs/**",
     "queries/**",
     "src/**",
-    "LICENSE"
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "generate": "tree-sitter generate",
     "format": "prettier --write grammar.js",
     "format:check": "prettier --check grammar.js",
     "test": "tree-sitter test",
+    "test:node": "node --test bindings/node/binding_test.js",
+    "test:go": "CGO_ENABLED=1 go test ./...",
+    "test:metadata": "node test/check-metadata.js",
     "test:alignment": "node test/check-node-alignment.js",
     "test:fields": "tree-sitter test --file-name public_node_contract.txt --show-fields",
     "test:scanner": "bash test/scanner/check.sh",
@@ -39,12 +61,31 @@
     "test:external:list": "find .fixtures/pawn-projects -type f | sort",
     "check:external": "npm run test:external:fetch && npm run test:external:quality",
     "parse": "tree-sitter parse",
-    "check": "npm run format:check && npm run generate && npm run diagnose:parser && npm run check:parser-size && npm run test:alignment && npm test && npm run test:fields && npm run test:queries && npm run test:scanner",
+    "check": "npm run format:check && npm run generate && npm run diagnose:parser && npm run check:parser-size && npm run test:metadata && npm run test:alignment && npm test && npm run test:fields && npm run test:queries && npm run test:scanner && npm run test:node && npm run test:go",
     "pack:check": "npm pack --dry-run",
-    "prepack": "npm run generate"
+    "prepack": "npm run generate",
+    "install": "node-gyp rebuild"
+  },
+  "dependencies": {
+    "node-addon-api": "^8.9.0",
+    "node-gyp-build": "^4.8.4"
+  },
+  "peerDependencies": {
+    "tree-sitter": "^0.25.0"
+  },
+  "peerDependenciesMeta": {
+    "tree-sitter": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "prettier": "^3.9.4",
+    "tree-sitter": "^0.25.0",
     "tree-sitter-cli": "0.25.10"
-  }
+  },
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "gypfile": true
 }

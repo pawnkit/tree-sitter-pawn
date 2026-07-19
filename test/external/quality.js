@@ -6,6 +6,9 @@ const root = path.resolve(__dirname, "../..");
 const fixtureRoot = path.resolve(root, ".fixtures/pawn-projects");
 const parser = path.resolve(root, "node_modules/.bin/tree-sitter");
 const config = path.resolve(__dirname, "tree-sitter-config.json");
+const baseline = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, "quality-baseline.json"), "utf8"),
+);
 
 function sourceFiles(directory) {
   if (!fs.existsSync(directory)) return [];
@@ -130,4 +133,14 @@ for (const item of measurements.filter(
     !entry.reachesEof,
 )) {
   console.log(JSON.stringify(item));
+}
+
+const regressions = Object.entries(baseline).filter(
+  ([metric, limit]) => summary[metric] > limit,
+);
+if (regressions.length > 0) {
+  for (const [metric, limit] of regressions) {
+    console.error(`${metric}: ${summary[metric]} exceeds ${limit}`);
+  }
+  process.exit(1);
 }

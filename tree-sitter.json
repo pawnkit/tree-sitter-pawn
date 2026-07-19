@@ -1,21 +1,36 @@
 {
-    "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
-    "grammars": [
-        {
-            "name": "pawn",
-            "camelcase": "Pawn",
-            "title": "Pawn",
-            "scope": "source.pawn",
-            "file-types": [
-                "pwn",
-                "inc"
-            ],
-            "injection-regex": "^pawn$"
-        }
-    ],
-    "metadata": {
-        "version": "0.1.0",
-        "license": "MIT",
-        "description": "Tree-sitter grammar for classic Pawn v3 as used by SA-MP/open.mp"
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "pawn",
+      "camelcase": "Pawn",
+      "title": "Pawn",
+      "scope": "source.pawn",
+      "file-types": ["pwn", "inc"],
+      "injection-regex": "^pawn$"
     }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Tree-sitter grammar for Pawn 3",
+    "authors": [
+      {
+        "name": "PawnKit contributors",
+        "url": "https://github.com/pawnkit"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/pawnkit/tree-sitter-pawn"
+    }
+  },
+  "bindings": {
+    "c": false,
+    "go": true,
+    "node": true,
+    "python": false,
+    "rust": false,
+    "swift": false,
+    "zig": false
+  }
 }
