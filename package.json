@@ -18,7 +18,7 @@
   "main": "bindings/node",
   "types": "bindings/node",
   "engines": {
-    "node": ">=18"
+    "node": ">=20.17.0"
   },
   "license": "MIT",
   "keywords": [
@@ -79,6 +79,7 @@
     }
   },
   "devDependencies": {
+    "node-gyp": "12.1.0",
     "prettier": "^3.9.4",
     "tree-sitter": "^0.25.0",
     "tree-sitter-cli": "0.25.10"
