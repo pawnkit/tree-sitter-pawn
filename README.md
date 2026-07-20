@@ -8,12 +8,12 @@ including the syntax used by SA-MP and open.mp projects.
 For Node.js:
 
 ```sh
-npm install tree-sitter tree-sitter-pawn
+npm install tree-sitter @pawnkit/tree-sitter-pawn
 ```
 
 ```js
 const Parser = require("tree-sitter");
-const Pawn = require("tree-sitter-pawn");
+const Pawn = require("@pawnkit/tree-sitter-pawn");
 
 const parser = new Parser();
 parser.setLanguage(Pawn);

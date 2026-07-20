@@ -6,3 +6,4 @@
 - Added highlight, locals, and tags queries.
 - Added Node.js and Go bindings.
 - Added corpus and external-project checks.
+- Published the Node.js binding under the `@pawnkit` npm scope.
