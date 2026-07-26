@@ -1,6 +1,6 @@
 {
   "name": "@pawnkit/tree-sitter-pawn",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Tree-sitter grammar for Pawn 3",
   "repository": {
     "type": "git",

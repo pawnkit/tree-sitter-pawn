@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "repository": "pawnkit/tree-sitter-pawn",
+  "maturity": "preview",
+  "platforms": ["linux-amd64"],
+  "profiles": ["samp-037", "openmp"],
+  "compilers": [],
+  "contracts": [],
+  "limitations": [
+    "The grammar provides structure and highlighting, not semantic analysis.",
+    "Windows and macOS package installation is not tested in CI."
+  ]
+}

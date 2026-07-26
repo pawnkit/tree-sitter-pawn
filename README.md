@@ -1,5 +1,7 @@
 # tree-sitter-pawn
 
+[![Maturity: preview](https://img.shields.io/badge/maturity-preview-blue)](.pawnkit/support.json)
+
 A [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) grammar for Pawn 3,
 including the syntax used by SA-MP and open.mp projects.
 
