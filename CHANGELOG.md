@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 - 2026-07-26
+
+- Updated audited dependencies to fix denial-of-service advisories.
+- Kept the package and Tree-sitter manifest versions in sync.
+
 ## 0.1.1 - 2026-07-25
 
 - Added the repository support record with CI validation.
