@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4 - 2026-08-03
+
+- Commit the generated parser metadata for the 0.1.4 grammar release.
+
 ## 0.1.3 - 2026-08-03
 
 - Update the dependency lockfile with the latest security fix.
