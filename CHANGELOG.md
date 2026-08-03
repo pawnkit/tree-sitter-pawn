@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 - 2026-08-03
+
+- Update the dependency lockfile with the latest security fix.
+
 ## 0.1.2 - 2026-07-26
 
 - Updated audited dependencies to fix denial-of-service advisories.
