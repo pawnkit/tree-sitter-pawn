@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5 - 2026-08-04
+
+- Pin the patched `ip-address` release in the native build dependencies.
+
 ## 0.1.4 - 2026-08-03
 
 - Commit the generated parser metadata for the 0.1.4 grammar release.

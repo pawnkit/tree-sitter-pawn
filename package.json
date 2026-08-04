@@ -1,6 +1,6 @@
 {
   "name": "@pawnkit/tree-sitter-pawn",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Tree-sitter grammar for Pawn 3",
   "repository": {
     "type": "git",
@@ -77,6 +77,9 @@
     "tree-sitter": {
       "optional": true
     }
+  },
+  "overrides": {
+    "ip-address": "^10.4.0"
   },
   "devDependencies": {
     "node-gyp": "12.1.0",
